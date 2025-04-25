@@ -1,0 +1,29 @@
+{
+  "outputRules": {
+    "defaultOutputPath": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test",
+    "fileTypes": {
+      "html": {
+        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test",
+        "extension": ".html"
+      },
+      "css": {
+        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test",
+        "extension": ".css"
+      },
+      "assets": {
+        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test/assets",
+        "allowedTypes": ["png", "jpg", "svg", "gif"]
+      }
+    },
+    "rules": {
+      "createDirectory": true,
+      "overwrite": true,
+      "separateStyles": true,
+      "assetHandling": "copy",
+      "naming": {
+        "pattern": "${filename}-${timestamp}",
+        "lowercase": true
+      }
+    }
+  }
+}

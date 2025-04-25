@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "node",
+      "args": ["/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/dist/index.mjs"],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}

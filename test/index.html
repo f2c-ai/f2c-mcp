@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Design</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 通用布局类 */
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 主要容器样式 */
+        .page {
+            width: 829px;
+            height: 317px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrap {
+            width: 829px;
+            height: 317px;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            width: 460px;
+            height: 317px;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            width: 444px;
+            height: 317px;
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* 头部区域样式 */
+        .header {
+            width: 444px;
+            height: 68px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .header-section {
+            width: 412px;
+            height: 44px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            display: flex;
+        }
+
+        .app-info {
+            width: 191.33px;
+            height: 44px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .app-icon {
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .app-details {
+            margin-left: 10px;
+            width: 141.33px;
+        }
+
+        .app-name {
+            font-family: Inter;
+            font-size: 11.9px;
+            color: #000;
+            line-height: 22px;
+            font-weight: 500;
+        }
+
+        .app-description {
+            font-family: Inter;
+            font-size: 10.2px;
+            color: #aaa;
+            line-height: 22px;
+        }
+
+        /* 内容区域样式 */
+        .content-section {
+            width: 444px;
+            height: 102px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .info-container {
+            width: 428px;
+            height: 98px;
+            margin-bottom: 1px;
+            position: relative;
+        }
+
+        .info-row {
+            width: 428px;
+            height: 51px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 50.61px;
+        }
+
+        .info-text {
+            font-family: Inter;
+            font-size: 10.2px;
+            text-align: center;
+            line-height: 22px;
+        }
+
+        .info-text-bold {
+            font-weight: 700;
+            color: #000;
+        }
+
+        .info-text-normal {
+            font-weight: 400;
+            color: #666;
+        }
+
+        /* 标签样式 */
+        .tag {
+            height: 22px;
+            border-radius: 4px;
+            padding: 0 8px;
+            font-size: 10.2px;
+            line-height: 20px;
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
+        }
+
+        .tag-function {
+            background: #E6FFFB;
+            color: #08979C;
+        }
+
+        .tag-voice {
+            background: #F0F5FF;
+            color: #1D39C4;
+        }
+
+        /* 底部工具栏样式 */
+        .toolbar {
+            width: 444px;
+            height: 47px;
+            border: 1px solid #050505;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .toolbar-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .toolbar-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* 分隔线 */
+        .divider {
+            width: 10px;
+            background: #000;
+            min-height: 100px;
+        }
+
+        /* 头像组样式 */
+        .avatar-group {
+            position: relative;
+            width: 56px;
+            height: 24px;
+        }
+
+        .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #000;
+            position: absolute;
+            top: 0;
+        }
+
+        .avatar:nth-child(1) { left: 0; }
+        .avatar:nth-child(2) { left: 16px; }
+        .avatar:nth-child(3) { left: 32px; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="wrap">
+            <div class="container">
+                <div class="content">
+                    <div class="header">
+                        <div class="header-section">
+                            <div class="app-info">
+                                <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/fe467daf-1acd-4dc4-9e23-b61395e701e8" class="app-icon" />
+                                <div class="app-details flex-column">
+                                    <span class="app-name">yo-redpack-assistant</span>
+                                    <span class="app-description">YO语音红包工具</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section">
+                        <div class="info-container">
+                            <div class="info-row">
+                                <div class="info-block">
+                                    <span class="info-text info-text-bold">10000141</span>
+                                    <span class="info-text info-text-normal">app</span>
+                                </div>
+                                <div class="info-block" style="margin-left: 101.22px;">
+                                    <span class="info-text info-text-bold">-</span>
+                                    <span class="info-text info-text-normal">act</span>
+                                </div>
+                                <div class="info-block" style="margin-left: 101.22px;">
+                                    <div class="avatar-group">
+                                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/cc639cbc-c789-4f3e-844d-68be4c866709" class="avatar" />
+                                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/c86713fa-884c-4ece-b2b1-f2580a278565" class="avatar" />
+                                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/1a47f66a-61b9-46c7-aa68-ff9ddc09c5da" class="avatar" />
+                                    </div>
+                                    <span class="info-text info-text-normal">Partner</span>
+                                </div>
+                            </div>
+                            <div class="info-row" style="margin-top: 48px;">
+                                <div style="display: flex; align-items: center;">
+                                    <span class="tag tag-function">功能</span>
+                                    <span class="tag tag-voice">语音房</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="toolbar">
+                        <div class="toolbar-icons">
+                            <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/4cd29110-437f-4bda-ad93-c5885fea70a4" class="toolbar-icon" />
+                            <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/bdb71866-005a-47d3-ae76-7e7c720c1ae7" class="toolbar-icon" />
+                            <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/27247296-2661-4360-965b-a7d569e196a8" class="toolbar-icon" />
+                            <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/6dc77869-2cc5-4274-8680-c420bee8733c" class="toolbar-icon" />
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
