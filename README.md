@@ -24,9 +24,7 @@ The F2C MCP Server is a Model Context Protocol server that enables AI coding ass
     }
   }
 }
-···
-
-
+```
 ## Getting Started
 
 1. Set up your Figma API key in `.env` file:
