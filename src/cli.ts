@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {sendRpcMessage} from './helper'
+import {sendRpcMessage} from './logger'
 import {startServer} from './server'
 
 startServer().catch(error => {

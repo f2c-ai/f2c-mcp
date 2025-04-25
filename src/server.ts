@@ -2,8 +2,8 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
 import {z} from 'zod'
 import {DEFAULT_PERSONAL_TOKEN} from './config'
-import {parseFigmaUrl, sendRpcMessage} from './helper'
-
+import {parseFigmaUrl} from './helper'
+import {sendRpcMessage} from './logger'
 // Create MCP server
 const server = new McpServer({
   name: 'F2C MCP',
