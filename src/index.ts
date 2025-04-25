@@ -2,26 +2,26 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
 import {z} from 'zod'
 
-// 从环境变量获取 personalToken
+// Get personalToken from environment variables
 const DEFAULT_PERSONAL_TOKEN = process.env.personalToken || process.env.FIGMA_API_KEY || ''
 
-// 增强的 Figma URL 解析器，支持更多格式
+// Enhanced Figma URL parser supporting multiple formats
 function parseFigmaUrl(url: string) {
   try {
     const urlObj = new URL(url)
     const path = urlObj.pathname
 
-    // 支持 file/xxx 和 design/xxx 两种格式
+    // Support both file/xxx and design/xxx formats
     const [, fileKey] = path.match(/(?:file|design)\/([^/]+)/) || []
 
-    // 支持 node-id 参数和 hash 路由格式
+    // Support node-id parameter and hash format
     const nodeIdMatch =
       urlObj.searchParams.get('node-id') || url.match(/node-id=([^&]+)/) || url.match(/#([^:]+:[^:]+)/)
 
     const nodeId = nodeIdMatch ? (Array.isArray(nodeIdMatch) ? nodeIdMatch[1] : nodeIdMatch) : ''
 
     if (!fileKey) {
-      throw new Error('无效的 Figma 链接：未找到 fileKey')
+      throw new Error('Invalid Figma link: fileKey not found')
     }
 
     return {
@@ -29,12 +29,12 @@ function parseFigmaUrl(url: string) {
       nodeId: nodeId || '',
     }
   } catch (error) {
-    throw new Error('无效的 Figma 链接')
+    throw new Error('Invalid Figma link')
   }
 }
 
 // Replace console.log with proper JSON-RPC notification format
-// 统一的JSON-RPC消息发送方法
+// Unified JSON-RPC message sending method
 function sendRpcMessage(
   type: 'notification' | 'error',
   options: {
@@ -89,7 +89,7 @@ sendRpcMessage('notification', {
 
 server.tool(
   'figma_to_html',
-  '将 Figma 文件中的节点转换为 HTML 内容',
+  'Convert Figma nodes to HTML content',
   {
     personalToken: z.string().default(DEFAULT_PERSONAL_TOKEN).describe('Your Figma personal access token'),
     figmaUrl: z.string().describe('Figma design URL containing fileKey and nodeId'),
