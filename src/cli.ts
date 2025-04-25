@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {sendRpcMessage} from './helper'
 import {startServer} from './server'
 

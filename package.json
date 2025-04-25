@@ -1,6 +1,6 @@
 {
   "name": "@f2c/mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "repository": {
     "type": "git",
@@ -24,6 +24,9 @@
         "default": "./dist/index.js"
       }
     }
+  },
+  "bin": {
+    "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
     "build": "tsup",
