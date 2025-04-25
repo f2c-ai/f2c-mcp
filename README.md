@@ -8,6 +8,25 @@ The F2C MCP Server is a Model Context Protocol server that enables AI coding ass
 - Uses Figma API to fetch design metadata
 - Implements JSON-RPC 2.0 protocol for communication
 
+## Add MCP Service
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@f2c/mcp"
+      ],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}
+···
+
+
 ## Getting Started
 
 1. Set up your Figma API key in `.env` file:

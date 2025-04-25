@@ -5,6 +5,27 @@ F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
 - 将Figma设计节点转换为HTML/CSS代码
 - 支持通过Figma文件URL获取设计元数据
 - 使用JSON-RPC 2.0协议进行通信
+
+## 添加 MCP 服务
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@f2c/mcp"
+      ],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}
+···
+
+
+
 ## 快速开始
 1. 在 .env 文件中配置Figma API密钥:
 ```bash

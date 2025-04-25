@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "f2c-mcp": {
-      "command": "node",
-      "args": ["/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/dist/index.mjs"],
+      "command": "npx",
+      "args": ["-y", "f2c-mcp"],
       "env": {
         "personalToken": ""
       }
