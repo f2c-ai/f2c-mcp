@@ -1,6 +1,6 @@
 # F2C MCP Server
 
-[English](./README.md) | [简体中文](./README-Zh.md) 
+[English](./README.md) | 简体中文
 
 F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
 
