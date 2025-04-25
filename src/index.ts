@@ -1,10 +1,9 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
-import axios from 'axios'
 import {z} from 'zod'
 
 // 从环境变量获取 personalToken
-const DEFAULT_PERSONAL_TOKEN: any = process.env.personalToken || process.env.FIGMA_API_KEY
+const DEFAULT_PERSONAL_TOKEN = process.env.personalToken || process.env.FIGMA_API_KEY || ''
 
 // 增强的 Figma URL 解析器，支持更多格式
 function parseFigmaUrl(url: string) {
@@ -35,14 +34,33 @@ function parseFigmaUrl(url: string) {
 }
 
 // Replace console.log with proper JSON-RPC notification format
-function sendNotification(method: string, params: any) {
-  console.log(
-    JSON.stringify({
-      jsonrpc: '2.0',
-      method,
-      params,
-    }),
-  )
+// 统一的JSON-RPC消息发送方法
+function sendRpcMessage(
+  type: 'notification' | 'error',
+  options: {
+    method?: string
+    id?: string | number | null
+    code?: number
+    message: string
+    params?: any
+  },
+) {
+  const base = {
+    jsonrpc: '2.0',
+    ...(type === 'notification'
+      ? {
+          method: options.method || 'log',
+          params: options.params || {message: options.message},
+        }
+      : {
+          id: options.id || null,
+          error: {
+            code: options.code || -32000,
+            message: options.message,
+          },
+        }),
+  }
+  console.log(JSON.stringify(base))
 }
 
 // Replace console.error with proper JSON-RPC error format
@@ -65,21 +83,22 @@ const server = new McpServer({
   version: '0.0.1',
 })
 
-sendNotification('log', {message: 'MCP server instance created'})
+sendRpcMessage('notification', {
+  message: 'MCP server instance created',
+})
 
 server.tool(
   'figma_to_html',
   '将 Figma 文件中的节点转换为 HTML 内容',
   {
-    personalToken: z
-      .string()
-      .optional()
-      .default(DEFAULT_PERSONAL_TOKEN || '')
-      .describe('Your Figma personal access token'),
+    personalToken: z.string().default(DEFAULT_PERSONAL_TOKEN).describe('Your Figma personal access token'),
     figmaUrl: z.string().describe('Figma design URL containing fileKey and nodeId'),
   },
   async ({personalToken = DEFAULT_PERSONAL_TOKEN, figmaUrl}) => {
-    sendNotification('log', {message: 'Tool call received', figmaUrl})
+    sendRpcMessage('notification', {
+      message: 'Tool call received',
+      params: {figmaUrl},
+    })
 
     try {
       const {fileKey, nodeId} = parseFigmaUrl(figmaUrl)
@@ -88,20 +107,24 @@ server.tool(
         throw new Error('fileKey 不能为空')
       }
 
-      const response = await axios.get('https://f2c-figma-api.yy.com/api/nodes', {
-        params: {
-          fileKey,
-          nodeIds: nodeId,
-          personal_token: personalToken,
-          format: 'html',
-        },
-      })
+      const url = new URL('https://f2c-figma-api.yy.com/api/nodes')
+      url.searchParams.append('fileKey', fileKey)
+      url.searchParams.append('nodeIds', nodeId)
+      url.searchParams.append('personal_token', personalToken)
+      url.searchParams.append('format', 'html')
+
+      const response = await fetch(url.toString())
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+      const data = await response.text()
 
       return {
-        content: [{type: 'text', text: response.data}],
+        content: [{type: 'text', text: data}],
       }
     } catch (error: any) {
-      sendError(null, -32000, `Error: ${error.message}`)
+      sendRpcMessage('error', {
+        message: `Error: ${error.message}`,
+        code: -32000,
+      })
       return {
         content: [{type: 'text', text: `Error: ${error.message}`}],
       }
@@ -111,14 +134,17 @@ server.tool(
 
 // Start server and connect to stdio transport
 async function startServer() {
-  sendNotification('log', {message: 'Starting Figma-to-HTML service'})
+  sendRpcMessage('notification', {message: 'Starting Figma-to-HTML service'})
   const transport = new StdioServerTransport()
-  sendNotification('log', {message: 'Transport layer initialized'})
+  sendRpcMessage('notification', {message: 'Transport layer initialized'})
   await server.connect(transport)
-  sendNotification('log', {message: 'MCP server connected to stdio'})
+  sendRpcMessage('notification', {message: 'MCP server connected to stdio'})
 }
 
 startServer().catch(error => {
-  sendError(null, -32000, `Server startup failed: ${error.message}`)
+  sendRpcMessage('error', {
+    message: `Server startup failed: ${error.message}`,
+    code: -32000,
+  })
   process.exit(1)
 })

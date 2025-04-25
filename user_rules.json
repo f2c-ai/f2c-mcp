@@ -1,17 +1,17 @@
 {
   "outputRules": {
-    "defaultOutputPath": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test",
+    "defaultOutputPath": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/demo",
     "fileTypes": {
       "html": {
-        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test",
+        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/demo",
         "extension": ".html"
       },
       "css": {
-        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test",
+        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/demo",
         "extension": ".css"
       },
       "assets": {
-        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/test/assets",
+        "path": "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/demo",
         "allowedTypes": ["png", "jpg", "svg", "gif"]
       }
     },

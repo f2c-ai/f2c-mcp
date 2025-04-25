@@ -5,7 +5,6 @@ const envConfig: any = {}
 export default defineConfig(({watch}) => {
   const isDev = !!watch
   if (isDev) dotenv.config({processEnv: envConfig})
-  console.log('config', envConfig)
   return {
     entry: ['src/index.ts'],
     format: ['esm', 'cjs'],
