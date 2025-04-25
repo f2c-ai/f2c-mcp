@@ -1,4 +1,7 @@
 # F2C MCP Server
+
+[English](./README.md) | [简体中文](./README-Zh.md) 
+
 F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
 
 - 为AI编程助手提供Figma设计数据访问能力
