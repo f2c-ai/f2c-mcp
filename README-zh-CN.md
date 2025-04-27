@@ -26,6 +26,21 @@ F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
   }
 }
 ```
+## Add MCP Service(Windows)
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@f2c/mcp"],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}
+```
+
 ## 快速开始
 1. 在 .env 文件中配置Figma API密钥:
 ```bash
