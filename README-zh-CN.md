@@ -48,3 +48,16 @@ npm run dev
 3. 服务器将Figma节点转换为HTML代码
 4. AI助手使用转换后的代码进行开发
 项目基于Model Context Protocol实现，专为AI编程工具优化设计数据访问。
+
+## FAQ
+```
+Error: spawn npx ENOENT
+```
+解决方法：添加PATH到mcpServer中
+```
+{
+  "env": {
+    "PATH": "/Users/xxx/.nvm/versions/node/v20.10.0/bin:/bin"
+  }
+}
+```
