@@ -1,8 +1,9 @@
+import {execSync} from 'child_process'
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
 import {z} from 'zod'
 import {DEFAULT_PERSONAL_TOKEN} from './config'
-import {parseFigmaUrl} from './helper'
+import {isValidProjectName, parseFigmaUrl} from './helper'
 import {sendRpcMessage} from './logger'
 // Create MCP server
 const server = new McpServer({
@@ -46,6 +47,104 @@ server.tool(
 
       return {
         content: [{type: 'text', text: data}],
+      }
+    } catch (error: any) {
+      sendRpcMessage('error', {
+        message: `Error: ${error.message}`,
+        code: -32000,
+      })
+      return {
+        content: [{type: 'text', text: `Error: ${error.message}`}],
+      }
+    }
+  },
+)
+
+server.tool(
+  '创建或新增Astro组件',
+  '创建或新增Astro组件通过组件名字',
+  {
+    componentName: z.string().regex(/^[A-Z][a-zA-Z0-9_]*$/, {
+      message: '组件名称必须以大写字母开头，且只能包含英文、数字、下划线',
+    }).describe('组件的名字'),
+  },
+  async ({componentName}) => {
+    sendRpcMessage('notification', {
+      message: 'Creating Astro component',
+      params: {componentName},
+    })
+
+    try {
+      // Validate component name
+      if (!componentName.match(/^[A-Z][a-zA-Z0-9_]*$/)) {
+        throw new Error('组件名称必须以大写字母开头，且只能包含英文、数字、下划线')
+      }
+
+      // Determine output directory
+      
+      // Create component using Astro CLI
+      try {
+        execSync(`npx --registry=https://npm-registry.yy.com @astro/create-astro new component ${componentName}`, {
+          stdio: 'pipe',
+        })
+        
+        return {
+          content: [{
+            type: 'text', 
+            text: `成功创建 Astro 组件: ${componentName} --registry=https://npm-registry.yy.com`
+          }],
+        }
+      } catch (execError: any) {
+        throw new Error(`创建组件失败失败: ${execError.message}`)
+      }
+    } catch (error: any) {
+      sendRpcMessage('error', {
+        message: `Error: ${error.message}`,
+        code: -32000,
+      })
+      return {
+        content: [{type: 'text', text: `Error: ${error.message}`}],
+      }
+    }
+  },
+)
+
+
+
+
+server.tool(
+  '创建Astro项目',
+  '通过项目名称创建新的Astro项目',
+  {
+    projectName: z.string().describe('项目的名称'),
+  },
+  async ({projectName}) => {
+    sendRpcMessage('notification', {
+      message: 'Creating Astro project',
+      params: {projectName},
+    })
+
+    try {
+      // 验证项目名称
+      const validation = isValidProjectName(projectName)
+      if (!validation.isValid) {
+        throw new Error(validation.message)
+      }
+
+      // 创建项目使用Astro CLI
+      try {
+        execSync(`npx --registry=https://npm-registry.yy.com @astro/create-astro new project --name ${projectName}`, {
+          stdio: 'pipe',
+        })
+        
+        return {
+          content: [{
+            type: 'text', 
+            text: `成功创建 Astro 项目: ${projectName}`
+          }],
+        }
+      } catch (execError: any) {
+        throw new Error(`创建项目失败: ${execError.message}`)
       }
     } catch (error: any) {
       sendRpcMessage('error', {
