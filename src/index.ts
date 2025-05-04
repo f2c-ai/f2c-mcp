@@ -1,5 +1,5 @@
-import {sendRpcMessage} from './logger'
-import {startServer} from './server'
+import {sendRpcMessage} from './helper/logger'
+import {startServer} from './server/stdio'
 
 startServer().catch(error => {
   sendRpcMessage('error', {
