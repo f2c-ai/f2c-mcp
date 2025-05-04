@@ -95,7 +95,7 @@ server.tool(
           }],
         }
       } catch (execError: any) {
-        throw new Error(`创建组件失败失败: ${execError.message}`)
+        throw new Error(`创建组件失败: ${execError.message}\n请确保您在YY内网环境下执行此操作`)
       }
     } catch (error: any) {
       sendRpcMessage('error', {
@@ -108,9 +108,6 @@ server.tool(
     }
   },
 )
-
-
-
 
 server.tool(
   '创建Astro项目',
@@ -144,7 +141,7 @@ server.tool(
           }],
         }
       } catch (execError: any) {
-        throw new Error(`创建项目失败: ${execError.message}`)
+        throw new Error(`创建项目失败: ${execError.message}\n请确保您在YY内网环境下执行此操作`)
       }
     } catch (error: any) {
       sendRpcMessage('error', {
