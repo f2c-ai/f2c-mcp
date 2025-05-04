@@ -36,7 +36,7 @@
     "lint": "biome check . --fix"
   },
   "author": "ken",
-  "maintainers": ["ckken"],
+  "maintainers": ["ckken", "doerme"],
   "license": "ISC",
   "dependencies": {
     "zod": "^3.22.4"
