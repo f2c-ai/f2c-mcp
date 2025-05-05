@@ -86,12 +86,14 @@ server.tool(
       try {
         execSync(`npx --registry=https://npm-registry.yy.com @astro/create-astro new component ${componentName}`, {
           stdio: 'pipe',
+          cwd: process.cwd(),
+          env: process.env
         })
         
         return {
           content: [{
             type: 'text', 
-            text: `成功创建 Astro 组件: ${componentName} --registry=https://npm-registry.yy.com`
+            text: `成功创建 Astro 组件: ${componentName} , 在当前目录下: ${process.cwd()}`
           }],
         }
       } catch (execError: any) {
@@ -132,12 +134,14 @@ server.tool(
       try {
         execSync(`npx --registry=https://npm-registry.yy.com @astro/create-astro new project --name ${projectName}`, {
           stdio: 'pipe',
+          cwd: process.cwd(),
+          env: process.env
         })
         
         return {
           content: [{
             type: 'text', 
-            text: `成功创建 Astro 项目: ${projectName}`
+            text: `成功创建 Astro 项目: ${projectName}, 在当前目录下: ${process.cwd()}`
           }],
         }
       } catch (execError: any) {
