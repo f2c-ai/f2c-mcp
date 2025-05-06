@@ -1,8 +1,8 @@
+import {registerServer} from '@/server'
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
-import {serverName, serverVersion} from '../config'
-import {sendRpcMessage} from '../helper/logger'
-import {registerFigmaToHtmlTool} from '../tools/figma-to-html'
+import {serverName, serverVersion} from 'src/config'
+import {sendRpcMessage} from 'src/helper/logger'
 
 // Create MCP server
 const server = new McpServer({
@@ -15,7 +15,7 @@ sendRpcMessage('notification', {
 })
 
 // 注册工具
-registerFigmaToHtmlTool(server)
+registerServer(server)
 
 // Start server and connect to stdio transport
 export async function startServer() {

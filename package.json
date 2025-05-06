@@ -10,13 +10,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [
-    "f2c",
-    "mcp"
-  ],
-  "files": [
-    "dist"
-  ],
+  "keywords": ["f2c", "mcp"],
+  "files": ["dist"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -37,13 +32,12 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "shttp": "node ./dist/streamableHttp.js",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/index.mjs",
     "lint": "biome check . --fix"
   },
   "author": "ken",
-  "maintainers": [
-    "ckken"
-  ],
+  "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",

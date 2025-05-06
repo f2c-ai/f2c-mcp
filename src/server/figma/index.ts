@@ -1,8 +1,8 @@
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
+import {DEFAULT_PERSONAL_TOKEN} from 'src/config'
+import {parseFigmaUrl} from 'src/helper'
+import {sendRpcMessage} from 'src/helper/logger'
 import {z} from 'zod'
-import {DEFAULT_PERSONAL_TOKEN} from '../config'
-import {parseFigmaUrl} from '../helper'
-import {sendRpcMessage} from '../helper/logger'
 
 export const figmaToHtmlSchema = {
   personalToken: z.string().default(DEFAULT_PERSONAL_TOKEN).describe('Your Figma personal access token'),
@@ -52,6 +52,6 @@ export async function figmaToHtml({
   }
 }
 
-export function registerFigmaToHtmlTool(server: McpServer) {
+export function registerFigmaServer(server: McpServer) {
   server.tool('figma_to_html', 'Convert Figma nodes to HTML content', figmaToHtmlSchema, figmaToHtml)
 }
