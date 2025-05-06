@@ -3,9 +3,9 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express from 'express'
-import {serverName, serverVersion} from '../config'
-import {sendRpcMessage} from '../helper/logger'
-import {registerFigmaToHtmlTool} from '../tools/figma-to-html'
+import {serverName, serverVersion} from 'src/config'
+import {sendRpcMessage} from 'src/helper/logger'
+import {registerServer} from 'src/server'
 
 const app = express()
 app.use(express.json())
@@ -48,7 +48,7 @@ app.post('/mcp', async (req, res) => {
     })
 
     // 注册工具
-    registerFigmaToHtmlTool(server)
+    registerServer(server)
 
     // Connect to the MCP server
     await server.connect(transport)
