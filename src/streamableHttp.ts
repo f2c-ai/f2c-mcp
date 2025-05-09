@@ -1,2 +1,2 @@
-import {startHttpServer} from 'src/transports/streamable-http'
-startHttpServer()
+import {startServer} from 'src/transports/streamable-http'
+startServer()

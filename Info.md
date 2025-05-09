@@ -14,6 +14,7 @@
 1. JSON-RPC：主要用于本地场景，例如 IDE 插件连接到本地运行的 MCP 服务器。
 
 ## 本地调试 
+### stido
 ```json
 {
   "mcpServers": {
@@ -27,5 +28,30 @@
       }
     }
   }
+}
+```
+### steamable http
+```json
+{
+  "f2c_mcp": {
+    "transport": "streamable_http",
+    "url": "http://172.29.97.170:3000/mcp",
+    "headers": {},
+    "timeout": 50
+  }
+}
+```
+
+### 多MCP Server 配置
+```json
+{
+  "mcpServers": {
+      "f2c_mcp": {
+        "transport": "streamable_http",
+        "url": "http://172.29.97.170:3000/mcp",
+        "headers": {},
+        "timeout": 50
+      }
+    }
 }
 ```
