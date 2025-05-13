@@ -8,15 +8,15 @@ app.post('/mcp', async (req, res) => {
   // to ensure complete isolation. A single instance would cause request ID collisions
   // when multiple clients connect concurrently.
   
-  console.log('收到 MCP POST 请求!!!!!2');
-  console.log('请求头:', req.headers);
+  // console.log('收到 MCP POST 请求!!!!!2');
+  // console.log('请求头:', req.headers);
   console.log('请求体:',req.body);
   let acceptHeader = req.headers.accept as string;
   if (acceptHeader === '*/*') {
     // 如果 Accept 头为 */*，则添加必要的内容类型
     acceptHeader = '*/*,application/json, text/event-stream';
     req.headers.accept = acceptHeader;
-    console.log('修改后的 Accept 头:', acceptHeader);
+    // console.log('修改后的 Accept 头:', acceptHeader);
   }
   try {
     const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
@@ -24,19 +24,19 @@ app.post('/mcp', async (req, res) => {
       enableJsonResponse: true,
     });
     
-    console.log('创建新的 StreamableHTTPServerTransport 实例');
+    // console.log('创建新的 StreamableHTTPServerTransport 实例');
     
     res.on('close', () => {
-      console.log('请求关闭，正在清理资源');
+      // console.log('请求关闭，正在清理资源');
       transport.close();
       server.close();
     });
     
-    console.log('连接到 MCP 服务器...');
+    // console.log('连接到 MCP 服务器...');
     await server.connect(transport);
-    console.log('MCP 服务器连接成功');
+    // console.log('MCP 服务器连接成功');
     await transport.handleRequest(req, res, req.body);
-    console.log('请求处理完成');
+    // console.log('请求处理完成');
   } catch (error:any) {
     console.error('处理 MCP 请求时出错:', error);
     console.error('错误堆栈:', error.stack);
@@ -58,8 +58,8 @@ app.post('/mcp', async (req, res) => {
 });
 
 app.get('/mcp', async (req, res) => {
-  console.log('收到 MCP GET 请求');
-  console.log('请求头:', JSON.stringify(req.headers, null, 2));
+  // console.log('收到 MCP GET 请求');
+  // console.log('请求头:', JSON.stringify(req.headers, null, 2));
   
   res.writeHead(405).end(JSON.stringify({
     jsonrpc: "2.0",
@@ -70,12 +70,12 @@ app.get('/mcp', async (req, res) => {
     id: null
   }));
   
-  console.log('返回 405 Method Not Allowed');
+  // console.log('返回 405 Method Not Allowed');
 });
 
 app.delete('/mcp', async (req, res) => {
-  console.log('收到 MCP DELETE 请求');
-  console.log('请求头:', JSON.stringify(req.headers, null, 2));
+  // console.log('收到 MCP DELETE 请求');
+  // console.log('请求头:', JSON.stringify(req.headers, null, 2));
   
   res.writeHead(405).end(JSON.stringify({
     jsonrpc: "2.0",
@@ -86,7 +86,7 @@ app.delete('/mcp', async (req, res) => {
     id: null
   }));
   
-  console.log('返回 405 Method Not Allowed');
+  // console.log('返回 405 Method Not Allowed');
 });
 
 
