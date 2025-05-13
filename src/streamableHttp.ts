@@ -1,2 +1,3 @@
-import {startServer} from 'src/transports/streamable-http'
-startServer()
+import {startServer} from 'src/transports/without-session-steamable-http'
+import {server} from'src/server/figma'
+startServer(server,3000)
