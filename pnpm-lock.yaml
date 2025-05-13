@@ -23,8 +23,8 @@ devDependencies:
     specifier: ^0.7.2
     version: 0.7.2
   '@modelcontextprotocol/sdk':
-    specifier: 1.11.1
-    version: 1.11.1
+    specifier: 1.11.2
+    version: 1.11.2
   '@types/cors':
     specifier: ^2.8.18
     version: 2.8.18
@@ -408,8 +408,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.0
     dev: true
 
-  /@modelcontextprotocol/sdk@1.11.1:
-    resolution: {integrity: sha512-9LfmxKTb1v+vUS1/emSk1f5ePmTLkb9Le9AxOB5T0XM59EUumwcS45z05h7aiZx3GI0Bl7mjb3FMEglYj+acuQ==}
+  /@modelcontextprotocol/sdk@1.11.2:
+    resolution: {integrity: sha512-H9vwztj5OAqHg9GockCQC06k1natgcxWQSRpQcPJf6i5+MWBzfKkRtxGbjQf0X2ihii0ffLZCRGbYV2f2bjNCQ==}
     engines: {node: '>=18'}
     dependencies:
       content-type: 1.0.5
