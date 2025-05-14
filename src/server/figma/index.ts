@@ -1,7 +1,6 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
-import {DEFAULT_PERSONAL_TOKEN, serverName, serverVersion} from 'src/server/figma/config'
-import {parseFigmaUrl} from 'src/server/figma/helper'
+import {serverName, serverVersion} from 'src/server/figma/config'
 import {z} from 'zod'
 import api from './api'
 
@@ -20,26 +19,16 @@ export const server = new McpServer(
 // Register Figma to HTML conversion tool
 server.tool(
   'figma_to_html',
-  'Convert Figma design to HTML code using F2C',
+  'Convert Figma design to HTML code with node',
   {
-    figmaUrl: z.string().describe('Figma design URL containing fileKey and nodeId'),
+    fileKey: z.string().describe('Unique identifier of the Figma file'),
+    ids: z.string().describe('List of node IDs to retrieve, comma separated'),
+    format: z.string().default('html').describe('Format of the returned code'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({figmaUrl, personalToken}): Promise<CallToolResult> => {
-    personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-
+  async (o): Promise<CallToolResult> => {
     try {
-      const {fileKey, nodeId} = parseFigmaUrl(figmaUrl)
-      if (!fileKey) {
-        console.error('Error: fileKey cannot be empty')
-        throw new Error('fileKey cannot be empty')
-      }
-      const data = await api.nodes2Code({
-        personal_token: personalToken,
-        nodeIds: nodeId,
-        fileKey: fileKey,
-        format: 'html',
-      })
+      const data = await api.f2cNodeToCode(o)
 
       return {
         content: [{type: 'text', text: data}],
@@ -55,10 +44,11 @@ server.tool(
 
 // Get Figma file information
 server.tool(
-  'figma_get_file',
+  'figma_get_file_data',
   'Get detailed information about a Figma file',
   {
     fileKey: z.string().describe('Unique identifier of the Figma file'),
+    ids: z.string().describe('List of node IDs to retrieve, comma separated'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
     version: z.string().optional().describe('Specify the version to return'),
     depth: z.number().optional().describe('Specify the depth of nodes to return'),
@@ -66,18 +56,11 @@ server.tool(
     plugin_data: z.string().optional().describe('Specify plugin data to return'),
     branch_data: z.boolean().optional().describe('Specify whether to return branch data'),
   },
-  async ({fileKey, personalToken, ...op}): Promise<CallToolResult> => {
-    personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-
+  async (o): Promise<CallToolResult> => {
     try {
-      if (!fileKey) {
-        throw new Error('fileKey cannot be empty')
-      }
-
-      const data = await api.files(fileKey, personalToken, op)
-
+      const data = await api.files(o)
       return {
-        content: [{type: 'text', text: JSON.stringify(data)}],
+        content: [{type: 'text', text: data}],
       }
     } catch (error: any) {
       return {
@@ -93,7 +76,7 @@ server.tool(
   'Get images of Figma nodes',
   {
     fileKey: z.string().describe('Unique identifier of the Figma file'),
-    nodeIds: z.string().describe('Node IDs to get images for, comma separated'),
+    ids: z.string().describe('Node IDs to get images for, comma separated'),
     format: z.enum(['jpg', 'png', 'svg', 'pdf']).optional().describe('Image format, e.g., png, jpg, svg'),
     scale: z.number().optional().describe('Image scale factor'),
     svg_include_id: z.boolean().optional().describe('Whether SVG includes ID'),
@@ -102,18 +85,12 @@ server.tool(
     version: z.string().optional().describe('Specify the version to return'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({fileKey, nodeIds, personalToken, ...op}): Promise<CallToolResult> => {
-    personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-
+  async (o): Promise<CallToolResult> => {
     try {
-      if (!fileKey || !nodeIds) {
-        throw new Error('fileKey and nodeIds cannot be empty')
-      }
-
-      const data = await api.images(fileKey, personalToken, {...op, ids: nodeIds})
+      const data = await api.images(o)
 
       return {
-        content: [{type: 'text', text: JSON.stringify(data)}],
+        content: [{type: 'text', text: data}],
       }
     } catch (error: any) {
       return {
@@ -131,18 +108,12 @@ server.tool(
     fileKey: z.string().describe('Unique identifier of the Figma file'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({fileKey, personalToken}): Promise<CallToolResult> => {
-    personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-
+  async (o): Promise<CallToolResult> => {
     try {
-      if (!fileKey) {
-        throw new Error('fileKey cannot be empty')
-      }
-
-      const data = await api.imageFills(fileKey, personalToken)
+      const data = await api.imageFills(o)
 
       return {
-        content: [{type: 'text', text: JSON.stringify(data)}],
+        content: [{type: 'text', text: data}],
       }
     } catch (error: any) {
       return {
@@ -160,18 +131,11 @@ server.tool(
     fileKey: z.string().describe('Unique identifier of the Figma file'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({fileKey, personalToken}): Promise<CallToolResult> => {
-    personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-
+  async (o): Promise<CallToolResult> => {
     try {
-      if (!fileKey) {
-        throw new Error('fileKey cannot be empty')
-      }
-
-      const data = await api.meta(fileKey, personalToken)
-
+      const data = await api.meta(o)
       return {
-        content: [{type: 'text', text: JSON.stringify(data)}],
+        content: [{type: 'text', text: data}],
       }
     } catch (error: any) {
       return {
