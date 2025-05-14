@@ -7,8 +7,7 @@
 ## 通信方式 (Transports)
 
 + 1. Stdio (标准输入/输出)：主要用于本地场景，例如 IDE 插件连接到本地运行的 MCP 服务器。通信通过进程的标准输入和输出来进行。
-+ 2. SSE (Server-Sent Events)：主要用于网络/云端场景，例如连接到部署在云函数或服务器上的 MCP 服务。它基于 HTTP 长连接。
-+ 3. Streamable Http：主要用于网络/云端场景，例如连接到部署在云函数或服务器上的 MCP 服务。它基于 HTTP 长连接。
++ 2. Streamable Http：主要用于网络/云端场景，例如连接到部署在云函数或服务器上的 MCP 服务。它基于 HTTP 长连接。
 
 ## 协议 (Protocols)
 1. JSON-RPC：主要用于本地场景，例如 IDE 插件连接到本地运行的 MCP 服务器。
@@ -21,7 +20,7 @@
     "f2c-mcp": {
       "command": "node",
       "args": [
-        "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/dist/index.js"
+        "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/dist/stdio.js"
       ],
       "env": {
         "personalToken": ""
