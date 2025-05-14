@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import {sendRpcMessage} from '@/helper/logger'
 import {server} from '@/server/figma'
 import {startServer} from 'src/transports/stdio'
