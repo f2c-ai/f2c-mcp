@@ -24,6 +24,16 @@
         "types": "./dist/stdio.d.ts",
         "default": "./dist/stdio.js"
       }
+    },
+    "./streamableHttp": {
+      "import": {
+        "types": "./dist/streamableHttp.d.mts",
+        "default": "./dist/streamableHttp.mjs"
+      },
+      "require": {
+        "types": "./dist/streamableHttp.d.ts",
+        "default": "./dist/streamableHttp.js"
+      }
     }
   },
   "bin": {
