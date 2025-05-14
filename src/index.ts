@@ -1,6 +1,6 @@
-import {sendRpcMessage} from '@/helper'
-import {startServer} from 'src/transports/stdio'
+import {sendRpcMessage} from '@/helper/logger'
 import {server} from '@/server/figma'
+import {startServer} from 'src/transports/stdio'
 startServer(server).catch(error => {
   sendRpcMessage('error', {
     message: `Server startup failed: ${error.message}`,

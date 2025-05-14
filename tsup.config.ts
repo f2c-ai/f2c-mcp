@@ -6,7 +6,7 @@ export default defineConfig(({watch}) => {
   const isDev = !!watch
   if (isDev) dotenv.config({processEnv: envConfig})
   return {
-    entry: ['src/index.ts', 'src/cli.ts', 'src/streamableHttp.ts'],
+    entry: ['src/stdio.ts', 'src/cli.ts', 'src/streamableHttp.ts'],
     format: ['esm', 'cjs'],
     splitting: false,
     sourcemap: isDev,

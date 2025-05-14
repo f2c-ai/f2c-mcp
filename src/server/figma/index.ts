@@ -1,193 +1,182 @@
-import { parseFigmaUrl } from 'src/server/figma/helper'
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
-import { DEFAULT_PERSONAL_TOKEN, serverName, serverVersion } from 'src/server/figma/config'
-import { z } from 'zod'
+import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
+import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
+import {DEFAULT_PERSONAL_TOKEN, serverName, serverVersion} from 'src/server/figma/config'
+import {parseFigmaUrl} from 'src/server/figma/helper'
+import {z} from 'zod'
+import api from './api'
 
-export const server = new McpServer({
-  name: serverName,
-  version: serverVersion,
-}, {
-  capabilities: {
-    logging: {},
-  }
-})
+export const server = new McpServer(
+  {
+    name: serverName,
+    version: serverVersion,
+  },
+  {
+    capabilities: {
+      logging: {},
+    },
+  },
+)
 
-
-
-// 注册 Figma 转 HTML 工具
+// Register Figma to HTML conversion tool
 server.tool(
   'figma_to_html',
-  '根据提供的figma url通过F2C转换成html代码',
+  'Convert Figma design to HTML code using F2C',
   {
     figmaUrl: z.string().describe('Figma design URL containing fileKey and nodeId'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({ figmaUrl, personalToken }): Promise<CallToolResult> => {
-    console.log('开始执行 figma_to_html 工具', { figmaUrl, personalToken })
+  async ({figmaUrl, personalToken}): Promise<CallToolResult> => {
     personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-    
+
     try {
-      console.log('开始解析Figma URL:', figmaUrl)
-      const { fileKey, nodeId } = parseFigmaUrl(figmaUrl)
-      console.log(`解析结果: fileKey=${fileKey}, nodeId=${nodeId}`)
-
+      const {fileKey, nodeId} = parseFigmaUrl(figmaUrl)
       if (!fileKey) {
-        console.error('错误: fileKey 不能为空')
-        throw new Error('fileKey 不能为空')
+        console.error('Error: fileKey cannot be empty')
+        throw new Error('fileKey cannot be empty')
       }
-
-      const url = new URL('https://f2c-figma-api.yy.com/api/nodes')
-      url.searchParams.append('fileKey', fileKey)
-      url.searchParams.append('nodeIds', nodeId)
-      url.searchParams.append('personal_token', personalToken)
-      url.searchParams.append('format', 'html')
-      console.log('准备请求API:', url.toString())
-
-      console.log('开始发送请求到Figma API')
-      const response = await fetch(url.toString())
-      console.log('收到API响应, 状态码:', response.status)
-
-      if (!response.ok) {
-        console.error(`API请求失败! 状态码: ${response.status}`)
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.text()
-      console.log(`成功获取数据, 数据长度: ${data.length}字节`)
+      const data = await api.nodes2Code({
+        personal_token: personalToken,
+        nodeIds: nodeId,
+        fileKey: fileKey,
+        format: 'html',
+      })
 
       return {
-        content: [{ type: 'text', text: data }],
+        content: [{type: 'text', text: data}],
       }
     } catch (error: any) {
-      console.error('工具调用出错:', error)
+      console.error('Tool execution error:', error)
       return {
-        content: [{ type: 'text', text: `Error: ${error.message}` }],
+        content: [{type: 'text', text: `Error: ${error.message}`}],
       }
     }
-  }
+  },
 )
 
-// 获取 Figma 文件信息
+// Get Figma file information
 server.tool(
   'figma_get_file',
-  '获取 Figma 文件的详细信息',
+  'Get detailed information about a Figma file',
   {
-    fileKey: z.string().describe('Figma 文件的唯一标识符'),
+    fileKey: z.string().describe('Unique identifier of the Figma file'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
+    version: z.string().optional().describe('Specify the version to return'),
+    depth: z.number().optional().describe('Specify the depth of nodes to return'),
+    geometry: z.enum(['paths']).optional().describe('Specify whether to include geometry path data'),
+    plugin_data: z.string().optional().describe('Specify plugin data to return'),
+    branch_data: z.boolean().optional().describe('Specify whether to return branch data'),
   },
-  async ({ fileKey, personalToken }): Promise<CallToolResult> => {
+  async ({fileKey, personalToken, ...op}): Promise<CallToolResult> => {
     personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-    
+
     try {
       if (!fileKey) {
-        throw new Error('fileKey 不能为空')
+        throw new Error('fileKey cannot be empty')
       }
 
-      const url = new URL('https://f2c-figma-api.yy.com/api/file')
-      url.searchParams.append('fileKey', fileKey)
-      url.searchParams.append('personal_token', personalToken)
-      
-      const response = await fetch(url.toString())
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      const data = await api.files(fileKey, personalToken, op)
 
-      const data = await response.json()
-      
       return {
-        content: [{ type: 'text', text: JSON.stringify(data) }],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
-        content: [{ type: 'text', text: `Error: ${error.message}` }],
+        content: [{type: 'text', text: `Error: ${error.message}`}],
       }
     }
-  }
+  },
 )
 
-// 获取 Figma 节点图片
+// Get Figma node images
 server.tool(
   'figma_get_images',
-  '获取 Figma 节点的图片',
+  'Get images of Figma nodes',
   {
-    fileKey: z.string().describe('Figma 文件的唯一标识符'),
-    nodeIds: z.string().describe('要获取图片的节点 ID，以逗号分隔'),
-    format: z.string().optional().describe('图片格式，例如 png, jpg, svg'),
+    fileKey: z.string().describe('Unique identifier of the Figma file'),
+    nodeIds: z.string().describe('Node IDs to get images for, comma separated'),
+    format: z.enum(['jpg', 'png', 'svg', 'pdf']).optional().describe('Image format, e.g., png, jpg, svg'),
+    scale: z.number().optional().describe('Image scale factor'),
+    svg_include_id: z.boolean().optional().describe('Whether SVG includes ID'),
+    svg_simplify_stroke: z.boolean().optional().describe('Whether to simplify SVG strokes'),
+    use_absolute_bounds: z.boolean().optional().describe('Whether to use absolute bounds'),
+    version: z.string().optional().describe('Specify the version to return'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({ fileKey, nodeIds, format, personalToken }): Promise<CallToolResult> => {
+  async ({fileKey, nodeIds, personalToken, ...op}): Promise<CallToolResult> => {
     personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-    
+
     try {
       if (!fileKey || !nodeIds) {
-        throw new Error('fileKey 和 nodeIds 不能为空')
+        throw new Error('fileKey and nodeIds cannot be empty')
       }
 
-      const url = new URL('https://f2c-figma-api.yy.com/api/images')
-      url.searchParams.append('fileKey', fileKey)
-      url.searchParams.append('nodeIds', nodeIds)
-      if (format) {
-        url.searchParams.append('format', format)
-      }
-      url.searchParams.append('personal_token', personalToken)
-      
-      const response = await fetch(url.toString())
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      const data = await api.images(fileKey, personalToken, {...op, ids: nodeIds})
 
-      const data = await response.json()
-      
       return {
-        content: [{ type: 'text', text: JSON.stringify(data) }],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
-        content: [{ type: 'text', text: `Error: ${error.message}` }],
+        content: [{type: 'text', text: `Error: ${error.message}`}],
       }
     }
-  }
+  },
 )
 
-// 获取 Figma 项目文件列表
+// Returns download links for all images present in image fills
 server.tool(
-  'figma_get_project_files',
-  '获取 Figma 项目中的所有文件、主要是图片资源',
+  'figma_get_image_fills',
+  'Get all image resources in the specified Figma file',
   {
-    projectId: z.string().describe('Figma 项目的唯一标识符'),
+    fileKey: z.string().describe('Unique identifier of the Figma file'),
     personalToken: z.string().optional().describe('Your Figma personal access token'),
   },
-  async ({ projectId, personalToken }): Promise<CallToolResult> => {
+  async ({fileKey, personalToken}): Promise<CallToolResult> => {
     personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
-    
+
     try {
-      if (!projectId) {
-        throw new Error('projectId 不能为空')
+      if (!fileKey) {
+        throw new Error('fileKey cannot be empty')
       }
 
-      const url = new URL('https://f2c-figma-api.yy.com/api/project-files')
-      url.searchParams.append('projectId', projectId)
-      url.searchParams.append('personal_token', personalToken)
-      
-      const response = await fetch(url.toString())
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      const data = await api.imageFills(fileKey, personalToken)
 
-      const data = await response.json()
-      
       return {
-        content: [{ type: 'text', text: JSON.stringify(data) }],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
-        content: [{ type: 'text', text: `Error: ${error.message}` }],
+        content: [{type: 'text', text: `Error: ${error.message}`}],
       }
     }
-  }
+  },
 )
 
+// Get Figma file metadata
+server.tool(
+  'figma_get_file_meta',
+  'Get metadata information for a Figma file',
+  {
+    fileKey: z.string().describe('Unique identifier of the Figma file'),
+    personalToken: z.string().optional().describe('Your Figma personal access token'),
+  },
+  async ({fileKey, personalToken}): Promise<CallToolResult> => {
+    personalToken = personalToken || DEFAULT_PERSONAL_TOKEN
+
+    try {
+      if (!fileKey) {
+        throw new Error('fileKey cannot be empty')
+      }
+
+      const data = await api.meta(fileKey, personalToken)
+
+      return {
+        content: [{type: 'text', text: JSON.stringify(data)}],
+      }
+    } catch (error: any) {
+      return {
+        content: [{type: 'text', text: `Error: ${error.message}`}],
+      }
+    }
+  },
+)
