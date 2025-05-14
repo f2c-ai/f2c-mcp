@@ -28,10 +28,10 @@ server.tool(
   },
   async (o): Promise<CallToolResult> => {
     try {
-      const data = await api.f2cNodeToCode(o)
+      const html = await api.f2cNodeToCode(o)
 
       return {
-        content: [{type: 'text', text: data}],
+        content: [{type: 'text', text: html}],
       }
     } catch (error: any) {
       console.error('Tool execution error:', error)
@@ -60,7 +60,7 @@ server.tool(
     try {
       const data = await api.files(o)
       return {
-        content: [{type: 'text', text: data}],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
@@ -90,7 +90,7 @@ server.tool(
       const data = await api.images(o)
 
       return {
-        content: [{type: 'text', text: data}],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
@@ -113,7 +113,7 @@ server.tool(
       const data = await api.imageFills(o)
 
       return {
-        content: [{type: 'text', text: data}],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
@@ -135,7 +135,7 @@ server.tool(
     try {
       const data = await api.meta(o)
       return {
-        content: [{type: 'text', text: data}],
+        content: [{type: 'text', text: JSON.stringify(data)}],
       }
     } catch (error: any) {
       return {
