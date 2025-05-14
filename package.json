@@ -43,8 +43,10 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "shttp": "node ./dist/streamableHttp.js",
-    "inspector": "npx @modelcontextprotocol/inspector node ./dist/index.mjs",
-    "lint": "biome check . --fix"
+    "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
+    "lint": "biome check . --fix",
+    "test": "bun test src/server/figma/test/api.test.ts",
+    "e2e": "bun test src/server/figma/test/e2e.test.ts"
   },
   "author": "ken",
   "maintainers": ["ckken"],
@@ -58,6 +60,7 @@
     "@biomejs/biome": "^1.9.4",
     "@empjs/biome-config": "^0.7.2",
     "@modelcontextprotocol/sdk": "1.11.2",
+    "@types/bun": "^1.2.13",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.0",
