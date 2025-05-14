@@ -12,17 +12,27 @@
   },
   "keywords": ["f2c", "mcp"],
   "files": ["dist"],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/stdio.js",
+  "types": "dist/stdio.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "types": "./dist/stdio.d.mts",
+        "default": "./dist/stdio.mjs"
       },
       "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/stdio.d.ts",
+        "default": "./dist/stdio.js"
+      }
+    },
+    "./streamableHttp": {
+      "import": {
+        "types": "./dist/streamableHttp.d.mts",
+        "default": "./dist/streamableHttp.mjs"
+      },
+      "require": {
+        "types": "./dist/streamableHttp.d.ts",
+        "default": "./dist/streamableHttp.js"
       }
     }
   },
@@ -32,19 +42,27 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "inspector": "npx @modelcontextprotocol/inspector node ./dist/index.mjs",
-    "lint": "biome check . --fix"
+    "shttp": "node ./dist/streamableHttp.js",
+    "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
+    "lint": "biome check . --fix",
+    "test": "bun test src/server/figma/test/api.test.ts",
+    "e2e": "bun test src/server/figma/test/e2e.test.ts"
   },
   "author": "ken",
   "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@empjs/biome-config": "^0.7.2",
-    "@modelcontextprotocol/sdk": "1.10.2",
+    "@modelcontextprotocol/sdk": "1.11.2",
+    "@types/bun": "^1.2.13",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.1",
     "@types/node": "^22.15.0",
     "dotenv": "^16.5.0",
     "tsup": "^8.4.0",
