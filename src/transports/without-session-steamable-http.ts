@@ -4,13 +4,9 @@ const app = express()
 app.use(express.json())
 export const startServer = (server: any, port = 3000) => {
   app.post('/mcp', async (req, res) => {
-    // In stateless mode, create a new instance of transport and server for each request
-    // to ensure complete isolation. A single instance would cause request ID collisions
-    // when multiple clients connect concurrently.
     console.log('Request body:', JSON.stringify(req.body))
     let acceptHeader = req.headers.accept as string
     if (acceptHeader === '*/*') {
-      // If Accept header is */* add necessary content types
       acceptHeader = '*/*,application/json, text/event-stream'
       req.headers.accept = acceptHeader
     }

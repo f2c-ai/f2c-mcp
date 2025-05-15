@@ -43,6 +43,29 @@ The F2C MCP Server is a Model Context Protocol server that enables AI coding ass
 }
 ```
 
+### Streamable HTTP
+#### 1.Build js bundle
+```sh
+pnpm dev 
+```
+or
+```sh
+pnpm build 
+```
+#### 2.Copy configuration
+```json
+{
+  "mcpServers": {
+      "f2c_mcp": {
+        "transport": "streamable_http",
+        "url": "http://localhost:3000/mcp",
+        "headers": {},
+        "timeout": 50
+      }
+    }
+}
+```
+
 ## Getting Started
 
 1. Set up your Figma API key in `.env` file:

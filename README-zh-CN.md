@@ -26,6 +26,7 @@ F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
   }
 }
 ```
+
 ## Add MCP Service(Windows)
 ```json
 {
@@ -40,6 +41,29 @@ F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
   }
 }
 ```
+### Streamable HTTP
+#### 1.构建产物
+```sh
+pnpm dev 
+```
+or
+```sh
+pnpm build 
+```
+#### 2.复制配置
+```json
+{
+  "mcpServers": {
+      "f2c_mcp": {
+        "transport": "streamable_http",
+        "url": "http://localhost:3000/mcp",
+        "headers": {},
+        "timeout": 50
+      }
+    }
+}
+```
+
 
 ## 快速开始
 1. 在 .env 文件中配置Figma API密钥:
