@@ -1,4 +1,17 @@
 # F2C MCP Server
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![github][github-src]][github-href]
+[![node][node-src]][node-href]
+
+[npm-version-src]: https://img.shields.io/npm/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
+[npm-version-href]: https://npmjs.com/package/@f2c/mcp
+[npm-downloads-src]: https://img.shields.io/npm/dm/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
+[npm-downloads-href]: https://npmjs.com/package/@f2c/mcp
+[github-src]: https://img.shields.io/badge/github-@f2c/mcp-blue?style=flat&colorA=18181B&colorB=F0DB4F
+[github-href]: https://github.com/f2c-ai/f2c-mcp
+[node-src]: https://img.shields.io/node/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
+[node-href]: https://nodejs.org/en/about/previous-releases
 
 [English](./README.md) | 简体中文
 
@@ -100,3 +113,11 @@ Error: spawn npx ENOENT
   }
 }
 ```
+
+## 致谢
+
+感谢以下项目：
+
+[Framelink Figma MCP Server](https://github.com/GLips/Figma-Context-MCP) 通过此模型上下文协议服务器，为Cursor和其他AI编程工具提供Figma文件访问能力。
+[Figma MCP Server](https://github.com/MatthewDailey/figma-mcp) 该服务器提供直接通过ModelContextProtocol查看、评论和分析Figma设计的工具。
+
