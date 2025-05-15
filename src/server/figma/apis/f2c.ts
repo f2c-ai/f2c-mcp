@@ -6,13 +6,22 @@ class F2cApi {
   private personalToken = DEFAULT_PERSONAL_TOKEN
   //
   async nodeToCode(o: NodeToCodeWithF2COptions) {
-    const op: NodeToCodeWithF2C = {
+    const op = {
       fileKey: o.fileKey,
       nodeIds: o.ids,
       personal_token: o.personalToken || this.personalToken,
       format: o.format,
+      option: {},
     }
-
+    if (op.format === 'react-cssmodules') {
+      op.option = {
+        cssFramework: 'cssmodules',
+      }
+    } else if (op.format === 'react-tailwind') {
+      op.option = {
+        cssFramework: 'tailwind',
+      }
+    }
     const url = this.opToUrl(`${this.f2cHost}/nodes`, op)
     return this.fetch(url, 'text')
   }
