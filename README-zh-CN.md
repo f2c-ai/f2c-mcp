@@ -1,4 +1,5 @@
-![banner](./docs/banner.png)
+ <img alt="Framelink" src="./docs/banner.png" />
+
 # F2C MCP Server
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
