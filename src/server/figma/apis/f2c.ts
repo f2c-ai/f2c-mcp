@@ -1,4 +1,4 @@
-import type {NodeToCodeWithF2C, NodeToCodeWithF2COptions} from '@/server/figma/type/f2c'
+import type {NodeToCodeWithF2C, NodeToCodeWithF2COptions} from '@/server/figma/types/f2c'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 
 class F2cApi {

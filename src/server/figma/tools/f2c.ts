@@ -1,6 +1,6 @@
+import api from '@/server/figma/apis/f2c'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
-import api from 'src/server/figma/api/f2c'
 import {z} from 'zod'
 
 export const registerF2cServer = (server: McpServer) => {

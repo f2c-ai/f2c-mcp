@@ -32,4 +32,5 @@ See [FAQ](docs/en/FAQ.md)
 Thanks to:
 
 + [Framelink Figma MCP Server](https://github.com/GLips/Figma-Context-MCP) Give Cursor and other AI-powered coding tools access to your Figma files with this Model Context Protocol server.  
++ [Cursor Talk to Figma MCP](https://github.com/sonnylazuardi/cursor-talk-to-figma-mcp) Allowing Cursor to communicate with Figma for reading designs and modifying them programmatically.
 + [Figma MCP Server](https://github.com/MatthewDailey/figma-mcp) This server provides tools for viewing, commenting, and analyzing Figma designs directly through the ModelContextProtocol.

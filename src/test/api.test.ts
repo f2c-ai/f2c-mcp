@@ -1,6 +1,6 @@
 import {afterEach, describe, expect, it} from 'bun:test'
-import f2cApi from 'src/server/figma/api/f2c'
-import figmaApi from 'src/server/figma/api/figma'
+import f2cApi from '@/server/figma/apis/f2c'
+import figmaApi from '@/server/figma/apis/figma'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 
 // 测试常量
