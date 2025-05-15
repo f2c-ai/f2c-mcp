@@ -1,28 +1,9 @@
-import type {
-  GetFileParams,
-  GetImagesParams,
-  GetKeyParams,
-  NodeToCodeWithF2C,
-  NodeToCodeWithF2COptions,
-} from './apiTypes'
-import {DEFAULT_PERSONAL_TOKEN} from './config'
+import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/type/figma'
+import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 
-class Api {
+class FigmaRestApi {
   protected figmaHost = `https://api.figma.com/v1`
-  protected f2cHost = `https://f2c-figma-api.yy.com/api`
   private personalToken = DEFAULT_PERSONAL_TOKEN
-  //
-  async f2cNodeToCode(o: NodeToCodeWithF2COptions) {
-    const op: NodeToCodeWithF2C = {
-      fileKey: o.fileKey,
-      nodeIds: o.ids,
-      personal_token: o.personalToken || this.personalToken,
-      format: o.format,
-    }
-
-    const url = this.opToUrl(`${this.f2cHost}/nodes`, op, [])
-    return this.fetch(url, 'text')
-  }
   async files(o: GetFileParams) {
     let url: string
     if (o.ids) {
@@ -81,4 +62,4 @@ class Api {
     return url.toString()
   }
 }
-export default new Api()
+export default new FigmaRestApi()
