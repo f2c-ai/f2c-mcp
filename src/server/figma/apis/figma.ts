@@ -1,4 +1,4 @@
-import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/type/figma'
+import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 
 class FigmaRestApi {

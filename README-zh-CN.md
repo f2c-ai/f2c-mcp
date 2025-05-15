@@ -32,5 +32,6 @@ F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
 感谢：
 
 + [Framelink Figma MCP Server](https://github.com/GLips/Figma-Context-MCP) 通过此模型上下文协议服务器，为Cursor和其他AI编程工具提供Figma文件访问能力。  
++ [Cursor Talk to Figma MCP](https://github.com/sonnylazuardi/cursor-talk-to-figma-mcp) 允许 Cursor 与 Figma 进行通信，以便读取设计内容并通过编程方式修改它们。这种集成使开发者能够以编程方式访问和操作 Figma 中的设计元素。
 + [Figma MCP Server](https://github.com/MatthewDailey/figma-mcp) 该服务器提供直接通过ModelContextProtocol查看、评论和分析Figma设计的工具。
 
