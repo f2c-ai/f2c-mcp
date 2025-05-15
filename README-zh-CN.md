@@ -94,13 +94,6 @@ npm install
 npm run dev
  ```
 
-## 工作原理
-1. 在IDE聊天窗口粘贴Figma设计链接
-2. AI助手通过MCP协议获取设计数据
-3. 服务器将Figma节点转换为HTML代码
-4. AI助手使用转换后的代码进行开发
-项目基于Model Context Protocol实现，专为AI编程工具优化设计数据访问。
-
 ## FAQ
 ```
 Error: spawn npx ENOENT
