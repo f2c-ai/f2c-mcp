@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'bun:test'
-import api from '../api'
-import {DEFAULT_PERSONAL_TOKEN} from '../config'
+import f2cApi from 'src/server/figma/api/f2c'
+import api from 'src/server/figma/api/figma'
+import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 
 // 测试常量
 const fileKey = 'DkzGbKo09kf2w1ytMPALxd'
@@ -21,7 +22,7 @@ describe('Figma API 端到端测试', () => {
 
       try {
         // 发起真实的 API 请求
-        const result = await api.f2cNodeToCode({
+        const result = await f2cApi.nodeToCode({
           fileKey,
           ids,
           format: 'html',
@@ -99,11 +100,7 @@ describe('Figma API 端到端测试', () => {
         // expect(result).toHaveProperty('lastModified')
 
         // 记录结果以便手动检查
-        console.log('文件元数据:', {
-          name: result.name,
-          lastModified: result.lastModified,
-          version: result.version,
-        })
+        console.log('文件元数据:', JSON.stringify(result.file))
       } catch (error) {
         console.error('API 请求失败:', error)
         throw error

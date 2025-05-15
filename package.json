@@ -45,8 +45,8 @@
     "shttp": "node ./dist/streamableHttp.js",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix",
-    "test": "bun test src/server/figma/test/api.test.ts",
-    "e2e": "bun test src/server/figma/test/e2e.test.ts"
+    "test": "bun test src/test/api.test.ts",
+    "e2e": "bun test src/test/e2e.test.ts"
   },
   "author": "ken",
   "maintainers": ["ckken"],

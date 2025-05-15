@@ -1,0 +1,32 @@
+import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
+import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
+import api from 'src/server/figma/api/f2c'
+import {z} from 'zod'
+
+export const registerF2cServer = (server: McpServer) => {
+  // Register Figma to HTML conversion tool
+  server.tool(
+    'figma_to_html',
+    'Convert Figma design to HTML code with node',
+    {
+      fileKey: z.string().describe('Unique identifier of the Figma file'),
+      ids: z.string().describe('List of node IDs to retrieve, comma separated'),
+      format: z.string().default('html').describe('Format of the returned code'),
+      personalToken: z.string().optional().describe('Your Figma personal access token'),
+    },
+    async (o): Promise<CallToolResult> => {
+      try {
+        const html = await api.nodeToCode(o)
+
+        return {
+          content: [{type: 'text', text: html}],
+        }
+      } catch (error: any) {
+        console.error('Tool execution error:', error)
+        return {
+          content: [{type: 'text', text: `Error: ${error.message}`}],
+        }
+      }
+    },
+  )
+}
