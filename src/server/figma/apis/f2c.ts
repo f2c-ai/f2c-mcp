@@ -6,13 +6,24 @@ class F2cApi {
   private personalToken = DEFAULT_PERSONAL_TOKEN
   //
   async nodeToCode(o: NodeToCodeWithF2COptions) {
-    const op: NodeToCodeWithF2C = {
+    const op = {
       fileKey: o.fileKey,
       nodeIds: o.ids,
       personal_token: o.personalToken || this.personalToken,
       format: o.format,
+      option: {},
     }
-
+    if (op.format === 'react-cssmodules') {
+      op.format = 'html'
+      op.option = {
+        cssFramework: 'cssmodules',
+      }
+    } else if (op.format === 'react-tailwind') {
+      op.format = 'html'
+      op.option = {
+        cssFramework: 'tailwindcss',
+      }
+    }
     const url = this.opToUrl(`${this.f2cHost}/nodes`, op)
     return this.fetch(url, 'text')
   }
@@ -38,7 +49,13 @@ class F2cApi {
     }
     const url: any = new URL(api)
     for (const [key, value] of Object.entries(o)) {
-      url.searchParams.append(key, value)
+      if (typeof value === 'object' && value !== null) {
+        for (const [nestedKey, nestedValue] of Object.entries(value)) {
+          url.searchParams.append(`${key}[${nestedKey}]`, nestedValue as string)
+        }
+      } else {
+        url.searchParams.append(key, value as string)
+      }
     }
     return url.toString()
   }
