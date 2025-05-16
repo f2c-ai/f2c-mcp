@@ -10,13 +10,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [
-    "f2c",
-    "mcp"
-  ],
-  "files": [
-    "dist"
-  ],
+  "keywords": ["f2c", "mcp"],
+  "files": ["dist"],
   "main": "dist/stdio.js",
   "types": "dist/stdio.d.ts",
   "exports": {
@@ -54,12 +49,9 @@
     "e2e": "bun test src/test/e2e.test.ts"
   },
   "author": "ken",
-  "maintainers": [
-    "ckken"
-  ],
+  "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
-    "@chatmcp/sdk": "^1.0.6",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "zod": "^3.22.4"
