@@ -1,12 +1,23 @@
-FROM node:18-alpine
-RUN pnpm i
-RUN pnpm run build
-# 安装pnpm
-COPY dist /app
+FROM node:22.12-alpine as builder
+
+COPY ./ /app
+
 WORKDIR /app
 
-# 暴露端口
-EXPOSE 9593
+RUN --mount=type=cache,target=/root/.npm npm install
 
-# 启动服务
-CMD ["node", "dist/stdio.js"]
+RUN npm run build
+
+FROM node:22-alpine AS release
+
+COPY --from=builder /app/build /app/build
+COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/package-lock.json /app/package-lock.json
+
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+RUN npm ci --ignore-scripts --omit-dev
+
+ENTRYPOINT ["node", "build/index.js"]
