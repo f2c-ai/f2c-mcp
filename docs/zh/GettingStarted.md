@@ -61,3 +61,24 @@ npm run dev
     }
 }
 ```
+
+## 全局安装
+对于mcp client不稳定导致安装报错的情况，我们可以采用全局安装再配置的方式
+
+```bash
+npm install -g @f2c/mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "f2c-mcp",
+      "args": [],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}
+```

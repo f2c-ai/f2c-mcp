@@ -61,3 +61,24 @@ npm run dev
     }
 }
 ```
+
+## Global Installation
+For cases where mcp client installation is unstable and causing errors, we can use global installation and then configure it.
+
+```bash
+npm install -g @f2c/mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "f2c-mcp",
+      "args": [],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}
+```
