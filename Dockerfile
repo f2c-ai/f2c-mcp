@@ -18,6 +18,4 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-RUN npm ci --ignore-scripts --omit-dev
-
 ENTRYPOINT ["node", "dist/stdio.js"]
