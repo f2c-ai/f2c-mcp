@@ -6,12 +6,12 @@ import {z} from 'zod'
 export const registerF2cServer = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
-    'figma_to_html',
-    'Convert Figma design to HTML code with node',
+    'figma_to_code',
+    'Convert Figma design to code with node',
     {
       fileKey: z.string().describe('Unique identifier of the Figma file'),
       ids: z.string().describe('List of node IDs to retrieve, comma separated'),
-      format: z
+      framework: z
         .enum(['html', 'react-cssmodules', 'react-tailwind'])
         .default('html')
         .describe('Format of the returned code'),
@@ -20,11 +20,11 @@ export const registerF2cServer = (server: McpServer) => {
     async (o): Promise<CallToolResult> => {
       try {
         // Infer format, fallback to 'html'
-        const format = o.format ?? 'html'
-        const html = await api.nodeToCode({...o, format})
+        const framework = o.framework ?? 'html'
+        const json = await api.nodeToCode({...o, framework})
 
         return {
-          content: [{type: 'text', text: html}],
+          content: [{type: 'text', text: JSON.stringify(json)}],
         }
       } catch (error: any) {
         console.error('Tool execution error:', error)

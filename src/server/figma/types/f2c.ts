@@ -6,7 +6,7 @@ export interface NodeToCodeWithF2C {
 }
 export interface NodeToCodeWithF2COptions {
   personalToken?: string
-  format: string
+  framework: string
   ids: string
   fileKey: string
 }

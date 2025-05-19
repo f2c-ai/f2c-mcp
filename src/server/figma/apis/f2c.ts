@@ -10,22 +10,24 @@ class F2cApi {
       fileKey: o.fileKey,
       nodeIds: o.ids,
       personal_token: o.personalToken || this.personalToken,
-      format: o.format,
       option: {},
+      format: 'files',
     }
-    if (op.format === 'react-cssmodules') {
-      op.format = 'html'
+    if (o.framework === 'react-cssmodules') {
       op.option = {
         cssFramework: 'cssmodules',
       }
-    } else if (op.format === 'react-tailwind') {
-      op.format = 'html'
+    } else if (o.framework === 'react-tailwind') {
       op.option = {
         cssFramework: 'tailwindcss',
       }
+    } else {
+      op.option = {
+        cssFramework: 'inlinecss',
+      }
     }
     const url = this.opToUrl(`${this.f2cHost}/nodes`, op)
-    return this.fetch(url, 'text')
+    return this.fetch(url, 'json')
   }
   async fetch(url: string, resType: 'json' | 'text' = 'json'): Promise<any> {
     try {
