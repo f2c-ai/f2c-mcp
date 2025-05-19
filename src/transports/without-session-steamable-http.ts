@@ -1,15 +1,29 @@
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
 const app = express()
-app.use(express.json())
+app.use(express.json({
+  type: ['application/json', 'application/*+json', '*/*']  // 扩展支持的 Content-Type
+}))
 export const startServer = (server: any, port = 3000) => {
   app.post('/mcp', async (req, res) => {
     console.log('Request body:', JSON.stringify(req.body))
+    
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Connection', 'keep-alive')
+    res.setHeader('Keep-Alive', 'timeout=5')
+    
     let acceptHeader = req.headers.accept as string
     if (acceptHeader === '*/*') {
       acceptHeader = '*/*,application/json, text/event-stream'
       req.headers.accept = acceptHeader
     }
+    
+    // 确保请求的 Content-Type 存在
+    if (!req.headers['content-type']) {
+      req.headers['content-type'] = 'application/json'
+    }
+    
     try {
       const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
         sessionIdGenerator: undefined,
@@ -44,6 +58,8 @@ export const startServer = (server: any, port = 3000) => {
   })
 
   app.get('/mcp', async (req, res) => {
+    res.setHeader('Connection', 'keep-alive')
+    res.setHeader('Keep-Alive', 'timeout=5')
     res.writeHead(405).end(
       JSON.stringify({
         jsonrpc: '2.0',
