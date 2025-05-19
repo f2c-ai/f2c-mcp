@@ -1,4 +1,4 @@
-# F2C MCP Server
+# F2C MCP Server ![](https://badge.mcpx.dev?type=server 'MCP Server')
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![github][github-src]][github-href]
@@ -13,11 +13,16 @@
 [node-src]: https://img.shields.io/node/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
 [node-href]: https://nodejs.org/en/about/previous-releases
 
-[English](./README.md) | 简体中文
+[English](./README.md) | 简体中文   
+A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c.yy.com/).
 
-<img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
+<a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
+</a>
 
-F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
+
+## 主要功能
+<img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" /> 
 
 - 🎨 将Figma设计节点转换为**极高还原度**的HTML/CSS代码，行业内领先
 - 📚 为AI编程助手提供Figma设计数据访问能力

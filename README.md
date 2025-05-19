@@ -1,4 +1,4 @@
-# F2C MCP Server
+# F2C MCP Server ![](https://badge.mcpx.dev?type=server 'MCP Server')
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![github][github-src]][github-href]
@@ -14,14 +14,14 @@
 [node-href]: https://nodejs.org/en/about/previous-releases
 
 English | [简体中文](./README-zh-CN.md)
-
-<img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
+A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c.yy.com/).
 
 <a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
 </a>
 
-The F2C MCP Server is a Model Context Protocol server that enables AI coding assistants to access Figma design data and convert it to HTML/CSS code. Key features:
+## Features
+<img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
 
 - 🎨 Convert Figma design nodes to high-fidelity HTML/CSS markup, Industry-leading position
 - 📚 Provides Figma design context to AI coding tools like Cursor
