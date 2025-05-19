@@ -6,8 +6,8 @@ import {z} from 'zod'
 export const registerF2cServer = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
-    'figma_to_html',
-    'Convert Figma design to HTML code with node',
+    'figma_to_code',
+    'Convert Figma design to code with node',
     {
       fileKey: z.string().describe('Unique identifier of the Figma file'),
       ids: z.string().describe('List of node IDs to retrieve, comma separated'),
