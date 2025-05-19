@@ -9,7 +9,7 @@ class F2cApi {
     const op = {
       fileKey: o.fileKey,
       nodeIds: o.ids,
-      personal_token: o.personalToken || this.personalToken,
+      personal_token: o.personalToken && o.personalToken !== 'None' ? o.personalToken : this.personalToken,
       format: o.format,
       option: {},
     }
