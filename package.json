@@ -59,7 +59,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@empjs/biome-config": "^0.7.2",
-    "@modelcontextprotocol/sdk": "1.11.2",
+    "@modelcontextprotocol/sdk": "1.11.4",
     "@types/bun": "^1.2.13",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
