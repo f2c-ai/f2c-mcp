@@ -13,9 +13,13 @@
 [node-src]: https://img.shields.io/node/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
 [node-href]: https://nodejs.org/en/about/previous-releases
 
-English | [简体中文](./README-zh-CN.md) 
+English | [简体中文](./README-zh-CN.md)
 
 <img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
+
+<a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
+</a>
 
 The F2C MCP Server is a Model Context Protocol server that enables AI coding assistants to access Figma design data and convert it to HTML/CSS code. Key features:
 
