@@ -1,4 +1,4 @@
-# F2C MCP
+# F2C MCP Server
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![github][github-src]][github-href]
@@ -15,7 +15,7 @@
 
 [English](./README.md) | 简体中文
 
-<img alt="f2c" src="./docs/bannerv3.png" />
+<img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
 
 F2C MCP 服务器是一个模型上下文协议服务器，主要功能：
 

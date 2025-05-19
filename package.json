@@ -42,7 +42,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "shttp": "node ./dist/streamableHttp.js",
+    "http": "node ./dist/streamable-http.js",
+    "http:dev": "bun --env-file=.env --watch run src/streamable-http.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix",
     "test": "bun test src/test/api.test.ts",
@@ -59,7 +60,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@empjs/biome-config": "^0.7.2",
-    "@modelcontextprotocol/sdk": "1.11.2",
+    "@modelcontextprotocol/sdk": "1.11.4",
     "@types/bun": "^1.2.13",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",

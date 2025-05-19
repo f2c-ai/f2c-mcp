@@ -1,4 +1,4 @@
-# F2C MCP
+# F2C MCP Server
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![github][github-src]][github-href]
@@ -15,7 +15,7 @@
 
 English | [简体中文](./README-zh-CN.md) 
 
-<img alt="f2c" src="./docs/bannerv3.png" />
+<img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
 
 The F2C MCP Server is a Model Context Protocol server that enables AI coding assistants to access Figma design data and convert it to HTML/CSS code. Key features:
 
