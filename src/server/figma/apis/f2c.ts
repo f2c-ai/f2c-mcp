@@ -13,11 +13,11 @@ class F2cApi {
       option: {},
       format: 'files',
     }
-    if (o.framework === 'react-cssmodules') {
+    if (o.format === 'react-cssmodules') {
       op.option = {
         cssFramework: 'cssmodules',
       }
-    } else if (o.framework === 'react-tailwind') {
+    } else if (o.format === 'react-tailwind') {
       op.option = {
         cssFramework: 'tailwindcss',
       }

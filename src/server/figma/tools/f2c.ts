@@ -7,24 +7,50 @@ export const registerF2cServer = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
     'figma_to_code',
-    'Convert Figma design to code with node',
+    'Convert Figma designs into code. This tool extracts specified Figma nodes and transforms them into HTML, React with CSS Modules, or React with Tailwind CSS, facilitating automated design-to-code conversion.',
     {
-      fileKey: z.string().describe('Unique identifier of the Figma file'),
-      ids: z.string().describe('List of node IDs to retrieve, comma separated'),
-      framework: z
+      fileKey: z
+        .string()
+        .describe(
+          'The unique identifier for a Figma file. Can be found in the Figma file URL, such as: https://www.figma.com/file/XXXXXXXXXXXX/, where XXXXXXXXXXXX is the fileKey.',
+        ),
+      ids: z
+        .string()
+        .describe(
+          `List of Figma node IDs to convert, separated by commas. These can be obtained in Figma by selecting elements, right-clicking and choosing 'Copy/Paste as' → 'Copy ID'.`,
+        ),
+      format: z
         .enum(['html', 'react-cssmodules', 'react-tailwind'])
         .default('html')
-        .describe('Format of the returned code'),
+        .describe(
+          `The output code format: 'html' for pure HTML and CSS code, 'react-cssmodules' for React components with CSS modules, 'react-tailwind' for React components using Tailwind CSS.`,
+        ),
       personalToken: z.string().optional().describe('Your Figma personal access token'),
     },
     async (o): Promise<CallToolResult> => {
       try {
         // Infer format, fallback to 'html'
-        const framework = o.framework ?? 'html'
-        const json = await api.nodeToCode({...o, framework})
+        const cb = await api.nodeToCode(o)
+        const files = Array.isArray(cb) ? cb : [cb]
+
+        // 创建文件摘要
+        const summary = files.map((file, index) => `${index + 1}. ${file.path}`).join('\n')
+
+        // 创建详细文件内容
+        const fileDetails = files
+          .map((file, index) => {
+            const fileExtension = file.path.split('.').pop() || ''
+            return `## File ${index + 1}: ${file.path}\n\`\`\`${fileExtension}\n${file.content}\n\`\`\``
+          })
+          .join('\n\n')
 
         return {
-          content: [{type: 'text', text: JSON.stringify(json)}],
+          content: [
+            {
+              type: 'text',
+              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}`,
+            },
+          ],
         }
       } catch (error: any) {
         console.error('Tool execution error:', error)

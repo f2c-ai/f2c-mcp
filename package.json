@@ -25,14 +25,14 @@
         "default": "./dist/stdio.js"
       }
     },
-    "./streamableHttp": {
+    "./streamable-http": {
       "import": {
-        "types": "./dist/streamableHttp.d.mts",
-        "default": "./dist/streamableHttp.mjs"
+        "types": "./dist/streamable-http.d.mts",
+        "default": "./dist/streamable-http.mjs"
       },
       "require": {
-        "types": "./dist/streamableHttp.d.ts",
-        "default": "./dist/streamableHttp.js"
+        "types": "./dist/streamable-http.d.ts",
+        "default": "./dist/streamable-http.js"
       }
     }
   },
