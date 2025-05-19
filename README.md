@@ -14,6 +14,7 @@
 [node-href]: https://nodejs.org/en/about/previous-releases
 
 English | [简体中文](./README-zh-CN.md)
+
 A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c.yy.com/).
 
 <a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
