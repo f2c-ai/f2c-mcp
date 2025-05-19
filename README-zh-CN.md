@@ -15,7 +15,7 @@
 
 [English](./README.md) | 简体中文   
 
-A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c.yy.com/).
+使用[F2C](https://f2c.yy.com/) 根据 Figma设计稿生成代码的模型上下文协议服务器。
 
 <a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
