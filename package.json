@@ -49,7 +49,7 @@
     "test": "bun test src/test/api.test.ts",
     "e2e": "bun test src/test/e2e.test.ts"
   },
-  "author": "ken",
+  "author": "ckken",
   "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
