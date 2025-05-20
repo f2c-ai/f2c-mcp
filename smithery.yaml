@@ -1,13 +1,23 @@
 
 # Smithery.ai configuration
 startCommand:
-  type: stdio
+  type: streamable_http
   configSchema:
     # JSON Schema defining the configuration options for the MCP.
     type: object
-    properties: {}
+    properties:
+      port:
+        type: number
+        description: "HTTP 服务器端口"
+        default: 3000
+      timeout:
+        type: number
+        description: "请求超时时间（毫秒）"
+        default: 60000
   commandFunction:
-    # A function that produces the CLI command to start the MCP on stdio.
+    # A function that produces the CLI command to start the MCP on streamable HTTP.
     |-
-    (config) => ({ command: 'node', args: ['./dist/stdio.js'] })
-  exampleConfig: {}
+    (config) => ({ command: 'node', args: ['./dist/streamable-http.js', '--port', config.port || 3000, '--timeout', config.timeout || 60000] })
+  exampleConfig:
+    port: 3000
+    timeout: 60000
