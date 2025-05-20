@@ -3,6 +3,7 @@
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![github][github-src]][github-href]
 [![node][node-src]][node-href]
+[![smithery badge](https://smithery.ai/badge/@f2c-ai/f2c-mcp)](https://smithery.ai/server/@f2c-ai/f2c-mcp)
 
 [npm-version-src]: https://img.shields.io/npm/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-version-href]: https://npmjs.com/package/@f2c/mcp
@@ -30,6 +31,15 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 
 
 ## Getting started
+
+### Installing via Smithery
+
+To install F2C MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@f2c-ai/f2c-mcp):
+
+```bash
+npx -y @smithery/cli install @f2c-ai/f2c-mcp --client claude
+```
+
 See [Getting started](docs/en/GettingStarted.md)
 
 ## FAQ
