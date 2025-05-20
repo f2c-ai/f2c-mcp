@@ -1,10 +1,11 @@
 import {randomUUID} from 'node:crypto'
+import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express from 'express'
 const app = express()
 app.use(express.json())
-export const startServer = (server: any, port = 3000) => {
+export const startServer = (server: McpServer, port = 3000) => {
   const transports: {[sessionId: string]: StreamableHTTPServerTransport} = {}
   app.post('/mcp', async (req, res) => {
     let acceptHeader = req.headers.accept as string

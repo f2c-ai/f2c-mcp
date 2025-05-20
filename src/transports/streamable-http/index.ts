@@ -1,4 +1,6 @@
-export async function startServer(server: any, port = 3000, useSession = false) {
+import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
+
+export async function startServer(server: McpServer, port = 3000, useSession = false) {
   if (useSession) {
     console.log('Starting MCP server with session support')
     const {startServer: startWithSessionServer} = await import('./with-session-steamable-http.js')

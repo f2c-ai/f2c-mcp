@@ -1,3 +1,4 @@
+import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
 const app = express()
@@ -35,7 +36,7 @@ const polyfillRequest = (req: any, res: any) => {
     req.headers['content-type'] = 'application/json'
   }
 }
-export const startServer = (server: any, port = 3000) => {
+export const startServer = (server: McpServer, port = 3000) => {
   app.post('/mcp', async (req, res) => {
     console.log('Request body:', JSON.stringify(req.body))
     polyfillRequest(req, res)
