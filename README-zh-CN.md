@@ -1,4 +1,6 @@
-# F2C MCP Server ![](https://badge.mcpx.dev?type=server 'MCP Server')
+# F2C MCP Server 
+![](https://badge.mcpx.dev?type=server 'MCP Server')
+[![smithery badge](https://smithery.ai/badge/@f2c-ai/f2c-mcp)](https://smithery.ai/server/@f2c-ai/f2c-mcp)
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![github][github-src]][github-href]
