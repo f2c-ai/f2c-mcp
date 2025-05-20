@@ -82,3 +82,11 @@ npm install -g @f2c/mcp
   }
 }
 ```
+
+## Installing via Smithery
+
+To install F2C MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@f2c-ai/f2c-mcp):
+
+```bash
+npx -y @smithery/cli install @f2c-ai/f2c-mcp --client claude
+```

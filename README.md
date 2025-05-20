@@ -31,15 +31,6 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 
 
 ## Getting started
-
-### Installing via Smithery
-
-To install F2C MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@f2c-ai/f2c-mcp):
-
-```bash
-npx -y @smithery/cli install @f2c-ai/f2c-mcp --client claude
-```
-
 See [Getting started](docs/en/GettingStarted.md)
 
 ## FAQ
