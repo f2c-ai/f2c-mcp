@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -6,13 +6,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN pnpm install --ignore-scripts
+RUN npm install
 
 # Copy application code
 COPY . .
 
 # Build the application
-RUN pnpm run build
+RUN npm run build
 
 # Command will be provided by smithery.yaml
 CMD ["node", "dist/stdio.js"]
