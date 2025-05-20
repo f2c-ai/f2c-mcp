@@ -1,21 +1,18 @@
-FROM node:22.12-alpine as builder
-
-COPY ./ /app
+FROM node:lts-alpine
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.npm npm install
+# Copy package files
+COPY package*.json ./
 
-RUN npm run build
+# Install dependencies
+RUN pnpm install --ignore-scripts
 
-FROM node:22-alpine AS release
+# Copy application code
+COPY . .
 
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/package.json /app/package.json
-COPY --from=builder /app/package-lock.json /app/package-lock.json
+# Build the application
+RUN pnpm run build
 
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-ENTRYPOINT ["node", "dist/stdio.js"]
+# Command will be provided by smithery.yaml
+CMD ["node", "dist/stdio.js"]
