@@ -31,7 +31,28 @@ export const registerF2cServer = (server: McpServer) => {
       try {
         // Infer format, fallback to 'html'
         const cb = await api.nodeToCode(o)
+        
+        // 处理返回内容为空的情况
+        if (!cb) {
+          return {
+            content: [{
+              type: 'text',
+              text: '未能生成任何代码。请检查提供的Figma节点ID是否正确，或者该节点是否可以转换为代码。'
+            }]
+          }
+        }
+        
         const files = Array.isArray(cb) ? cb : [cb]
+        
+        // 处理返回的文件数组为空的情况
+        if (files.length === 0) {
+          return {
+            content: [{
+              type: 'text',
+              text: '转换成功，但没有生成任何文件。请检查选择的Figma节点是否包含可转换的内容。'
+            }]
+          }
+        }
 
         // 创建文件摘要
         const summary = files.map((file, index) => `${index + 1}. ${file.path}`).join('\n')
