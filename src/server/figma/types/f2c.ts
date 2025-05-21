@@ -17,6 +17,6 @@ export interface NodeToCodeWithF2CResult {
     path: string
   }[]
   images: {
-    [key: string]: {id: string; name: string; format: 'png' | 'jpg' | 'svg'}
+    [key: string]: {id: string; name: string; fileExt: 'png' | 'jpg' | 'svg'; nodeType: string}
   }
 }

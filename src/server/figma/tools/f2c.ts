@@ -61,7 +61,7 @@ export const registerF2cServer = (server: McpServer) => {
             ? `\n\n# 图片资源\n${Object.entries(images)
                 .map(([imageUrl, imageObject]) => {
                   // 构建更详细的图片描述
-                  return `## 图片: ${imageUrl}\n- **文件名**: ${imageObject.name}\n- **类型**: ${imageObject.format || 'png'}\n\n![${imageObject.name}](${imageUrl || ''})`
+                  return `## 图片: ${imageUrl}\n- **文件名**: ${imageObject.name}\n- **图片格式**: ${imageObject.fileExt || 'png'}\n- **节点类型**: ${imageObject.nodeType}\n\n![${imageObject.name}](${imageUrl || ''})`
                 })
                 .join('\n\n')}`
             : ''
