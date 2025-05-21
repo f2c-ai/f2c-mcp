@@ -10,3 +10,13 @@ export interface NodeToCodeWithF2COptions {
   ids: string
   fileKey: string
 }
+
+export interface NodeToCodeWithF2CResult {
+  files: {
+    content: string
+    path: string
+  }[]
+  images: {
+    [key: string]: {id: string; name: string; format: 'png' | 'jpg' | 'svg'}
+  }
+}
