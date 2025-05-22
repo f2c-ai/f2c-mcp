@@ -9,4 +9,17 @@ export interface NodeToCodeWithF2COptions {
   format: string
   ids: string
   fileKey: string
+  imgFormat: 'png' | 'jpg' | 'svg'
+  scaleSize: number
+}
+
+export interface NodeToCodeAllFiles {
+  files: NodeToCodeFile[]
+  images: {
+    [key: string]: {id: string; name: string; fileExt: 'png' | 'jpg' | 'svg'; nodeType: string}
+  }
+}
+export interface NodeToCodeFile {
+  content: string
+  path: string
 }

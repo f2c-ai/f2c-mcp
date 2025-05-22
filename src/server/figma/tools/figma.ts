@@ -62,48 +62,48 @@ export const registerFigmaServer = (server: McpServer) => {
     },
   )
 
-  // Returns download links for all images present in image fills
-  server.tool(
-    'figma_get_image_fills',
-    'Get all image resources in the specified Figma file',
-    {
-      fileKey: z.string().describe('Unique identifier of the Figma file'),
-      personalToken: z.string().optional().describe('Your Figma personal access token'),
-    },
-    async (o): Promise<CallToolResult> => {
-      try {
-        const data = await api.imageFills(o)
+  // // Returns download links for all images present in image fills
+  // server.tool(
+  //   'figma_get_image_fills',
+  //   'Get all image resources in the specified Figma file',
+  //   {
+  //     fileKey: z.string().describe('Unique identifier of the Figma file'),
+  //     personalToken: z.string().optional().describe('Your Figma personal access token'),
+  //   },
+  //   async (o): Promise<CallToolResult> => {
+  //     try {
+  //       const data = await api.imageFills(o)
 
-        return {
-          content: [{type: 'text', text: JSON.stringify(data)}],
-        }
-      } catch (error: any) {
-        return {
-          content: [{type: 'text', text: `Error: ${error.message}`}],
-        }
-      }
-    },
-  )
+  //       return {
+  //         content: [{type: 'text', text: JSON.stringify(data)}],
+  //       }
+  //     } catch (error: any) {
+  //       return {
+  //         content: [{type: 'text', text: `Error: ${error.message}`}],
+  //       }
+  //     }
+  //   },
+  // )
 
-  // Get Figma file metadata
-  server.tool(
-    'figma_get_file_meta',
-    'Get metadata information for a Figma file',
-    {
-      fileKey: z.string().describe('Unique identifier of the Figma file'),
-      personalToken: z.string().optional().describe('Your Figma personal access token'),
-    },
-    async (o): Promise<CallToolResult> => {
-      try {
-        const data = await api.meta(o)
-        return {
-          content: [{type: 'text', text: JSON.stringify(data)}],
-        }
-      } catch (error: any) {
-        return {
-          content: [{type: 'text', text: `Error: ${error.message}`}],
-        }
-      }
-    },
-  )
+  // // Get Figma file metadata
+  // server.tool(
+  //   'figma_get_file_meta',
+  //   'Get metadata information for a Figma file',
+  //   {
+  //     fileKey: z.string().describe('Unique identifier of the Figma file'),
+  //     personalToken: z.string().optional().describe('Your Figma personal access token'),
+  //   },
+  //   async (o): Promise<CallToolResult> => {
+  //     try {
+  //       const data = await api.meta(o)
+  //       return {
+  //         content: [{type: 'text', text: JSON.stringify(data)}],
+  //       }
+  //     } catch (error: any) {
+  //       return {
+  //         content: [{type: 'text', text: `Error: ${error.message}`}],
+  //       }
+  //     }
+  //   },
+  // )
 }
