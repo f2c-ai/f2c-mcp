@@ -1,19 +1,19 @@
-import type {NodeToCodeAllFiles, NodeToCodeFiles, NodeToCodeWithF2COptions} from '@/server/figma/types/f2c'
+import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from '@/server/figma/types/f2c'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 
 class F2cApi {
   protected f2cHost = `https://f2c-figma-api.yy.com/api`
   private personalToken = DEFAULT_PERSONAL_TOKEN
   //
-  async nodeToCode(o: NodeToCodeWithF2COptions): Promise<NodeToCodeFiles> {
+  async nodeToCode(o: NodeToCodeWithF2COptions): Promise<NodeToCodeFile[]> {
     const op = {
       fileKey: o.fileKey,
       nodeIds: o.ids,
       personal_token: o.personalToken || this.personalToken,
       option: {
         cssFramework: 'inlinecss',
-        imgFormat: 'png',
-        scaleSize: 2,
+        imgFormat: o.imgFormat || 'png',
+        scaleSize: o.scaleSize || 2,
       },
       format: 'files',
       // format: 'allFiles',
