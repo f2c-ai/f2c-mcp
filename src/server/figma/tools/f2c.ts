@@ -29,48 +29,13 @@ export const registerF2cServer = (server: McpServer) => {
     },
     async (o): Promise<CallToolResult> => {
       try {
-        // Infer format, fallback to 'html'
-        const {files, images} = await api.nodeToCode(o)
-
-        // 处理返回的文件数组为空的情况
-        if (files.length === 0) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: '转换成功，但没有生成任何文件。请检查选择的Figma节点是否包含可转换的内容。',
-              },
-            ],
-          }
-        }
-
-        // 创建文件摘要
-        const summary = files.map((file, index) => `${index + 1}. ${file.path}`).join('\n')
-
-        // 创建详细文件内容
-        const fileDetails = files
-          .map((file, index) => {
-            const fileExtension = file.path.split('.').pop() || ''
-            return `## File ${index + 1}: ${file.path}\n\`\`\`${fileExtension}\n${file.content}\n\`\`\``
-          })
-          .join('\n\n')
-
-        // 创建图片资源部分
-        const imageDetails =
-          Object.keys(images).length > 0
-            ? `\n\n# 图片资源\n${Object.entries(images)
-                .map(([imageUrl, imageObject]) => {
-                  // 构建更详细的图片描述
-                  return `## 图片: ${imageUrl}\n- **文件名**: ${imageObject.name}\n- **图片格式**: ${imageObject.fileExt || 'png'}\n- **节点类型**: ${imageObject.nodeType}\n\n![${imageObject.name}](${imageUrl || ''})`
-                })
-                .join('\n\n')}`
-            : ''
+        const cb = (await api.nodeToCode(o)) || {}
 
         return {
           content: [
             {
               type: 'text',
-              text: `# 生成文件摘要\n${summary}\n\n# 文件详情\n${fileDetails}${imageDetails}`,
+              text: JSON.stringify(cb),
             },
           ],
         }

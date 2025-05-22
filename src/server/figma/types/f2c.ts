@@ -11,12 +11,13 @@ export interface NodeToCodeWithF2COptions {
   fileKey: string
 }
 
-export interface NodeToCodeWithF2CResult {
-  files: {
-    content: string
-    path: string
-  }[]
+export interface NodeToCodeAllFiles {
+  files: NodeToCodeFiles[]
   images: {
     [key: string]: {id: string; name: string; fileExt: 'png' | 'jpg' | 'svg'; nodeType: string}
   }
+}
+export interface NodeToCodeFiles {
+  content: string
+  path: string
 }
