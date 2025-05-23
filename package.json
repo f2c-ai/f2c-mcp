@@ -40,12 +40,11 @@
     "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "bb": "bun run bun-build.ts",
-    "bd": "bun --watch run bun-build.ts",
+    "build": "bun run bun.build.script.ts",
+    "dev": "bun --watch run bun.build.script.ts",
     "http": "node ./dist/streamable-http.js",
     "http:dev": "bun --env-file=.env --watch run src/streamable-http.ts",
+    "http:prod": "bun --env-file= run src/streamable-http.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix",
     "test": "bun test src/test/api.test.ts",
@@ -67,8 +66,6 @@
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.0",
-    "dotenv": "^16.5.0",
-    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },
   "engines": {
