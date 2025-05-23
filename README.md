@@ -27,11 +27,11 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 ## Features
 <img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
 
-🎨 Pixel-Perfect HTML/CSS：F2C converts Figma designs to pixel-perfect HTML/CSS with precision.
-⚛️ Multi-Framework Support：F2C generates React, CSS Modules, and Tailwind CSS code for fast development.
-🧠 Figma Design Context：F2C integrates design context, ensuring compatibility with AI tools like Cursor.
-🔗 Figma File URL Parsing：F2C converts design nodes via Figma URLs, streamlining workflows.
-🖼️ Remote Image Localization：F2C automates downloading Figma images to local assets for efficiency.
+- 🎨 Pixel-Perfect HTML/CSS：F2C converts Figma designs to pixel-perfect HTML/CSS with precision.
+- ⚛️ Multi-Framework Support：F2C generates React, CSS Modules, and Tailwind CSS code for fast development.
+- 🧠 Figma Design Context：F2C integrates design context, ensuring compatibility with AI tools like Cursor.
+- 🔗 Figma File URL Parsing：F2C converts design nodes via Figma URLs, streamlining workflows.
+- 🖼️ Remote Image Localization：F2C automates downloading Figma images to local assets for efficiency.
 
 
 ## Getting started
