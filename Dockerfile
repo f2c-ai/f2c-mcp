@@ -1,18 +1,19 @@
-FROM node:18-alpine
+FROM oven/bun:latest
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
+COPY bun.lock ./
 # Install dependencies
-RUN npm install
+RUN bun install
 
 # Copy application code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN bun run build
 
 # Command will be provided by smithery.yaml
 CMD ["node", "dist/stdio.js"]
