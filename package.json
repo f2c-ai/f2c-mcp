@@ -42,6 +42,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "bb": "bun run bun-build.ts",
+    "bd": "bun --watch run bun-build.ts",
     "http": "node ./dist/streamable-http.js",
     "http:dev": "bun --env-file=.env --watch run src/streamable-http.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
