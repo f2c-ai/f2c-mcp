@@ -27,9 +27,11 @@
 ## 主要功能
 <img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" /> 
 
-- 🎨 将Figma设计节点转换为**极高还原度**的HTML/CSS代码，行业内领先
-- 📚 为AI编程助手提供Figma设计数据访问能力
-- 🚀 支持通过Figma文件URL获取设计元数据
+🎨 高保真 HTML/CSS 还原：F2C 实现像素级高保真 Figma 设计到 HTML/CSS 的精准转换。
+⚛️ 多框架支持：F2C 生成 React、CSS Modules 和 Tailwind CSS 代码，加速前端开发。
+🧠 Figma 设计上下文：F2C 提供设计上下文，与 AI 工具兼容，确保代码一致性。
+🔗 Figma 文件 URL 解析：F2C 通过 URL 直接转换 Figma 设计节点，简化工作流程。
+🖼️ 远程图片本地化：F2C 自动下载 Figma 远程图片到本地，优化开发体验。
 
 ## 快速上手
 [Getting started](docs/zh/GettingStarted.md)
