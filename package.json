@@ -1,6 +1,6 @@
 {
   "name": "@f2c/mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "repository": {
     "type": "git",
@@ -61,7 +61,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@empjs/biome-config": "^0.7.2",
-    "@modelcontextprotocol/sdk": "1.11.2",
+    "@modelcontextprotocol/sdk": "1.12.0",
     "@types/bun": "^1.2.13",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",

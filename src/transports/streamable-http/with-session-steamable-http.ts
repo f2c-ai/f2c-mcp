@@ -8,11 +8,12 @@ app.use(express.json())
 export const startServer = (server: McpServer, port = 3000) => {
   const transports: {[sessionId: string]: StreamableHTTPServerTransport} = {}
   app.post('/mcp', async (req, res) => {
-    let acceptHeader = req.headers.accept as string
-    if (acceptHeader === '*/*') {
-      acceptHeader = '*/*,application/json, text/event-stream'
-      req.headers.accept = acceptHeader
-    }
+    // let acceptHeader = req.headers.accept as string
+    // if (acceptHeader === '*/*') {
+    //   acceptHeader = '*/*,application/json, text/event-stream'
+    //   req.headers.accept = acceptHeader
+    // }
+    res.setHeader('Content-Type', 'application/json')
     const sessionId = req.headers['mcp-session-id'] as string | undefined
     let transport: StreamableHTTPServerTransport
     if (sessionId && transports[sessionId]) {
