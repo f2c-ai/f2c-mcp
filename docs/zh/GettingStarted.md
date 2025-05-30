@@ -1,18 +1,23 @@
 # Getting 快速开始
 
-1. 在`.env`文件中设置您的Figma API密钥：
+## 1. 在`.env`文件中设置您的Figma API密钥：
 ```bash
 FIGMA_API_KEY=your_api_key_here
 ```
 
-2. 安装依赖：
+## 2. 安装依赖：
 ```bash
-npm install
+bun install
  ```
 
-3. 启动开发服务器：
+## 3. 启动开发服务器：
+### stdio dev server
 ```bash
-npm run dev
+bun run dev
+ ```
+### streamable_http and SSE dev server
+```bash
+bun run http:dev
  ```
 
  ## 添加MCP服务
@@ -55,6 +60,20 @@ npm run dev
       "f2c_mcp": {
         "transport": "streamable_http",
         "url": "http://localhost:3000/mcp",
+        "headers": {},
+        "timeout": 50
+      }
+    }
+}
+```
+
+### 添加 SSE
+```json
+{
+  "mcpServers": {
+      "f2c_mcp": {
+        "transport": "sse",
+        "url": "http://localhost:3000/sse",
         "headers": {},
         "timeout": 50
       }

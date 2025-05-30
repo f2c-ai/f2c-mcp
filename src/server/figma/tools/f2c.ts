@@ -49,7 +49,8 @@ export const registerF2cServer = (server: McpServer) => {
           'Image export scale factor (1-4). Higher values yield better quality at the cost of larger file sizes.',
         ),
     },
-    async (o): Promise<CallToolResult> => {
+    async (o, context): Promise<CallToolResult> => {
+      console.log(context)
       try {
         const cb: NodeToCodeFile[] = (await api.nodeToCode(o)) || []
         if (o.localPath) {

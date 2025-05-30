@@ -1,18 +1,23 @@
 # Getting Started
 
-1. Set up your Figma API key in `.env` file:
+## 1. Set up your Figma API key in `.env` file:
 ```bash
 FIGMA_API_KEY=your_api_key_here
 ```
 
-2. Install dependencies:
+## 2. Install dependencies:
 ```bash
-npm install
+bun install
  ```
 
-3. Start development server:
+## 3. Start development server:
+### stdio dev server
 ```bash
-npm run dev
+bun run dev
+ ```
+ ### streamable_http and SSE dev server
+```bash
+bun run http:dev
  ```
 
  ## Add MCP Service
@@ -55,6 +60,20 @@ npm run dev
       "f2c_mcp": {
         "transport": "streamable_http",
         "url": "http://localhost:3000/mcp",
+        "headers": {},
+        "timeout": 50
+      }
+    }
+}
+```
+
+### Add SSE
+```json
+{
+  "mcpServers": {
+      "f2c_mcp": {
+        "transport": "sse",
+        "url": "http://localhost:3000/sse",
         "headers": {},
         "timeout": 50
       }

@@ -41,6 +41,18 @@
 }
 ```
 
+### SSE
+```json
+{
+  "f2c_mcp": {
+    "transport": "sse",
+    "url": "http://172.29.97.170:3000/sse",
+    "headers": {},
+    "timeout": 50
+  }
+}
+```
+
 ### 多MCP Server 配置
 ```json
 {
