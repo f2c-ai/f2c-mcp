@@ -19,11 +19,6 @@
 
 使用[F2C](https://f2c.yy.com/) 根据 Figma设计稿生成代码的模型上下文协议服务器。
 
-<a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
-</a>
-
-
 ## 主要功能
 <img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" /> 
 
@@ -32,6 +27,10 @@
 - 🧠 Figma 设计上下文：F2C 提供设计上下文，与 AI 工具兼容，确保代码一致性。
 - 🔗 Figma 文件 URL 解析：F2C 通过 URL 直接转换 Figma 设计节点，简化工作流程。
 - 🖼️ 远程图片本地化：F2C 自动下载 Figma 远程图片到本地，优化开发体验。
+
+<a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
+</a>
 
 ## 快速上手
 [Getting started](docs/zh/GettingStarted.md)

@@ -20,10 +20,6 @@ English | [简体中文](./README-zh-CN.md)
 
 A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c.yy.com/).
 
-<a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
-</a>
-
 ## Features
 <img alt="f2c" src="https://raw.githubusercontent.com/f2c-ai/f2c-mcp/main/docs/bannerv3.png" />
 
@@ -33,6 +29,9 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 - 🔗 Figma File URL Parsing：F2C converts design nodes via Figma URLs, streamlining workflows.
 - 🖼️ Remote Image Localization：F2C automates downloading Figma images to local assets for efficiency.
 
+<a href="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@f2c-ai/f2c-mcp/badge" alt="f2c-mcp-server MCP server" />
+</a>
 
 ## Getting started
 
