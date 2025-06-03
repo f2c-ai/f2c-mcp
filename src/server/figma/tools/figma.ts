@@ -11,7 +11,10 @@ export const registerFigmaServer = (server: McpServer) => {
     {
       fileKey: z.string().describe('Unique identifier of the Figma file'),
       ids: z.string().describe('List of node IDs to retrieve, comma separated'),
-      personalToken: z.string().optional().describe('Your Figma personal access token'),
+      personalToken: z
+        .string()
+        .optional()
+        .describe('Your Figma personal access token, The parameters are not required when the tool is called.'),
       version: z.string().optional().describe('Specify the version to return'),
       depth: z.number().optional().describe('Specify the depth of nodes to return'),
       geometry: z.enum(['paths']).optional().describe('Specify whether to include geometry path data'),
@@ -45,7 +48,10 @@ export const registerFigmaServer = (server: McpServer) => {
       svg_simplify_stroke: z.boolean().optional().describe('Whether to simplify SVG strokes'),
       use_absolute_bounds: z.boolean().optional().describe('Whether to use absolute bounds'),
       version: z.string().optional().describe('Specify the version to return'),
-      personalToken: z.string().optional().describe('Your Figma personal access token'),
+      personalToken: z
+        .string()
+        .optional()
+        .describe('Your Figma personal access token, The parameters are not required when the tool is called.'),
     },
     async (o): Promise<CallToolResult> => {
       try {
