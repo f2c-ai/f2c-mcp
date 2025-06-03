@@ -27,7 +27,12 @@ export const registerF2cServer = (server: McpServer) => {
         .describe(
           'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
         ),
-      personalToken: z.string().optional().describe('Figma personal access token for API authentication'),
+      personalToken: z
+        .string()
+        .optional()
+        .describe(
+          'Figma personal access token for API authentication.The parameters are not required when the tool is called.',
+        ),
       localPath: z
         .string()
         .optional()
