@@ -1,26 +1,8 @@
 # Getting 快速开始
 
-## 1. 在`.env`文件中设置您的Figma API密钥：
-```bash
-FIGMA_API_KEY=your_api_key_here
-```
+## 免安装配置MCP（stdio）
 
-## 2. 安装依赖：
-```bash
-bun install
- ```
-
-## 3. 启动开发服务器：
-### stdio dev server
-```bash
-bun run dev
- ```
-### streamable_http and SSE dev server
-```bash
-bun run http:dev
- ```
-
- ## 添加MCP服务
+### MacOS / Linux
 ```json
 {
   "mcpServers": {
@@ -38,7 +20,7 @@ bun run http:dev
 }
 ```
 
-## 添加MCP服务 (Windows)
+### Windows（stdio）
 ```json
 {
   "mcpServers": {
@@ -52,6 +34,29 @@ bun run http:dev
   }
 }
 ```
+
+## 全局安装配置MCP（stdio）
+对于mcp client不稳定导致安装报错的情况，我们可以采用全局安装再配置的方式
+
+```bash
+npm install -g @f2c/mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "f2c-mcp",
+      "args": [],
+      "env": {
+        "personalToken": ""
+      }
+    }
+  }
+}
+```
+
+## 其它类型配置
 
 ### 添加 Streamable HTTP
 ```json
@@ -81,26 +86,27 @@ bun run http:dev
 }
 ```
 
-## 全局安装
-对于mcp client不稳定导致安装报错的情况，我们可以采用全局安装再配置的方式
+## 开发
 
+### 1. 在`.env`文件中设置您的Figma API密钥：
 ```bash
-npm install -g @f2c/mcp
+FIGMA_API_KEY=your_api_key_here
 ```
 
-```json
-{
-  "mcpServers": {
-    "f2c-mcp": {
-      "command": "f2c-mcp",
-      "args": [],
-      "env": {
-        "personalToken": ""
-      }
-    }
-  }
-}
-```
+### 2. 安装依赖：
+```bash
+bun install
+ ```
+
+### 3. 启动开发服务器：
+### stdio dev server
+```bash
+bun run dev
+ ```
+### streamable_http and SSE dev server
+```bash
+bun run http:dev
+ ```
 
 ## 安装 Smithery
 
