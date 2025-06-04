@@ -1,4 +1,9 @@
 # Getting 快速开始
+通常，代码编辑器和其他 AI 客户端通过配置文件来管理 MCP 服务器。
+
+可以将以下内容添加到配置文件中来设置 `f2c-mcp` 服务器。
+
+> 注意：您需要创建 Figma 访问令牌才能使用此服务器。有关如何创建 Figma API 访问令牌的说明，请参见[此处](https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens)。
 
 ## 免安装配置MCP（stdio）
 
