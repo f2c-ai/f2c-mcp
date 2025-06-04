@@ -33,8 +33,14 @@
 - 🔗 Figma 文件 URL 解析：F2C 通过 URL 直接转换 Figma 设计节点，简化工作流程。
 - 🖼️ 远程图片本地化：F2C 自动下载 Figma 远程图片到本地，优化开发体验。
 
-## 快速上手
-[Getting started](docs/zh/GettingStarted.md)
+## 使用说明
+1. 在支持 MCP 的 IDE（如 Cursor、Trae） 中 [配置 Server](docs/zh/GettingStarted.md)。
+2. 在 IDE 中打开聊天窗口（例如：Cursor中的代理模式）。
+3. 粘贴 Figma 节点链接（在Figma的Layer面板选择你想要的节点右键即可复制）。
+4. 在对话框中输入需求，例如：获取节点数据、下载图片、转换为代码等。
+
+## 配置开发
+[配置&开发](docs/zh/GettingStarted.md)
 
 ## 常见问题
 [FAQ](docs/zh/FAQ.md)

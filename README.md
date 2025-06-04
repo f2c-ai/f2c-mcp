@@ -33,10 +33,15 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 - 🔗 Figma File URL Parsing：F2C converts design nodes via Figma URLs, streamlining workflows.
 - 🖼️ Remote Image Localization：F2C automates downloading Figma images to local assets for efficiency.
 
+## How it works
+1. [Configure the Server](docs/en/GettingStarted.md) in an MCP-supported IDE (e.g., Cursor, Trae).
+2. Open your chat in IDE (e.g. agent mode in Cursor).
+3. Paste a link to a Figma Node (Right-click any node in the Figma Layer panel to copy it).
+4. Enter your requirements in the chat, such as fetching node data, downloading images, converting to code, etc.
 
-## Getting started
+## Configuration and Development
 
-See [Getting started](docs/en/GettingStarted.md)
+See [Configuration and Development](docs/en/GettingStarted.md)
 
 ## FAQ
 See [FAQ](docs/en/FAQ.md)
