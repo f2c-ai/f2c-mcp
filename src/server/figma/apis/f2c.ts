@@ -1,5 +1,8 @@
 import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from '@/server/figma/types/f2c'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import {createLogger} from '@/utils/logger'
+
+const logger = createLogger('F2cApi')
 
 class F2cApi {
   protected f2cHost = `https://f2c-figma-api.yy.com/api`
@@ -38,7 +41,7 @@ class F2cApi {
       const data = resType === 'text' ? await response.text() : await response.json()
       return data
     } catch (error) {
-      console.error('HTTP error', error)
+      logger.error('HTTP error', error)
       throw error
     }
   }

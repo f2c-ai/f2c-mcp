@@ -1,6 +1,10 @@
+import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
+
+const logger = createLogger('StatelessStreamableHttp')
+
 const app = express()
 app.use(
   express.json({
@@ -39,7 +43,7 @@ const noAllowAcess = (req: any, res: any, next: any) => {
 export const startServer = (server: McpServer, port = 3000) => {
   app.post('/mcp', async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
-    console.log('Request body:', JSON.stringify(req.body))
+    logger.info('Request body:', JSON.stringify(req.body))
     // polyfillRequest(req, res)
 
     try {
@@ -56,8 +60,8 @@ export const startServer = (server: McpServer, port = 3000) => {
       await server.connect(transport)
       await transport.handleRequest(req, res, req.body)
     } catch (error: any) {
-      console.error('Error handling MCP request:', error)
-      console.error('Error stack:', error.stack)
+      logger.error('Error handling MCP request:', error)
+      logger.error('Error stack:', error.stack)
       if (!res.headersSent) {
         res.status(500).json({
           jsonrpc: '2.0',
@@ -79,7 +83,7 @@ export const startServer = (server: McpServer, port = 3000) => {
   app.delete('/mcp', noAllowAcess)
 
   app.listen(port, () => {
-    console.log(`MCP Stateless Streamable HTTP server started, listening on port ${port}`)
-    console.log(`Server address: http://localhost:${port}/mcp`)
+    logger.info(`MCP Stateless Streamable HTTP server started, listening on port ${port}`)
+    logger.info(`Server address: http://localhost:${port}/mcp`)
   })
 }

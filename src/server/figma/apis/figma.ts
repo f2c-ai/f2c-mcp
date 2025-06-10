@@ -1,5 +1,8 @@
 import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import {createLogger} from '@/utils/logger'
+
+const logger = createLogger('FigmaRestApi')
 
 class FigmaRestApi {
   protected figmaHost = `https://api.figma.com/v1`
@@ -37,14 +40,14 @@ class FigmaRestApi {
         },
       }
       const response = await fetch(url, fetchOptions)
-      // console.log('response', url, JSON.stringify(fetchOptions))
+      // logger.debug('response', url, JSON.stringify(fetchOptions))
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       const data = resType === 'text' ? await response.text() : await response.json()
       return data
     } catch (error) {
-      console.error('HTTP error', error)
+      logger.error('HTTP error', error)
       throw error
     }
   }

@@ -3,6 +3,10 @@ import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express from 'express'
+import {createLogger} from '@/utils/logger'
+
+const logger = createLogger('SessionStreamableHttp')
+
 const app = express()
 app.use(express.json())
 export const startServer = (server: McpServer, port = 3000) => {
@@ -57,6 +61,6 @@ export const startServer = (server: McpServer, port = 3000) => {
   app.get('/mcp', handleSessionRequest)
   app.delete('/mcp', handleSessionRequest)
   app.listen(port, () => {
-    console.log(`MCP Session-based Streamable HTTP Server listening on port ${port}`)
+    logger.info(`MCP Session-based Streamable HTTP Server listening on port ${port}`)
   })
 }

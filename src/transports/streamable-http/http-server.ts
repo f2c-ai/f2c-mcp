@@ -1,10 +1,13 @@
 import type {Server} from 'http'
 import {randomUUID} from 'node:crypto'
+import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {SSEServerTransport} from '@modelcontextprotocol/sdk/server/sse.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express, {type Request, type Response} from 'express'
+
+const logger = createLogger('HttpServer')
 
 let httpServer: Server | null = null
 const transports = {
@@ -18,16 +21,16 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
   app.use('/mcp', express.json())
 
   app.post('/mcp', async (req, res) => {
-    console.log('Received StreamableHTTP request', JSON.stringify(req.headers), JSON.stringify(req.body))
+    logger.info('Received StreamableHTTP request', JSON.stringify(req.headers), JSON.stringify(req.body))
     res.setHeader('Content-Type', 'application/json')
     const sessionId = req.headers['mcp-session-id'] as string | undefined
     let transport: StreamableHTTPServerTransport
 
     if (sessionId && transports.streamable[sessionId]) {
-      console.log('Reusing existing StreamableHTTP transport for sessionId', sessionId)
+      logger.info('Reusing existing StreamableHTTP transport for sessionId', sessionId)
       transport = transports.streamable[sessionId]
     } else if (!sessionId && isInitializeRequest(req.body)) {
-      console.log('New initialization request for StreamableHTTP sessionId', sessionId)
+      logger.info('New initialization request for StreamableHTTP sessionId', sessionId)
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => randomUUID(),
         onsessioninitialized: sessionId => {
@@ -41,7 +44,7 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
       }
       await mcpServer.connect(transport)
     } else {
-      console.log('Invalid request:', req.body)
+      logger.info('Invalid request:', req.body)
       res.status(400).json({
         jsonrpc: '2.0',
         error: {
@@ -57,9 +60,9 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
     const progressToken = req.body.params?._meta?.progressToken
     let progress = 0
     if (progressToken) {
-      console.log(`Setting up progress notifications for token ${progressToken} on session ${sessionId}`)
+      logger.info(`Setting up progress notifications for token ${progressToken} on session ${sessionId}`)
       progressInterval = setInterval(async () => {
-        console.log('Sending progress notification', progress)
+        logger.info('Sending progress notification', progress)
         await mcpServer.server.notification({
           method: 'notifications/progress',
           params: {
@@ -71,13 +74,13 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
       }, 1000)
     }
 
-    console.log('Handling StreamableHTTP request')
+    logger.info('Handling StreamableHTTP request')
     await transport.handleRequest(req, res, req.body)
 
     if (progressInterval) {
       clearInterval(progressInterval)
     }
-    console.log('StreamableHTTP request handled')
+    logger.info('StreamableHTTP request handled')
   })
 
   const handleSessionRequest = async (req: Request, res: Response) => {
@@ -87,13 +90,13 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
       return
     }
 
-    console.log(`Received session termination request for session ${sessionId}`)
+    logger.info(`Received session termination request for session ${sessionId}`)
 
     try {
       const transport = transports.streamable[sessionId]
       await transport.handleRequest(req, res)
     } catch (error) {
-      console.error('Error handling session termination:', error)
+      logger.error('Error handling session termination:', error)
       if (!res.headersSent) {
         res.status(500).send('Error processing session termination')
       }
@@ -125,17 +128,17 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
   })
 
   httpServer = app.listen(port, () => {
-    console.log(`SSE endpoint available at http://localhost:${port}/sse`)
-    console.log(`Message endpoint available at http://localhost:${port}/messages`)
-    console.log(`StreamableHTTP endpoint available at http://localhost:${port}/mcp`)
+    logger.info(`SSE endpoint available at http://localhost:${port}/sse`)
+    logger.info(`Message endpoint available at http://localhost:${port}/messages`)
+    logger.info(`StreamableHTTP endpoint available at http://localhost:${port}/mcp`)
   })
 
   process.on('SIGINT', async () => {
-    console.log('Shutting down server...')
+    logger.info('Shutting down server...')
     await closeTransports(transports.sse)
     await closeTransports(transports.streamable)
 
-    console.log('Server shutdown complete')
+    logger.info('Server shutdown complete')
     process.exit(0)
   })
 }
@@ -146,7 +149,7 @@ async function closeTransports(transports: Record<string, SSEServerTransport | S
       await transports[sessionId]?.close()
       delete transports[sessionId]
     } catch (error) {
-      console.error(`Error closing transport for session ${sessionId}:`, error)
+      logger.error(`Error closing transport for session ${sessionId}:`, error)
     }
   }
 }

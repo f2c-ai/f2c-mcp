@@ -1,7 +1,10 @@
 import {describe, expect, it} from 'bun:test'
 import f2cApi from '@/server/figma/apis/f2c'
 import api from '@/server/figma/apis/figma'
+import {createLogger} from '@/utils/logger'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+
+const logger = createLogger('E2ETest')
 
 // 测试常量
 const fileKey = 'DkzGbKo09kf2w1ytMPALxd'
@@ -16,7 +19,7 @@ describe('Figma API 端到端测试', () => {
     it('应该能够从真实 Figma API 获取节点代码', async () => {
       // 跳过测试如果没有设置个人令牌
       if (!personalToken) {
-        console.log('跳过测试：未设置 FIGMA_API_KEY 环境变量')
+        logger.info('跳过测试：未设置 FIGMA_API_KEY 环境变量')
         return
       }
 
@@ -27,6 +30,8 @@ describe('Figma API 端到端测试', () => {
           ids,
           format: 'html',
           personalToken,
+          imgFormat: 'png',
+          scaleSize: 0,
         })
 
         // 验证返回结果
@@ -38,9 +43,9 @@ describe('Figma API 端到端测试', () => {
         expect(result).toContain('>')
 
         // 记录结果以便手动检查
-        console.log('API 返回结果预览（前100字符）:', result.substring(0, 100))
+        // logger.info('API 返回结果预览（前100字符）:', result.substring(0, 100))
       } catch (error) {
-        console.error('API 请求失败:', error)
+        logger.error('API 请求失败:', error)
         throw error
       }
     })
@@ -50,7 +55,7 @@ describe('Figma API 端到端测试', () => {
     it('应该能够从真实 Figma API 获取文件节点数据', async () => {
       // 跳过测试如果没有设置个人令牌
       if (!personalToken) {
-        console.log('跳过测试：未设置 FIGMA_API_KEY 环境变量')
+        logger.info('跳过测试：未设置 FIGMA_API_KEY 环境变量')
         return
       }
 
@@ -71,9 +76,9 @@ describe('Figma API 端到端测试', () => {
         expect(nodeIds.length).toBeGreaterThan(0)
 
         // 记录结果以便手动检查
-        console.log('文件节点数据:', nodeIds)
+        logger.info('文件节点数据:', nodeIds)
       } catch (error) {
-        console.error('API 请求失败:', error)
+        logger.error('API 请求失败:', error)
         throw error
       }
     })
@@ -83,7 +88,7 @@ describe('Figma API 端到端测试', () => {
     it('应该能够从真实 Figma API 获取文件元数据', async () => {
       // 跳过测试如果没有设置个人令牌
       if (!personalToken) {
-        console.log('跳过测试：未设置 FIGMA_API_KEY 环境变量')
+        logger.info('跳过测试：未设置 FIGMA_API_KEY 环境变量')
         return
       }
 
@@ -100,9 +105,9 @@ describe('Figma API 端到端测试', () => {
         // expect(result).toHaveProperty('lastModified')
 
         // 记录结果以便手动检查
-        console.log('文件元数据:', JSON.stringify(result.file))
+        logger.info('文件元数据:', JSON.stringify(result.file))
       } catch (error) {
-        console.error('API 请求失败:', error)
+        logger.error('API 请求失败:', error)
         throw error
       }
     })

@@ -1,9 +1,12 @@
 import api from '@/server/figma/apis/f2c'
+import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
 import type {NodeToCodeFile} from 'src/server/figma/types/f2c'
 import {z} from 'zod'
 import downloader from '../helpers/downloader'
+
+const logger = createLogger('F2cTool')
 
 export const registerF2cServer = (server: McpServer) => {
   // Register Figma to HTML conversion tool
@@ -55,7 +58,7 @@ export const registerF2cServer = (server: McpServer) => {
         ),
     },
     async (o, context): Promise<CallToolResult> => {
-      console.log(context)
+      logger.info(context)
       try {
         const cb: NodeToCodeFile[] = (await api.nodeToCode(o)) || []
         if (o.localPath) {
@@ -75,7 +78,7 @@ export const registerF2cServer = (server: McpServer) => {
           ],
         }
       } catch (error: any) {
-        console.error('Tool execution error:', error)
+        logger.error('Tool execution error:', error)
         return {
           content: [{type: 'text', text: `Error: ${error.message}`}],
         }
