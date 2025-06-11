@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import {createLogger} from '@/utils/logger'
+import {createLogger} from 'src/utils/logger'
 
 const logger = createLogger('Downloader')
 
@@ -60,38 +60,38 @@ export class Downloader {
       // 匹配Figma图片URL的正则表达式
       const imgRegex = /https:\/\/figma-alpha-api\.s3\.us-west-2\.amazonaws\.com\/images\/[a-f0-9-]+/g
       const matches = content.match(imgRegex)
-  
+
       if (!matches) {
         return content
       }
-  
+
       // 去重URL
-      const uniqueUrls = [...new Set(matches)];
-      
+      const uniqueUrls = [...new Set(matches)]
+
       // 创建下载任务映射
-      const downloadTasks = new Map();
-      
+      const downloadTasks = new Map()
+
       // 并行下载所有图片
       await Promise.all(
-        uniqueUrls.map(async (remoteUrl) => {
-          const fileName = path.basename(remoteUrl);
+        uniqueUrls.map(async remoteUrl => {
+          const fileName = path.basename(remoteUrl)
           const localUrl = await this.downloadImage(remoteUrl, {
             localPath,
             fileName,
-          });
-          downloadTasks.set(remoteUrl, localUrl);
-        })
-      );
-      
+          })
+          downloadTasks.set(remoteUrl, localUrl)
+        }),
+      )
+
       // 一次性替换所有URL
-      let processedContent = content;
+      let processedContent = content
       for (const [remoteUrl, localUrl] of downloadTasks.entries()) {
         // 使用全局替换以处理重复的URL
-        const regex = new RegExp(remoteUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-        processedContent = processedContent.replace(regex, localUrl);
+        const regex = new RegExp(remoteUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')
+        processedContent = processedContent.replace(regex, localUrl)
       }
-  
-      return processedContent;
+
+      return processedContent
     } catch (error) {
       logger.error('内容处理错误:', error)
       throw error

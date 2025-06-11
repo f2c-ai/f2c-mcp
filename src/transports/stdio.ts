@@ -1,6 +1,6 @@
-import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
+import {createLogger} from 'src/utils/logger'
 
 const logger = createLogger('StdioTransport')
 

@@ -1,6 +1,6 @@
-import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from '@/server/figma/types/f2c'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
-import {createLogger} from '@/utils/logger'
+import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from 'src/server/figma/types/f2c'
+import {createLogger} from 'src/utils/logger'
 
 const logger = createLogger('F2cApi')
 
@@ -30,6 +30,7 @@ class F2cApi {
     return this.fetch(url, 'json')
   }
   async fetch(url: string, resType: 'json' | 'text' = 'json'): Promise<any> {
+    // logger.debug('fetch', url, this.personalToken)
     try {
       const fetchOptions = {
         method: 'GET',

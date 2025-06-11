@@ -1,7 +1,6 @@
 import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {startHttpServer} from './http-server'
-
 const logger = createLogger('StreamableHttp')
 
 /* export async function startServer(server: McpServer, port = 3000, useSession = false) {
