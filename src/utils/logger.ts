@@ -4,10 +4,10 @@ export enum LogLevel {
   WARN = 2,
   ERROR = 3,
 }
-// 通过检查运行命令来判断是 stdio 还是 http 模式
+// Determine if stdio or http mode by checking the run command
 function detectTransportMode(): boolean {
   const args = process.argv.join(' ')
-  // 如果命令行包含 streamable-http.js 或 streamable-http.ts，则为 HTTP 模式
+  // If command line includes streamable-http.js or streamable-http.ts, it's HTTP mode
   return args.includes('streamable-http.js') || args.includes('streamable-http.ts')
 }
 export const isHttp = detectTransportMode()
@@ -61,5 +61,5 @@ export class Logger {
   }
 }
 
-// 创建默认日志实例
+// Create default logger instance
 export const createLogger = (context: string, level: LogLevel = LogLevel.INFO) => new Logger(context, level)

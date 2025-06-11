@@ -9,11 +9,30 @@ export interface DownloadOptions {
   fileName: string
 }
 
+export interface FileData {
+  content: string
+  path: string
+}
+
 export class Downloader {
-  imgFormat = 'png'
-  setImgFormat(format: string) {
+  private imgFormat = 'png'
+
+  /**
+   * 设置图片格式
+   */
+  setImgFormat(format: string): void {
     this.imgFormat = format
   }
+
+  /**
+   * 确保目录存在
+   */
+  private ensureDirectoryExists(dirPath: string): void {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, {recursive: true})
+    }
+  }
+
   /**
    * 下载远程图片到本地
    * @param url 远程图片URL
@@ -22,28 +41,22 @@ export class Downloader {
    */
   async downloadImage(url: string, options: DownloadOptions): Promise<string> {
     try {
-      // 确保目标目录存在
-      if (!fs.existsSync(options.localPath)) {
-        fs.mkdirSync(options.localPath, {recursive: true})
-      }
+      this.ensureDirectoryExists(options.localPath)
+
       const localfileName = `${options.fileName}.${this.imgFormat}`
-      // 构建本地文件路径
       const localFilePath = path.join(options.localPath, localfileName)
 
-      // 下载图片
       const response = await fetch(url)
       if (!response.ok) {
-        throw new Error(`下载失败: ${response.status} ${response.statusText}`)
+        throw new Error(`Download failed: ${response.status} ${response.statusText}`)
       }
 
-      // 将响应内容转换为Buffer并写入文件
       const buffer = await response.arrayBuffer()
       fs.writeFileSync(localFilePath, new Uint8Array(buffer))
 
-      // 返回相对路径
       return path.join(path.basename(options.localPath), localfileName).replace(/\\/g, '/')
     } catch (error) {
-      logger.error('图片下载错误:', error)
+      logger.error('Image download error:', error)
       throw error
     }
   }
@@ -52,10 +65,11 @@ export class Downloader {
    * 从HTML/JSX内容中提取并下载图片
    * @param content 包含图片URL的内容
    * @param localPath 本地存储路径
-   * @returns 替换后的内容
+   * @returns 修改后的内容
    */
   async processContent(content: string, localPath: string): Promise<string> {
-    localPath = path.join(localPath, 'images')
+    const imagesPath = path.join(localPath, 'images')
+
     try {
       // 匹配Figma图片URL的正则表达式
       const imgRegex = /https:\/\/figma-alpha-api\.s3\.us-west-2\.amazonaws\.com\/images\/[a-f0-9-]+/g
@@ -67,8 +81,6 @@ export class Downloader {
 
       // 去重URL
       const uniqueUrls = [...new Set(matches)]
-
-      // 创建下载任务映射
       const downloadTasks = new Map()
 
       // 并行下载所有图片
@@ -76,7 +88,7 @@ export class Downloader {
         uniqueUrls.map(async remoteUrl => {
           const fileName = path.basename(remoteUrl)
           const localUrl = await this.downloadImage(remoteUrl, {
-            localPath,
+            localPath: imagesPath,
             fileName,
           })
           downloadTasks.set(remoteUrl, localUrl)
@@ -84,16 +96,112 @@ export class Downloader {
       )
 
       // 一次性替换所有URL
-      let processedContent = content
-      for (const [remoteUrl, localUrl] of downloadTasks.entries()) {
-        // 使用全局替换以处理重复的URL
+      return uniqueUrls.reduce((processedContent, remoteUrl) => {
+        const localUrl = downloadTasks.get(remoteUrl)
         const regex = new RegExp(remoteUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')
-        processedContent = processedContent.replace(regex, localUrl)
+        return processedContent.replace(regex, localUrl)
+      }, content)
+    } catch (error) {
+      logger.error('Content processing error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 保存内容到文件
+   * @param content 文件内容
+   * @param basePath 基础路径
+   * @param filePath 文件相对路径
+   * @returns 完整文件路径
+   */
+  async saveContentToFile(content: string, basePath: string, filePath: string): Promise<string> {
+    try {
+      const fullPath = path.join(basePath, filePath)
+      const dirPath = path.dirname(fullPath)
+
+      this.ensureDirectoryExists(dirPath)
+
+      // 为HTML文件添加HTML和body标签
+      if (filePath.endsWith('.html')) {
+        content = this.wrapHtmlContent(content)
       }
 
-      return processedContent
+      fs.writeFileSync(fullPath, content)
+      logger.info(`File saved: ${fullPath}`)
+      return fullPath
     } catch (error) {
-      logger.error('内容处理错误:', error)
+      logger.error('File save error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 包装HTML内容
+   */
+  private wrapHtmlContent(content: string): string {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generated HTML</title>
+</head>
+<body>
+${content}
+</body>
+</html>`
+  }
+
+  /**
+   * 处理并保存多个文件
+   * @param files 文件数组，每个包含内容和路径
+   * @param basePath 基础路径
+   * @returns 保存的文件路径数组
+   */
+  async processAndSaveFiles(files: FileData[], basePath: string): Promise<string[]> {
+    try {
+      return await Promise.all(files.map(file => this.saveContentToFile(file.content, basePath, file.path)))
+    } catch (error) {
+      logger.error('Batch file processing error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 处理文件内容，提取并下载图片
+   * @param files 文件数组
+   * @param basePath 基础路径
+   * @returns 处理后的文件数组
+   */
+  private async processFileContents(files: FileData[], basePath: string): Promise<FileData[]> {
+    return Promise.all(
+      files.map(async file => ({
+        ...file,
+        content: await this.processContent(file.content, basePath),
+      })),
+    )
+  }
+
+  /**
+   * 处理图片并保存所有文件
+   * @param files 文件数组，每个包含内容和路径
+   * @param basePath 基础路径
+   * @param imgFormat 图片格式
+   * @returns 保存的文件路径数组
+   */
+  async downloadAndSaveFiles(files: FileData[], basePath: string, imgFormat?: string): Promise<string[]> {
+    try {
+      if (imgFormat) {
+        this.setImgFormat(imgFormat)
+      }
+
+      // 处理每个文件中的图片
+      const processedFiles = await this.processFileContents(files, basePath)
+
+      // 保存处理后的文件
+      return this.processAndSaveFiles(processedFiles, basePath)
+    } catch (error) {
+      logger.error('Image processing and file saving error:', error)
       throw error
     }
   }
