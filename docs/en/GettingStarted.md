@@ -24,6 +24,21 @@ You can add the following content to the configuration file to set up the `f2c-m
   }
 }
 ```
+or
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@f2c/mcp",
+        "--figma-api-key=YOUR-KEY"
+      ],
+    }
+  }
+}
+```
 
 ### Windows (stdio)
 ```json
@@ -35,6 +50,17 @@ You can add the following content to the configuration file to set up the `f2c-m
       "env": {
         "personalToken": ""
       }
+    }
+  }
+}
+```
+or 
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@f2c/mcp", "--figma-api-key=YOUR-KEY"],
     }
   }
 }

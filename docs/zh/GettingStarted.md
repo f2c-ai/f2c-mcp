@@ -24,6 +24,21 @@
   }
 }
 ```
+or
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@f2c/mcp",
+        "--figma-api-key=YOUR-KEY"
+      ],
+    }
+  }
+}
+```
 
 ### Windows（stdio）
 ```json
@@ -35,6 +50,17 @@
       "env": {
         "personalToken": ""
       }
+    }
+  }
+}
+```
+or 
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@f2c/mcp", "--figma-api-key=YOUR-KEY"],
     }
   }
 }

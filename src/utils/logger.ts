@@ -44,4 +44,4 @@ export class Logger {
 }
 
 // 创建默认日志实例
-export const createLogger = (context: string) => new Logger(context)
+export const createLogger = (context: string, level: LogLevel = LogLevel.INFO) => new Logger(context, level)
