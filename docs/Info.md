@@ -29,14 +29,30 @@
   }
 }
 ```
+or
+```json
+{
+  "mcpServers": {
+    "f2c-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/xuhongbin/Desktop/Develop/f2c/f2c-mcp/dist/stdio.js",
+        "--figma-api-key=YOUR-KEY"
+      ]
+    }
+  }
+}
+```
 ### steamable http
 ```json
 {
-  "f2c_mcp": {
-    "transport": "streamable_http",
-    "url": "http://172.29.97.170:3000/mcp",
-    "headers": {},
-    "timeout": 50
+  "mcpServers": {
+    "f2c_mcp": {
+      "transport": "streamable_http",
+      "url": "http://172.29.97.170:3000/mcp",
+      "headers": {},
+      "timeout": 50
+    }
   }
 }
 ```
@@ -44,25 +60,13 @@
 ### SSE
 ```json
 {
-  "f2c_mcp": {
-    "transport": "sse",
-    "url": "http://172.29.97.170:3000/sse",
-    "headers": {},
-    "timeout": 50
-  }
-}
-```
-
-### 多MCP Server 配置
-```json
-{
   "mcpServers": {
-      "f2c_mcp": {
-        "transport": "streamable_http",
-        "url": "http://172.29.97.170:3000/mcp",
-        "headers": {},
-        "timeout": 50
-      }
+    "f2c_mcp": {
+      "transport": "sse",
+      "url": "http://172.29.97.170:3000/sse",
+      "headers": {},
+      "timeout": 50
     }
+  }
 }
 ```

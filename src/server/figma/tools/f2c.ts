@@ -58,22 +58,10 @@ export const registerF2cServer = (server: McpServer) => {
         ),
     },
     async (o): Promise<CallToolResult> => {
-      // logger.info(context)
+      downloader.setup(o)
       try {
         const cb: NodeToCodeFile[] = (await api.nodeToCode(o)) || []
-        if (o.localPath) {
-          // Use integrated method to process images and save files
-          await downloader.downloadAndSaveFiles(cb, o.localPath as string, o.imgFormat)
-        }
-        /* return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(cb),
-            },
-          ],
-        } */
-        // Handle case when no content is returned
+        await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {
             content: [
@@ -101,7 +89,6 @@ export const registerF2cServer = (server: McpServer) => {
 
         // Create file summary
         const summary = files.map((file, index) => `${index + 1}. ${file.path}`).join('\n')
-
         // If local path is specified, return save location information instead of detailed content
         if (o.localPath) {
           return {
