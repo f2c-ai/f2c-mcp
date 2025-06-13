@@ -2,7 +2,7 @@ import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 const logger = createLogger('StreamableHttp')
 type ServerTypeIns = 'all' | 'session' | 'no_session'
-export async function startServer(server: McpServer, port = 3000, serverType: ServerTypeIns = 'no_session') {
+export async function startServer(server: McpServer, port = 3000, serverType: ServerTypeIns = 'all') {
   switch (serverType) {
     // don't support hot reload
     case 'all': {

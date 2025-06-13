@@ -12,7 +12,7 @@ export const registerF2cServer = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
     'figma_to_code',
-    'Transform Figma designs into production-ready code. This tool converts selected Figma nodes into HTML, React with CSS Modules, or React with Tailwind CSS, enabling seamless design-to-code workflow.',
+    'Transform Figma designs into production-ready code. This tool converts selected Figma nodes into HTML,enabling seamless design-to-code workflow.',
     {
       fileKey: z
         .string()
@@ -24,12 +24,12 @@ export const registerF2cServer = (server: McpServer) => {
         .describe(
           'Comma-separated list of Figma node IDs for conversion. To obtain node IDs, select elements in Figma, right-click and select "Copy/Paste as" → "Copy ID".',
         ),
-      format: z
-        .enum(['html', 'react-cssmodules', 'react-tailwind'])
-        .default('html')
-        .describe(
-          'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
-        ),
+      // format: z
+      //   .enum(['html', 'react-cssmodules', 'react-tailwind'])
+      //   .default('html')
+      //   .describe(
+      //     'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
+      //   ),
       personalToken: z
         .string()
         .optional()
@@ -58,9 +58,9 @@ export const registerF2cServer = (server: McpServer) => {
         ),
     },
     async (o): Promise<CallToolResult> => {
-      downloader.setup(o)
+      downloader.setup({...o, format: 'html'})
       try {
-        const cb: NodeToCodeFile[] = (await api.nodeToCode(o)) || []
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'html'})) || []
         await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {
