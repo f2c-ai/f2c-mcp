@@ -1,7 +1,7 @@
 import {getArgValue} from '@/utils/index'
 import {LogLevel, createLogger} from '@/utils/logger'
 
-const logger = createLogger('FigmaConfig', LogLevel.DEBUG)
+const logger = createLogger('FigmaConfig', LogLevel.INFO)
 
 // Priority: get from command line arguments first, then from environment variables
 export const DEFAULT_PERSONAL_TOKEN = getArgValue('figma-api-key') || process.env.FIGMA_API_KEY || ''
