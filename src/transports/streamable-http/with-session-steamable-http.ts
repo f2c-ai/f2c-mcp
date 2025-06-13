@@ -1,9 +1,9 @@
 import {randomUUID} from 'node:crypto'
+import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express from 'express'
-import {createLogger} from '@/utils/logger'
 
 const logger = createLogger('SessionStreamableHttp')
 
@@ -62,5 +62,6 @@ export const startServer = (server: McpServer, port = 3000) => {
   app.delete('/mcp', handleSessionRequest)
   app.listen(port, () => {
     logger.info(`MCP Session-based Streamable HTTP Server listening on port ${port}`)
+    logger.info(`Server address: http://localhost:${port}/mcp`)
   })
 }
