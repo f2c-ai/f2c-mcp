@@ -40,7 +40,7 @@ export const registerF2cServer = (server: McpServer) => {
         .string()
         .optional()
         .describe(
-          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When set, all static resources will be saved to the images directory under this path.The parameter is optional, If the user does not specify a particular folder, do not automatically assign a folder — simply leave it empty. In other words, if the user does not explicitly mention it in the prompt, it should be set to an empty string.',
+          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When set, all static resources will be saved to the images directory under this path.',
         ),
       imgFormat: z
         .enum(['png', 'jpg', 'svg'])
