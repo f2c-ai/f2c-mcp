@@ -40,7 +40,7 @@ export const registerF2cServer = (server: McpServer) => {
         .string()
         .optional()
         .describe(
-          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When set, all static resources will be saved to the images directory under this path.',
+          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When set, all static resources will be saved to the images directory under this path.The parameter is optional, If the user does not specify a particular folder, do not automatically assign a folder — simply leave it empty. In other words, if the user does not explicitly mention it in the prompt, it should be set to an empty string.',
         ),
       imgFormat: z
         .enum(['png', 'jpg', 'svg'])
@@ -60,7 +60,7 @@ export const registerF2cServer = (server: McpServer) => {
     async (o): Promise<CallToolResult> => {
       downloader.setup({...o, format: 'html'})
       try {
-        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'html'})) || []
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
         await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {
@@ -101,7 +101,7 @@ export const registerF2cServer = (server: McpServer) => {
 ${o.localPath}
 
 ## Generated Files
-${summary}`,
+${summary}. Convert the Tailwind to vanilla CSS if not already used in the codebase. Do not install any dependencies.`,
               },
             ],
           }
@@ -119,7 +119,7 @@ ${summary}`,
           content: [
             {
               type: 'text',
-              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}`,
+              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}. Convert the Tailwind to vanilla CSS if not already used in the codebase. Do not install any dependencies.`,
             },
           ],
         }
