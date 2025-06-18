@@ -1,13 +1,13 @@
 import type {Server} from 'http'
 import {randomUUID} from 'node:crypto'
-import {createLogger} from '@/utils/logger'
+import {LogLevel, Logger, createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {SSEServerTransport} from '@modelcontextprotocol/sdk/server/sse.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express, {type Request, type Response} from 'express'
 
-const logger = createLogger('HttpServer')
+const logger = createLogger('HttpServer', LogLevel.INFO)
 
 let httpServer: Server | null = null
 const transports = {
