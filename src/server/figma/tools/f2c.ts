@@ -60,7 +60,7 @@ export const registerF2cServer = (server: McpServer) => {
     async (o): Promise<CallToolResult> => {
       downloader.setup({...o, format: 'html'})
       try {
-        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'html'})) || []
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
         await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {
@@ -101,7 +101,7 @@ export const registerF2cServer = (server: McpServer) => {
 ${o.localPath}
 
 ## Generated Files
-${summary}`,
+${summary}. Convert the Tailwind to vanilla CSS if not already used in the codebase. Do not install any dependencies.`,
               },
             ],
           }
@@ -119,7 +119,7 @@ ${summary}`,
           content: [
             {
               type: 'text',
-              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}`,
+              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}. Convert the Tailwind to vanilla CSS if not already used in the codebase. Do not install any dependencies.`,
             },
           ],
         }
