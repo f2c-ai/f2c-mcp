@@ -12,7 +12,7 @@ export const registerF2cServer = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
     'figma_to_code',
-    'Transform Figma designs into production-ready code. This tool converts selected Figma nodes into HTML, React with CSS Modules, or React with Tailwind CSS, enabling seamless design-to-code workflow.',
+    'Transform Figma designs into production-ready code. This tool converts selected Figma nodes into HTML,enabling seamless design-to-code workflow.',
     {
       fileKey: z
         .string()
@@ -24,12 +24,12 @@ export const registerF2cServer = (server: McpServer) => {
         .describe(
           'Comma-separated list of Figma node IDs for conversion. To obtain node IDs, select elements in Figma, right-click and select "Copy/Paste as" → "Copy ID".',
         ),
-      format: z
-        .enum(['html', 'react-cssmodules', 'react-tailwind'])
-        .default('html')
-        .describe(
-          'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
-        ),
+      // format: z
+      //   .enum(['html', 'react-cssmodules', 'react-tailwind'])
+      //   .default('html')
+      //   .describe(
+      //     'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
+      //   ),
       personalToken: z
         .string()
         .optional()
@@ -40,7 +40,7 @@ export const registerF2cServer = (server: McpServer) => {
         .string()
         .optional()
         .describe(
-          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping.',
+          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When set, all static resources will be saved to the images directory under this path.',
         ),
       imgFormat: z
         .enum(['png', 'jpg', 'svg'])
@@ -57,23 +57,69 @@ export const registerF2cServer = (server: McpServer) => {
           'Image export scale factor (1-4). Higher values yield better quality at the cost of larger file sizes.',
         ),
     },
-    async (o, context): Promise<CallToolResult> => {
-      logger.info(context)
+    async (o): Promise<CallToolResult> => {
+      downloader.setup({...o, format: 'html'})
       try {
-        const cb: NodeToCodeFile[] = (await api.nodeToCode(o)) || []
-        if (o.localPath) {
-          downloader.setImgFormat(o.imgFormat)
-          await Promise.all(
-            cb.map(async f => {
-              f.content = await downloader.processContent(f.content, o.localPath as string)
-            }),
-          )
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'html'})) || []
+        await downloader.checkLocalAndDownload(cb)
+        if (!cb) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Failed to generate any code. Please check if the provided Figma node IDs are correct or if the nodes can be converted to code.',
+              },
+            ],
+          }
         }
+
+        const files = Array.isArray(cb) ? cb : [cb]
+
+        // Handle case when returned file array is empty
+        if (files.length === 0) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Conversion succeeded but no files were generated. Please check if the selected Figma nodes contain convertible content.',
+              },
+            ],
+          }
+        }
+
+        // Create file summary
+        const summary = files.map((file, index) => `${index + 1}. ${file.path}`).join('\n')
+        // If local path is specified, return save location information instead of detailed content
+        if (o.localPath) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `# Files Saved Locally
+
+## Save Location
+${o.localPath}
+
+## Generated Files
+${summary}`,
+              },
+            ],
+          }
+        }
+
+        // Create detailed file content (only when local path is not specified)
+        const fileDetails = files
+          .map((file, index) => {
+            const fileExtension = file.path.split('.').pop() || ''
+            return `## File ${index + 1}: ${file.path}\n\`\`\`${fileExtension}\n${file.content}\n\`\`\``
+          })
+          .join('\n\n')
+
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(cb),
+              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}`,
             },
           ],
         }

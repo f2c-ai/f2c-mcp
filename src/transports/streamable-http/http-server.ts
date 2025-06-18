@@ -1,13 +1,13 @@
 import type {Server} from 'http'
 import {randomUUID} from 'node:crypto'
-import {createLogger} from '@/utils/logger'
+import {LogLevel, Logger, createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {SSEServerTransport} from '@modelcontextprotocol/sdk/server/sse.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express, {type Request, type Response} from 'express'
 
-const logger = createLogger('HttpServer')
+const logger = createLogger('HttpServer', LogLevel.INFO)
 
 let httpServer: Server | null = null
 const transports = {
@@ -21,16 +21,16 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
   app.use('/mcp', express.json())
 
   app.post('/mcp', async (req, res) => {
-    logger.info('Received StreamableHTTP request', JSON.stringify(req.headers), JSON.stringify(req.body))
+    logger.debug('Received StreamableHTTP request', JSON.stringify(req.headers), JSON.stringify(req.body))
     res.setHeader('Content-Type', 'application/json')
     const sessionId = req.headers['mcp-session-id'] as string | undefined
     let transport: StreamableHTTPServerTransport
 
     if (sessionId && transports.streamable[sessionId]) {
-      logger.info('Reusing existing StreamableHTTP transport for sessionId', sessionId)
+      logger.debug('Reusing existing StreamableHTTP transport for sessionId', sessionId)
       transport = transports.streamable[sessionId]
     } else if (!sessionId && isInitializeRequest(req.body)) {
-      logger.info('New initialization request for StreamableHTTP sessionId', sessionId)
+      logger.debug('New initialization request for StreamableHTTP sessionId', sessionId)
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => randomUUID(),
         onsessioninitialized: sessionId => {
@@ -44,7 +44,7 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
       }
       await mcpServer.connect(transport)
     } else {
-      logger.info('Invalid request:', req.body)
+      logger.error('Invalid request:', req.body)
       res.status(400).json({
         jsonrpc: '2.0',
         error: {
@@ -74,13 +74,13 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
       }, 1000)
     }
 
-    logger.info('Handling StreamableHTTP request')
+    logger.debug('Handling StreamableHTTP request')
     await transport.handleRequest(req, res, req.body)
 
     if (progressInterval) {
       clearInterval(progressInterval)
     }
-    logger.info('StreamableHTTP request handled')
+    logger.debug('StreamableHTTP request handled')
   })
 
   const handleSessionRequest = async (req: Request, res: Response) => {
@@ -108,6 +108,7 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
   app.delete('/mcp', handleSessionRequest)
 
   app.get('/sse', async (req, res) => {
+    logger.debug('Received SSE request', JSON.stringify(req.headers), JSON.stringify(req.body))
     const transport = new SSEServerTransport('/messages', res)
     transports.sse[transport.sessionId] = transport
     res.on('close', () => {
@@ -134,11 +135,11 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
   })
 
   process.on('SIGINT', async () => {
-    logger.info('Shutting down server...')
+    logger.debug('Shutting down server...')
     await closeTransports(transports.sse)
     await closeTransports(transports.streamable)
 
-    logger.info('Server shutdown complete')
+    logger.debug('Server shutdown complete')
     process.exit(0)
   })
 }

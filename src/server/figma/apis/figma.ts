@@ -1,6 +1,6 @@
 import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
-import {createLogger} from '@/utils/logger'
+import {createLogger} from 'src/utils/logger'
 
 const logger = createLogger('FigmaRestApi')
 
