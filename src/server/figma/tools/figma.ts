@@ -5,7 +5,7 @@ import {z} from 'zod'
 
 export const registerFigmaServer = (server: McpServer) => {
   // Get Figma file information
-  /* server.tool(
+  server.tool(
     'figma_get_file_data',
     'Get detailed information about a Figma file',
     {
@@ -33,7 +33,7 @@ export const registerFigmaServer = (server: McpServer) => {
         }
       }
     },
-  ) */
+  )
 
   // Get Figma node images
   server.tool(

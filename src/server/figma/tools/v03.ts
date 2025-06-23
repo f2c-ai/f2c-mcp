@@ -1,4 +1,5 @@
 import api from '@/server/figma/apis/f2c'
+import figmaApi from '@/server/figma/apis/figma'
 import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
@@ -6,12 +7,12 @@ import type {NodeToCodeFile} from 'src/server/figma/types/f2c'
 import {z} from 'zod'
 import downloader from '../helpers/downloader'
 
-const logger = createLogger('F2cTool')
+const logger = createLogger('V3Tool')
 
-export const registerF2cServer = (server: McpServer) => {
+export const registerV03Server = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
-    'figma_to_code',
+    'get_code',
     'Transform Figma designs into production-ready code. This tool converts selected Figma nodes into HTML,enabling seamless design-to-code workflow.',
     {
       fileKey: z
@@ -24,12 +25,12 @@ export const registerF2cServer = (server: McpServer) => {
         .describe(
           'Comma-separated list of Figma node IDs for conversion. To obtain node IDs, select elements in Figma, right-click and select "Copy/Paste as" → "Copy ID".',
         ),
-      format: z
-        .enum(['html', 'react-cssmodules', 'react-tailwind'])
-        .default('html')
-        .describe(
-          'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
-        ),
+      // format: z
+      //   .enum(['html', 'react-cssmodules', 'react-tailwind'])
+      //   .default('html')
+      //   .describe(
+      //     'Specify the output format: "html" generates semantic HTML/CSS, "react-cssmodules" creates React components with scoped CSS modules, "react-tailwind" produces React components with utility-first Tailwind classes.',
+      //   ),
       personalToken: z
         .string()
         .optional()
@@ -60,8 +61,7 @@ export const registerF2cServer = (server: McpServer) => {
     async (o): Promise<CallToolResult> => {
       downloader.setup({...o, format: 'html'})
       try {
-        // const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
-        const cb: NodeToCodeFile[] = (await api.nodeToCode(o)) || []
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
         await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {
@@ -126,6 +126,60 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
         }
       } catch (error: any) {
         logger.error('Tool execution error:', error)
+        return {
+          content: [{type: 'text', text: `Error: ${error.message}`}],
+        }
+      }
+    },
+  )
+  server.tool(
+    'get_image',
+    'Export Figma design images for visual verification and design fidelity validation. Essential for comparing generated code output against original designs, ensuring pixel-perfect implementation and catching visual discrepancies during the design-to-code process.',
+    {
+      fileKey: z.string().describe('Figma file identifier from the URL for accessing the design source'),
+      ids: z
+        .string()
+        .describe(
+          'Comma-separated node IDs to export. Use "Copy ID" from Figma context menu to get precise element references for comparison',
+        ),
+      format: z
+        .enum(['jpg', 'png', 'svg', 'pdf'])
+        .optional()
+        .describe(
+          'Export format for verification: "png" for pixel-perfect comparison with transparency, "jpg" for quick previews, "svg" for scalable reference, "pdf" for print validation',
+        ),
+      scale: z
+        .number()
+        .optional()
+        .describe(
+          'Scale factor (1-4x) for high-resolution comparison. Use 2x+ for detailed fidelity checks on retina displays',
+        ),
+      svg_include_id: z
+        .boolean()
+        .optional()
+        .describe('Include element IDs in SVG for precise element mapping during code validation'),
+      svg_simplify_stroke: z
+        .boolean()
+        .optional()
+        .describe('Simplify stroke paths for cleaner reference images during visual comparison'),
+      use_absolute_bounds: z
+        .boolean()
+        .optional()
+        .describe('Use absolute positioning for accurate layout verification against implemented code'),
+      version: z.string().optional().describe('Specific design version for consistent comparison baseline'),
+      personalToken: z
+        .string()
+        .optional()
+        .describe('Figma personal access token for authenticated access to design files'),
+    },
+    async (o): Promise<CallToolResult> => {
+      try {
+        const data = await figmaApi.images(o)
+
+        return {
+          content: [{type: 'text', text: JSON.stringify(data)}],
+        }
+      } catch (error: any) {
         return {
           content: [{type: 'text', text: `Error: ${error.message}`}],
         }
