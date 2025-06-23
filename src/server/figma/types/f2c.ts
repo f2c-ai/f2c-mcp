@@ -7,7 +7,7 @@ export interface NodeToCodeWithF2C {
 export interface NodeToCodeWithF2COptions {
   personalToken?: string
   localPath?: string
-  format: string
+  format?: string
   ids: string
   fileKey: string
   imgFormat: 'png' | 'jpg' | 'svg'

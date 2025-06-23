@@ -59,7 +59,7 @@ export const registerV03Server = (server: McpServer) => {
         ),
     },
     async (o): Promise<CallToolResult> => {
-      downloader.setup({...o, format: 'html'})
+      downloader.setup(o)
       try {
         const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
         await downloader.checkLocalAndDownload(cb)
