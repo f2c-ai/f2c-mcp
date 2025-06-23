@@ -13,7 +13,7 @@ export const registerV03Server = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
     'get_code',
-    'Transform Figma designs into production-ready code. This tool converts selected Figma nodes into HTML,enabling seamless design-to-code workflow.',
+    'Generate UI code for a given node or the currently selected node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be 1:2. IMPORTANT: After you call this tool, you should call get_image to get an image of the node for context.',
     {
       fileKey: z
         .string()
@@ -41,7 +41,7 @@ export const registerV03Server = (server: McpServer) => {
         .string()
         .optional()
         .describe(
-          'Absolute path for image asset storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When set, all static resources will be saved to the images directory under this path.',
+          'Absolute path for asset(e.g., images) and code storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When this path is set, all code-related static resources are stored in this directory, while other assets (e.g., images) will be saved into the subdirectory named assets under this path.',
         ),
       imgFormat: z
         .enum(['png', 'jpg', 'svg'])
@@ -89,7 +89,10 @@ export const registerV03Server = (server: McpServer) => {
         }
 
         // Create file summary
-        const summary = files.map((file, index) => `${index + 1}. ${file.path}`).join('\n')
+        const summary = files
+          .filter(file => !file.path.endsWith('/index.scss'))
+          .map((file, index) => `${index + 1}. ${file.path}`)
+          .join('\n')
         // If local path is specified, return save location information instead of detailed content
         if (o.localPath) {
           return {
@@ -109,18 +112,22 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
         }
 
         // Create detailed file content (only when local path is not specified)
-        const fileDetails = files
+        /* const fileDetails = files
           .map((file, index) => {
             const fileExtension = file.path.split('.').pop() || ''
             return `## File ${index + 1}: ${file.path}\n\`\`\`${fileExtension}\n${file.content}\n\`\`\``
           })
+          .join('\n\n') */
+        const fileDetails = files
+          .filter(file => file.path.endsWith('.tsx'))
+          .map(file => file.content)
           .join('\n\n')
 
         return {
           content: [
             {
               type: 'text',
-              text: `# Generated Files Summary\n${summary}\n\n# File Details\n${fileDetails}. Convert the Tailwind to vanilla CSS if not already used in the codebase. Do not install any dependencies.`,
+              text: `${fileDetails} Convert the Tailwind to vanilla CSS if not already used in the codebase. Do not install any dependencies.`,
             },
           ],
         }
@@ -134,7 +141,7 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
   )
   server.tool(
     'get_image',
-    'Export Figma design images for visual verification and design fidelity validation. Essential for comparing generated code output against original designs, ensuring pixel-perfect implementation and catching visual discrepancies during the design-to-code process.',
+    'Generate an image for a given node or the currently selected node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be 1:2. Also export Figma design images for visual verification and design fidelity validation. Essential for comparing generated code output against original designs, ensuring pixel-perfect implementation and catching visual discrepancies during the design-to-code process.',
     {
       fileKey: z.string().describe('Figma file identifier from the URL for accessing the design source'),
       ids: z
