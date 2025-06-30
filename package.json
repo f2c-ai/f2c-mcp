@@ -40,7 +40,7 @@
     "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
-    "build": "bun run bun.build.script.ts",
+    "build": "bun run bun.build.script.ts --server=localhost",
     "dev": "bun --watch run bun.build.script.ts",
     "http": "node ./dist/streamable-http.js",
     "http:dev": "bun --env-file=.env --watch run src/streamable-http.ts",
@@ -48,7 +48,8 @@
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix",
     "test": "bun test src/test/api.test.ts",
-    "e2e": "bun test src/test/e2e.test.ts"
+    "e2e": "bun test src/test/e2e.test.ts",
+    "socket": "bun run src/socket.ts --server=localhost"
   },
   "author": "ckken",
   "maintainers": ["ckken"],
@@ -56,6 +57,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "ws": "latest",
     "zod": "^3.22.4"
   },
   "devDependencies": {

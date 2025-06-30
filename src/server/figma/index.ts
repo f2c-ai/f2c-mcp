@@ -1,10 +1,8 @@
-import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
-import {serverName, serverVersion} from 'src/server/figma/config'
-import {registerNotificatons} from './notifications'
-// import {registerF2cServer} from 'src/server/figma/tools/f2c'
-// import {registerFigmaServer} from 'src/server/figma/tools/figma'
-import {registerV03Server} from './tools/v03'
-
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { serverName, serverVersion } from "src/server/figma/config";
+import { registerNotificatons } from "./notifications";
+import { registerV03Server } from "./tools/v03";
+import { registerPTDServer } from "./tools/ptd";
 export const server = new McpServer(
   {
     name: serverName,
@@ -14,10 +12,9 @@ export const server = new McpServer(
     capabilities: {
       logging: {},
     },
-  },
-)
+  }
+);
 
-registerNotificatons(server)
-// registerFigmaServer(server)
-// registerF2cServer(server)
-registerV03Server(server)
+registerNotificatons(server);
+registerV03Server(server);
+registerPTDServer(server);
