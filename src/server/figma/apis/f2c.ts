@@ -34,6 +34,9 @@ class F2cApi {
     try {
       const fetchOptions = {
         method: 'GET',
+        headers: {
+          'F2c-Api-Platform': 'mcp',
+        },
       }
       logger.debug('fetch', url)
       const response = await fetch(url, fetchOptions)
