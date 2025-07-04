@@ -8,6 +8,7 @@
 ## 免安装配置MCP（stdio）
 
 ### MacOS / Linux
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=f2c-mcp&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMm5weCUyMC15JTIwJTQwZjJjJTJGbWNwJTIyJTJDJTIyZW52JTIyJTNBJTdCJTIycGVyc29uYWxUb2tlbiUyMiUzQSUyMiUyMiU3RCU3RA%3D%3D)
 ```json
 {
   "mcpServers": {
@@ -41,6 +42,7 @@ or
 ```
 
 ### Windows（stdio）
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=f2c-mcp&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMmNtZCUyMCUyRmMlMjBucHglMjAteSUyMCU0MGYyYyUyRm1jcCUyMiUyQyUyMmVudiUyMiUzQSU3QiUyMnBlcnNvbmFsVG9rZW4lMjIlM0ElMjIlMjIlN0QlN0Q%3D)
 ```json
 {
   "mcpServers": {
@@ -72,7 +74,7 @@ or
 ```bash
 npm install -g @f2c/mcp
 ```
-
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=f2c-mcp&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMmYyYy1tY3AlMjAlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJwZXJzb25hbFRva2VuJTIyJTNBJTIyJTIyJTdEJTdE)
 ```json
 {
   "mcpServers": {
@@ -90,6 +92,7 @@ npm install -g @f2c/mcp
 ## 其它类型配置
 
 ### 添加 Streamable HTTP
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=f2c_mcp&config=JTdCJTIydHJhbnNwb3J0JTIyJTNBJTIyc3RyZWFtYWJsZV9odHRwJTIyJTJDJTIydXJsJTIyJTNBJTIyaHR0cCUzQSUyRiUyRmxvY2FsaG9zdCUzQTMwMDAlMkZtY3AlMjIlMkMlMjJoZWFkZXJzJTIyJTNBJTdCJTdEJTJDJTIydGltZW91dCUyMiUzQTUwJTdE)
 ```json
 {
   "mcpServers": {
@@ -104,6 +107,7 @@ npm install -g @f2c/mcp
 ```
 
 ### 添加 SSE
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=f2c_mcp&config=JTdCJTIydHJhbnNwb3J0JTIyJTNBJTIyc3NlJTIyJTJDJTIydXJsJTIyJTNBJTIyaHR0cCUzQSUyRiUyRmxvY2FsaG9zdCUzQTMwMDAlMkZzc2UlMjIlMkMlMjJoZWFkZXJzJTIyJTNBJTdCJTdEJTJDJTIydGltZW91dCUyMiUzQTUwJTdE)
 ```json
 {
   "mcpServers": {
