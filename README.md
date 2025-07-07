@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/f2c-ai-f2c-mcp-badge.png)](https://mseep.ai/app/f2c-ai-f2c-mcp)
+
 # F2C MCP Server 
 ![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
 [![smithery badge](https://smithery.ai/badge/@f2c-ai/f2c-mcp)](https://smithery.ai/server/@f2c-ai/f2c-mcp)
