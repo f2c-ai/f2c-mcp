@@ -45,7 +45,11 @@ function connectToFigma(port: number = 3055) {
       // Define a more specific type with an index signature to allow any property access
 
       const json = JSON.parse(event.data) as ProgressMessage;
-
+      logger.log("onmessage" + JSON.stringify(json));
+      if (json.type === "ping") {
+        ws?.send(JSON.stringify({ type: "pong" }));
+        return;
+      }
       // Handle progress updates
       if (json.type === "progress_update") {
         const progressData = json.message.data as CommandProgressUpdate;
@@ -89,7 +93,6 @@ function connectToFigma(port: number = 3055) {
 
       // Handle regular responses
       const myResponse = json.message;
-      logger.log("myResponse" + JSON.stringify(myResponse));
       // Handle response to a request
       if (
         myResponse.id &&
