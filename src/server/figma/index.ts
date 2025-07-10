@@ -15,6 +15,6 @@ export const server = new McpServer(
   }
 );
 
-registerNotificatons(server);
-registerV03Server(server);
+// registerNotificatons(server);
+// registerV03Server(server);
 registerPTDServer(server);

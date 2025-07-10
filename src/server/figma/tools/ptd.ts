@@ -1214,7 +1214,7 @@ export function registerPTDServer(server: McpServer) {
 - Use descriptive, semantic names for all elements
 - Follow a consistent naming pattern (e.g., "Login Screen", "Logo Container", "Email Input")
 - Group related elements with meaningful names
-﻿
+
 3. Layout Hierarchy:
 - Create parent frames first, then add child elements
 - For forms/login screens:
@@ -1223,12 +1223,12 @@ export function registerPTDServer(server: McpServer) {
 * Group input fields in their own containers
 * Place action buttons (login, submit) after inputs
 * Add secondary elements (forgot password, signup links) last
-﻿
+
 4. Input Fields Structure:
 - Create a container frame for each input field
 - Include a label text above or inside the input
 - Group related inputs (e.g., username/password) together
-﻿
+
 5. Element Creation:
 - Use create_frame() for containers and input fields
 - Use create_text() for labels, buttons text, and links
@@ -1236,10 +1236,10 @@ export function registerPTDServer(server: McpServer) {
 * Use fillColor for backgrounds
 * Use strokeColor for borders
 * Set proper fontWeight for different text elements
-﻿
+
 6. Mofifying existing elements:
 - use set_text_content() to modify text content.
-﻿
+
 7. Visual Hierarchy:
 - Position elements in logical reading order (top to bottom)
 - Maintain consistent spacing between elements
@@ -1248,13 +1248,13 @@ export function registerPTDServer(server: McpServer) {
 * Medium for input labels
 * Standard for button text
 * Smaller for helper text/links
-﻿
+
 8. Best Practices:
 - Verify each creation with get_node_info()
 - Use parentId to maintain proper hierarchy
 - Group related elements together in frames
 - Keep consistent spacing and alignment
-﻿
+
 Example Login Screen Structure:
 - Login Screen (main frame)
 - Logo Container (frame)
@@ -2009,7 +2009,64 @@ This strategy enables transferring content and property overrides from a source 
       }
     }
   );
-
+  server.tool(
+    "set_annotation",
+    "Create or update an annotation",
+    {
+      nodeId: z.string().describe("The ID of the node to annotate"),
+      annotationId: z
+        .string()
+        .optional()
+        .describe(
+          "The ID of the annotation to update (if updating existing annotation)"
+        ),
+      labelMarkdown: z
+        .string()
+        .describe("The annotation text in markdown format"),
+      categoryId: z
+        .string()
+        .optional()
+        .describe("The ID of the annotation category"),
+      properties: z
+        .array(
+          z.object({
+            type: z.string(),
+          })
+        )
+        .optional()
+        .describe("Additional properties for the annotation"),
+    },
+    async ({ nodeId, annotationId, labelMarkdown, categoryId, properties }) => {
+      try {
+        const result = await sendCommandToFigma("set_annotation", {
+          nodeId,
+          annotationId,
+          labelMarkdown,
+          categoryId,
+          properties,
+        });
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(result),
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error setting annotation: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            },
+          ],
+        };
+      }
+    }
+  );
   // Set Padding Tool
   server.tool(
     "set_padding",
@@ -2329,6 +2386,37 @@ This strategy enables transferring content and property overrides from a source 
   );
 
   server.tool(
+    "delete_node",
+    "Delete a node from Figma",
+    {
+      nodeId: z.string().describe("The ID of the node to delete"),
+    },
+    async ({ nodeId }) => {
+      try {
+        await sendCommandToFigma("delete_node", { nodeId });
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Deleted node with ID: ${nodeId}`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error deleting node: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            },
+          ],
+        };
+      }
+    }
+  );
+  server.tool(
     "create_connections",
     "Create connections between nodes using the default connector style",
     {
@@ -2525,72 +2613,72 @@ This detailed process ensures you correctly interpret the reaction data, prepare
   );
 
   // Get Personal Token Tool
-  server.tool(
-    "get_personal_token",
-    "Get Figma personal access token from environment or server",
-    {},
-    async () => {
-      try {
-        // First try to get from environment/config
-        if (process.env.personalToken) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify({
-                  success: true,
-                  token: process.env.personalToken,
-                  source: "environment",
-                }),
-              },
-            ],
-          };
-        }
+  // server.tool(
+  //   "get_personal_token",
+  //   "Get Figma personal access token from environment or server",
+  //   {},
+  //   async () => {
+  //     try {
+  //       // First try to get from environment/config
+  //       if (process.env.personalToken) {
+  //         return {
+  //           content: [
+  //             {
+  //               type: "text",
+  //               text: JSON.stringify({
+  //                 success: true,
+  //                 token: process.env.personalToken,
+  //                 source: "environment",
+  //               }),
+  //             },
+  //           ],
+  //         };
+  //       }
 
-        try {
-          const result = await sendCommandToFigma(
-            "get_personal_token",
-            {},
-            60 * 1000
-          );
-          return {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify(result),
-              },
-            ],
-          };
-        } catch (error) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Error getting personal token: ${
-                  error instanceof Error ? error.message : String(error)
-                }`,
-              },
-            ],
-          };
-        }
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                success: false,
-                error: `Error getting personal token: ${
-                  error instanceof Error ? error.message : String(error)
-                }`,
-                source: "error",
-              }),
-            },
-          ],
-        };
-      }
-    }
-  );
+  //       try {
+  //         const result = await sendCommandToFigma(
+  //           "get_personal_token",
+  //           {},
+  //           60 * 1000
+  //         );
+  //         return {
+  //           content: [
+  //             {
+  //               type: "text",
+  //               text: JSON.stringify(result),
+  //             },
+  //           ],
+  //         };
+  //       } catch (error) {
+  //         return {
+  //           content: [
+  //             {
+  //               type: "text",
+  //               text: `Error getting personal token: ${
+  //                 error instanceof Error ? error.message : String(error)
+  //               }`,
+  //             },
+  //           ],
+  //         };
+  //       }
+  //     } catch (error) {
+  //       return {
+  //         content: [
+  //           {
+  //             type: "text",
+  //             text: JSON.stringify({
+  //               success: false,
+  //               error: `Error getting personal token: ${
+  //                 error instanceof Error ? error.message : String(error)
+  //               }`,
+  //               source: "error",
+  //             }),
+  //           },
+  //         ],
+  //       };
+  //     }
+  //   }
+  // );
 
   // Get File Components Tool
   server.tool(
@@ -2783,97 +2871,97 @@ This detailed process ensures you correctly interpret the reaction data, prepare
   );
 
   // Team Library Components Tool
-  server.tool(
-    "get_team_library_components",
-    "Get team library components information by team ID",
-    {
-      teamId: z.string().describe("The Figma team ID to get components from"),
-      personalToken: z
-        .string()
-        .optional()
-        .describe(
-          "Optional personal token, will use environment token if not provided"
-        ),
-    },
-    async ({ teamId, personalToken }) => {
-      try {
-        // Get personal token - use provided one or get from environment
-        let token = personalToken;
-        if (!token) {
-          token = process.env.personalToken;
-          if (!token) {
-            return {
-              content: [
-                {
-                  type: "text",
-                  text: JSON.stringify({
-                    success: false,
-                    error:
-                      "Personal token not found. Please provide personalToken parameter or set FIGMA_API_KEY environment variable.",
-                  }),
-                },
-              ],
-            };
-          }
-        }
+  // server.tool(
+  //   "get_team_library_components",
+  //   "Get team library components information by team ID",
+  //   {
+  //     teamId: z.string().describe("The Figma team ID to get components from"),
+  //     personalToken: z
+  //       .string()
+  //       .optional()
+  //       .describe(
+  //         "Optional personal token, will use environment token if not provided"
+  //       ),
+  //   },
+  //   async ({ teamId, personalToken }) => {
+  //     try {
+  //       // Get personal token - use provided one or get from environment
+  //       let token = personalToken;
+  //       if (!token) {
+  //         token = process.env.personalToken;
+  //         if (!token) {
+  //           return {
+  //             content: [
+  //               {
+  //                 type: "text",
+  //                 text: JSON.stringify({
+  //                   success: false,
+  //                   error:
+  //                     "Personal token not found. Please provide personalToken parameter or set FIGMA_API_KEY environment variable.",
+  //                 }),
+  //               },
+  //             ],
+  //           };
+  //         }
+  //       }
 
-        // Make API call to get team components
-        const response = await fetch(
-          `https://api.figma.com/v1/teams/${teamId}/components`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Figma-Token": token,
-            },
-          }
-        );
+  //       // Make API call to get team components
+  //       const response = await fetch(
+  //         `https://api.figma.com/v1/teams/${teamId}/components`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //             "X-Figma-Token": token,
+  //           },
+  //         }
+  //       );
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          return {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify({
-                  success: false,
-                  error: `API request failed: ${response.status} ${response.statusText}`,
-                  details: errorText,
-                }),
-              },
-            ],
-          };
-        }
+  //       if (!response.ok) {
+  //         const errorText = await response.text();
+  //         return {
+  //           content: [
+  //             {
+  //               type: "text",
+  //               text: JSON.stringify({
+  //                 success: false,
+  //                 error: `API request failed: ${response.status} ${response.statusText}`,
+  //                 details: errorText,
+  //               }),
+  //             },
+  //           ],
+  //         };
+  //       }
 
-        const teamComponents = await response.json();
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                success: true,
-                teamId,
-                components: teamComponents,
-              }),
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                success: false,
-                error: `Error getting team components: ${
-                  error instanceof Error ? error.message : String(error)
-                }`,
-              }),
-            },
-          ],
-        };
-      }
-    }
-  );
+  //       const teamComponents = await response.json();
+  //       return {
+  //         content: [
+  //           {
+  //             type: "text",
+  //             text: JSON.stringify({
+  //               success: true,
+  //               teamId,
+  //               components: teamComponents,
+  //             }),
+  //           },
+  //         ],
+  //       };
+  //     } catch (error) {
+  //       return {
+  //         content: [
+  //           {
+  //             type: "text",
+  //             text: JSON.stringify({
+  //               success: false,
+  //               error: `Error getting team components: ${
+  //                 error instanceof Error ? error.message : String(error)
+  //               }`,
+  //             }),
+  //           },
+  //         ],
+  //       };
+  //     }
+  //   }
+  // );
 }
 // Run the server
 start().catch((error) => {
