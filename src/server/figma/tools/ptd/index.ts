@@ -42,58 +42,13 @@ function connectToFigma(port: number = 3055) {
   };
   ws.onmessage = (event) => {
     try {
-      // Define a more specific type with an index signature to allow any property access
-
       const json = JSON.parse(event.data) as ProgressMessage;
       logger.log("onmessage" + JSON.stringify(json));
       if (json.type === "ping") {
         ws?.send(JSON.stringify({ type: "pong" }));
         return;
       }
-      // Handle progress updates
-      if (json.type === "progress_update") {
-        const progressData = json.message.data as CommandProgressUpdate;
-        const requestId = json.id || "";
-
-        if (requestId && pendingRequests.has(requestId)) {
-          const request = pendingRequests.get(requestId)!;
-
-          // Update last activity timestamp
-          request.lastActivity = Date.now();
-
-          // Reset the timeout to prevent timeouts during long-running operations
-          clearTimeout(request.timeout);
-
-          // Create a new timeout
-          request.timeout = setTimeout(() => {
-            if (pendingRequests.has(requestId)) {
-              logger.error(
-                `Request ${requestId} timed out after extended period of inactivity`
-              );
-              pendingRequests.delete(requestId);
-              request.reject(new Error("Request to Figma timed out"));
-            }
-          }, 60000); // 60 second timeout for inactivity
-
-          logger.info(
-            `Progress update for ${progressData.commandType}: ${progressData.progress}% - ${progressData.message}`
-          );
-
-          if (
-            progressData.status === "completed" &&
-            progressData.progress === 100
-          ) {
-            logger.info(
-              `Operation ${progressData.commandType} completed, waiting for final result`
-            );
-          }
-        }
-        return;
-      }
-
-      // Handle regular responses
       const myResponse = json.message;
-      // Handle response to a request
       if (
         myResponse.id &&
         pendingRequests.has(myResponse.id) &&

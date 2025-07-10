@@ -36,18 +36,19 @@ export type FigmaCommand =
   | "set_item_spacing"
   | "get_reactions"
   | "set_default_connector"
-  | "create_connections";
-  
+  | "create_connections"
+  | "get_personal_token";
+
 interface FigmaResponse {
   id: string;
   result?: any;
   error?: string;
 }
 export interface ProgressMessage {
-      message: FigmaResponse | any;
-      type?: string;
-      id?: string;
-      [key: string]: any; // Allow any other properties
+  message: FigmaResponse | any;
+  type?: string;
+  id?: string;
+  [key: string]: any; // Allow any other properties
 }
 export interface SetMultipleAnnotationsParams {
   nodeId: string;
@@ -61,10 +62,10 @@ export interface SetMultipleAnnotationsParams {
 }
 // Define interface for command progress updates
 export interface CommandProgressUpdate {
-  type: 'command_progress';
+  type: "command_progress";
   commandId: string;
   commandType: string;
-  status: 'started' | 'in_progress' | 'completed' | 'error';
+  status: "started" | "in_progress" | "completed" | "error";
   progress: number;
   totalItems: number;
   processedItems: number;
