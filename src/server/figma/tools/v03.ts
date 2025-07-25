@@ -13,7 +13,7 @@ export const registerV03Server = (server: McpServer) => {
   // Register Figma to HTML conversion tool
   server.tool(
     'get_code',
-    'Generate UI code for a given node or the currently selected node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be 1:2. IMPORTANT: After you call this tool, you should call get_image to get an image of the node for context.',
+    '在 Figma 桌面应用中，为指定节点或当前选中的节点生成 UI 代码。你可以通过 nodeId 参数指定一个节点 ID。如果没有提供节点 ID，则使用当前选中的节点。如果提供的是一个 URL，请从该 URL 中提取节点 ID。例如，如果给定的 URL 为 https://figma.com/design/:fileKey/:fileName?node-id=1-2，则提取出的节点 ID 为 1:2。重要提示：在调用此工具后，你应该调用 get_image 来获取该节点的图像，以获得视觉上下文。',
     {
       fileKey: z
         .string()
@@ -141,7 +141,7 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
   )
   server.tool(
     'get_image',
-    'Generate an image for a given node or the currently selected node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be 1:2. Also export Figma design images for visual verification and design fidelity validation. Essential for comparing generated code output against original designs, ensuring pixel-perfect implementation and catching visual discrepancies during the design-to-code process.',
+    '在 Figma 桌面应用中，为指定节点或当前选中的节点生成图像。你可以通过 nodeId 参数指定一个节点 ID。如果没有提供节点 ID，则使用当前选中的节点。如果提供的是一个 URL，请从该 URL 中提取节点 ID。例如，如果给定的 URL 为 https://figma.com/design/:fileKey/:fileName?node-id=1-2，则提取出的节点 ID 为 1:2。同时，导出 Figma 设计图以进行视觉验证和设计保真度校验。这对于将生成的代码输出与原始设计进行对比至关重要，可确保像素级精准实现，并在设计到代码的转换过程中及时发现视觉差异。',
     {
       fileKey: z.string().describe('Figma file identifier from the URL for accessing the design source'),
       ids: z
