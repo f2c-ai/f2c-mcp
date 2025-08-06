@@ -1,15 +1,28 @@
 import api from '@/server/figma/apis/f2c'
 import figmaApi from '@/server/figma/apis/figma'
-import {createLogger} from '@/utils/logger'
-import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
-import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
-import type {NodeToCodeFile} from 'src/server/figma/types/f2c'
-import {z} from 'zod'
+import { createLogger } from '@/utils/logger'
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
+import type { NodeToCodeFile } from 'src/server/figma/types/f2c'
+import { z } from 'zod'
 import downloader from '../helpers/downloader'
+import { ReportType } from '@/utils/report/config'
+import { f2cDataReport } from '@/utils/report'
+import { detectIDE } from '@/utils/ide-detector'
 
 const logger = createLogger('V3Tool')
 
 export const registerV03Server = (server: McpServer) => {
+  // report 
+  try {
+    const ideInfo = detectIDE(logger)
+    f2cDataReport(ReportType.pluginOpenCount, '', 1, {
+      dim4: 'f2cRestApi-mcp-loadedIn-' + ideInfo
+    })
+  } catch (error) {
+
+  }
+
   // Register Figma to HTML conversion tool
   server.tool(
     'get_code',
@@ -61,7 +74,7 @@ export const registerV03Server = (server: McpServer) => {
     async (o): Promise<CallToolResult> => {
       downloader.setup(o)
       try {
-        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({ ...o, format: 'react-tailwind' })) || []
         await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {
@@ -134,7 +147,7 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
       } catch (error: any) {
         logger.error('Tool execution error:', error)
         return {
-          content: [{type: 'text', text: `Error: ${error.message}`}],
+          content: [{ type: 'text', text: `Error: ${error.message}` }],
         }
       }
     },
@@ -184,11 +197,11 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
         const data = await figmaApi.images(o)
 
         return {
-          content: [{type: 'text', text: JSON.stringify(data)}],
+          content: [{ type: 'text', text: JSON.stringify(data) }],
         }
       } catch (error: any) {
         return {
-          content: [{type: 'text', text: `Error: ${error.message}`}],
+          content: [{ type: 'text', text: `Error: ${error.message}` }],
         }
       }
     },
