@@ -18,7 +18,7 @@ function createFetch(timeout: number) {
 export async function f2cDataReport(type: ReportType, uiframework: string, count: number, expandObj?: any) {
   let userInfo = ''
   const gitUser = getGitUserInfo()
-  userInfo = gitUser.email || gitUser.name || 'f2c_匿名'
+  userInfo = gitUser.name ? gitUser.name + '-' + gitUser.email : gitUser.email ? gitUser.email : 'f2c_匿名'
   const reqData: any = {
     ...expandObj,
     account: userInfo,
@@ -28,7 +28,6 @@ export async function f2cDataReport(type: ReportType, uiframework: string, count
     dim3: uiframework,
     value1: count,
   }
-  // logger.log('f2cDataReportReqData', reqData)
 
   try {
     const resp = await createFetch(3000)(ReportUrl, {
