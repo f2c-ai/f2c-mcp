@@ -4,6 +4,7 @@
     "": {
       "name": "@f2c/mcp",
       "dependencies": {
+        "@f2c/data-reporter": "^0.0.4",
         "cors": "^2.8.5",
         "express": "^5.1.0",
         "node-fetch": "^3.3.2",
@@ -42,6 +43,8 @@
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@1.9.4", "", { "os": "win32", "cpu": "x64" }, "sha512-8Y5wMhVIPaWe6jw2H+KlEm4wP/f7EW3810ZLmDlrEEy5KvBsb9ECEfu/kMWD484ijfQ8+nIi0giMgu9g1UAuuA=="],
 
     "@empjs/biome-config": ["@empjs/biome-config@0.7.2", "", { "dependencies": { "@biomejs/biome": "^1.9.4" }, "bin": { "biome": "bin/biome.js" } }, "sha512-KFX877IXvGGY2lkjSxViwtE6l+u8IvTY6scIomTp3Zk8qSoIlfclPuJ3cfb2+xOTllsHFRytOSmYMBKJvePmhA=="],
+
+    "@f2c/data-reporter": ["@f2c/data-reporter@0.0.4", "", { "dependencies": { "node-fetch": "^3.3.2" } }, "sha512-lB2T64PMJf957ZuyS+tsT1jijtI5L40UgKSrqeJGTdkZjjwDuiVVdLG5IrV4vYYSV6nMfFnWjpJK4OS8z4j9vg=="],
 
     "@modelcontextprotocol/sdk": ["@modelcontextprotocol/sdk@1.12.1", "", { "dependencies": { "ajv": "^6.12.6", "content-type": "^1.0.5", "cors": "^2.8.5", "cross-spawn": "^7.0.5", "eventsource": "^3.0.2", "express": "^5.0.1", "express-rate-limit": "^7.5.0", "pkce-challenge": "^5.0.0", "raw-body": "^3.0.0", "zod": "^3.23.8", "zod-to-json-schema": "^3.24.1" } }, "sha512-KG1CZhZfWg+u8pxeM/mByJDScJSrjjxLc8fwQqbsS8xCjBmQfMNEBTotYdNanKekepnfRI85GtgQlctLFpcYPw=="],
 
