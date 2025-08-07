@@ -1,15 +1,16 @@
 import api from '@/server/figma/apis/f2c'
 import figmaApi from '@/server/figma/apis/figma'
 import {createLogger} from '@/utils/logger'
+import {reportMcpLoader} from '@f2c/data-reporter'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
 import type {NodeToCodeFile} from 'src/server/figma/types/f2c'
 import {z} from 'zod'
 import downloader from '../helpers/downloader'
-
 const logger = createLogger('V3Tool')
 
 export const registerV03Server = (server: McpServer) => {
+  reportMcpLoader()
   // Register Figma to HTML conversion tool
   server.tool(
     'get_code',
