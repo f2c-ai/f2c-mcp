@@ -1,6 +1,11 @@
+import { filterDesignComponentSetInfo } from "@/utils/filterDesignComponentInfo";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { sendCommandToFigma } from "./index";
+import { DEFAULT_PERSONAL_TOKEN } from "../../config";
+import { createLogger } from "@/utils/logger";
+import { processComponentsToMarkdown } from "@/utils/ptd/filterComponent";
+const logger = createLogger("ptdTool");
 const componentToolList = (server: McpServer) => {
   // Get File components Set Info
   server.tool(
@@ -10,40 +15,31 @@ const componentToolList = (server: McpServer) => {
       fileKey: z
         .string()
         .describe("The Figma file identifier found in the file URL"),
-      personalToken: z
-        .string()
-        .optional()
-        .describe(
-          "Optional personal token, will use environment token if not provided"
-        ),
     },
-    async ({ fileKey, personalToken }) => {
+    async ({ fileKey }) => {
       try {
-        let token = personalToken;
+        const token = DEFAULT_PERSONAL_TOKEN;
+        logger.log("token", token);
         if (!token) {
-          token = process.env.personalToken;
-          if (!token) {
-            return {
-              content: [
-                {
-                  type: "text",
-                  text: JSON.stringify({
-                    success: false,
-                    error:
-                      "Personal token not found. Please provide personalToken parameter or set FIGMA_API_KEY environment variable.",
-                  }),
-                },
-              ],
-            };
-          }
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({
+                  success: false,
+                  error:
+                    "Personal token not found. Please provide personalToken parameter or set FIGMA_API_KEY environment variable.",
+                }),
+              },
+            ],
+          };
         }
 
-        // Make API call to get file components
+        // Make API call to get file components set
         const response = await fetch(
-          `https://api.figma.com/v1/files/${fileKey}/components`,
+          `https://api.figma.com/v1/files/${fileKey}/component_sets`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
               "X-Figma-Token": token,
             },
           }
@@ -66,23 +62,23 @@ const componentToolList = (server: McpServer) => {
         }
 
         const fileComponentSets = await response.json();
-        if (fileComponentSets.meta.components) {
-          const res = filterDesignComponentSetInfo(
-            fileComponentSets.meta.components
-          );
+        if (fileComponentSets.meta.component_sets) {
+          // 将文件保存到generated-ui目录下
+          const outputPath = "./generated-ui/components.md";
+          const res = processComponentsToMarkdown(fileComponentSets, outputPath);
         }
-        // return {
-        //   content: [
-        //     {
-        //       type: "text",
-        //       text: JSON.stringify({
-        //         success: true,
-        //         fileKey,
-        //         components: fileComponents,
-        //       }),
-        //     },
-        //   ],
-        // };
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                success: true,
+                fileKey,
+                // components: fileComponents,
+              }),
+            },
+          ],
+        };
       } catch (error) {
         return {
           content: [
@@ -143,7 +139,7 @@ const componentToolList = (server: McpServer) => {
           `https://api.figma.com/v1/components/${componentKey}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              // Authorization: `Bearer ${token}`,
               "X-Figma-Token": token,
             },
           }
@@ -166,6 +162,7 @@ const componentToolList = (server: McpServer) => {
         }
 
         const componentData = await response.json();
+
         return {
           content: [
             {
@@ -213,7 +210,7 @@ const componentToolList = (server: McpServer) => {
         const result = await sendCommandToFigma("get_instance_overrides", {
           instanceNodeId: nodeId || null,
         });
-        const typedResult = result as getInstanceOverridesResult;
+        const typedResult = result as any;
 
         return {
           content: [

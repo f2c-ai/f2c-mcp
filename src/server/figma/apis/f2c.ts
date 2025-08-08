@@ -1,5 +1,6 @@
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
 import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from 'src/server/figma/types/f2c'
+import compatFetch from 'src/utils/fetch'
 import {LogLevel, createLogger} from 'src/utils/logger'
 
 const logger = createLogger('F2cApi', LogLevel.INFO)
@@ -34,9 +35,12 @@ class F2cApi {
     try {
       const fetchOptions = {
         method: 'GET',
+        headers: {
+          'F2c-Api-Platform': 'mcp',
+        },
       }
       logger.debug('fetch', url)
-      const response = await fetch(url, fetchOptions)
+      const response = await compatFetch(url, fetchOptions)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }

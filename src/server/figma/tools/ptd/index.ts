@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { createLogger } from "@/utils/logger";
 import {
-  FigmaCommand,
-  ProgressMessage,
   CommandProgressUpdate,
+  type FigmaCommand,
+  type ProgressMessage,
 } from "../../types/design";
 const logger = createLogger("ptdTool");
 let ws: WebSocket | null = null;
@@ -25,7 +25,7 @@ const pendingRequests = new Map<
     lastActivity: number; // Add timestamp for last activity
   }
 >();
-function connectToFigma(port: number = 3055) {
+function connectToFigma(port = 3055) {
   if (ws && ws.readyState === WebSocket.OPEN) {
     logger.info("Already connected to Figma");
     return;
@@ -102,7 +102,7 @@ function connectToFigma(port: number = 3055) {
 
     if (reconnectAttempts < maxReconnectAttempts) {
       const reconnectDelay =
-        initialReconnectDelay * Math.pow(2, reconnectAttempts);
+        initialReconnectDelay * 2 ** reconnectAttempts;
       logger.info(
         `Attempting to reconnect in ${
           reconnectDelay / 1000
@@ -119,7 +119,7 @@ async function start() {
   try {
     console.log("FigmaMCP server starting...");
     // Try to connect to Figma socket server
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3055;
+    const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3055;
     connectToFigma(port);
   } catch (error) {
     logger.warn(
@@ -158,8 +158,9 @@ async function joinChannel(channelName: string): Promise<void> {
 function sendCommandToFigma(
   command: FigmaCommand,
   params: unknown = {},
-  timeoutMs: number = 30000
+  timeoutMs = 30000
 ): Promise<unknown> {
+  logger.info(`sendCommandToFigmaReq`, command, params);
   return new Promise((resolve, reject) => {
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       connectToFigma();
@@ -212,8 +213,7 @@ function sendCommandToFigma(
     });
 
     // Send the request
-    logger.info(`Sending command to Figma: ${command}`);
-    logger.debug(`Request details: ${JSON.stringify(request)}`);
+    logger.info(`Request details: ${JSON.stringify(request)}`);
     ws.send(JSON.stringify(request));
   });
 }

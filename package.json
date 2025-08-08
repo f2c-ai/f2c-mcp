@@ -1,6 +1,6 @@
 {
   "name": "@f2c/mcp",
-  "version": "0.3.0",
+  "version": "0.3.4",
   "description": "",
   "repository": {
     "type": "git",
@@ -60,8 +60,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "ws": "latest",
-    "zod": "^3.22.4"
+    "node-fetch": "^3.3.2",
+    "zod": "^3.22.4",
+    "@f2c/data-reporter": "^0.0.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -71,6 +72,7 @@
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.0",
+    "@types/node-fetch": "^2.6.12",
     "typescript": "^5.8.3"
   },
   "engines": {

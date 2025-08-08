@@ -1,5 +1,6 @@
 import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
 import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import compatFetch from 'src/utils/fetch'
 import {createLogger} from 'src/utils/logger'
 
 const logger = createLogger('FigmaRestApi')
@@ -39,7 +40,7 @@ class FigmaRestApi {
           'X-FIGMA-TOKEN': this.personalToken,
         },
       }
-      const response = await fetch(url, fetchOptions)
+      const response = await compatFetch(url, fetchOptions)
       // logger.debug('response', url, JSON.stringify(fetchOptions))
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

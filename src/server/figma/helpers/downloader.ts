@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import fsp from 'fs/promises'
+import compatFetch from 'src/utils/fetch'
 import {createLogger} from 'src/utils/logger'
 import type {NodeToCodeFile, NodeToCodeWithF2COptions} from '../types/f2c'
 
@@ -36,7 +37,7 @@ export class Downloader {
       const localFilePath = path.join(localPath, localfileName)
 
       // 下载图片
-      const response = await fetch(url)
+      const response = await compatFetch(url)
       if (!response.ok) {
         throw new Error(`下载失败: ${response.status} ${response.statusText}`)
       }

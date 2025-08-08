@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { sendCommandToFigma } from "./index.ts";
+import { joinChannel } from "./index";
 const channelToolList = (server: McpServer) => {
   // Update the join_channel tool
   server.tool(

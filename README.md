@@ -43,6 +43,9 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 
 See [Configuration and Development](docs/en/GettingStarted.md)
 
+## Data Privacy Notice
+The logging tools integrated in this project are used solely for basic usage statistics and error log reporting. No sensitive information or user data is collected. All reported data is used exclusively to improve product quality and user experience.
+
 ## FAQ
 See [FAQ](docs/en/FAQ.md)
 
