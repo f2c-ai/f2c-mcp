@@ -3,4 +3,4 @@ dist/
 .env
 .demo/
 build/
-.comate/mcp.json
+.comate/
