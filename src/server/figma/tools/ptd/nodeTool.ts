@@ -1,6 +1,6 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { sendCommandToFigma } from ".";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { sendCommandToFigma } from "./index";
 const getNodeInfoToolList = (server: McpServer) => {
   // Document Info Tool
   server.tool(

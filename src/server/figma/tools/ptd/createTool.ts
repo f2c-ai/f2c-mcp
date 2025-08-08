@@ -1,6 +1,6 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { sendCommandToFigma } from ".";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { sendCommandToFigma } from "./index";
 const createNodeToolList = (server: McpServer) => {
   // Create Rectangle Tool
   server.tool(
@@ -467,7 +467,7 @@ const createNodeToolList = (server: McpServer) => {
         };
 
         // Track overall progress
-        let totalProcessed = 0;
+        const totalProcessed = 0;
         const totalToProcess = annotations.length;
 
         // Use the plugin's set_multiple_annotations function with chunking
@@ -723,7 +723,7 @@ const createNodeToolList = (server: McpServer) => {
         };
 
         // Track overall progress
-        let totalProcessed = 0;
+        const totalProcessed = 0;
         const totalToProcess = text.length;
 
         // Use the plugin's set_multiple_text_contents function with chunking

@@ -1,23 +1,25 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import channelToolList from "./ptd/channelTool";
-import createNodeToolList from "./ptd/createTool";
-import getNodeInfoToolList from "./ptd/nodeTool";
-import prompt from "./ptd/promtp";
-import { z } from "zod";
-import {
-  ProgressMessage,
-  FigmaCommand,
-  CommandProgressUpdate,
-} from "../types/design";
+import componentToolList from "./ptd/componentToolList";
+
+import { filterFigmaNode, rgbaToHex } from "@/utils/figmaUtils";
 import { createLogger } from "@/utils/logger";
+import { z } from "zod";
 import { DEFAULT_PERSONAL_TOKEN } from "../config";
 import {
-  start,
+  CommandProgressUpdate,
+  FigmaCommand,
+  ProgressMessage,
+} from "../types/design";
+import channelToolList from "./ptd/channelTool";
+import createNodeToolList from "./ptd/createTool";
+import {
   connectToFigma,
-  sendCommandToFigma,
   joinChannel,
+  sendCommandToFigma,
+  start,
 } from "./ptd/index";
-import { filterFigmaNode, rgbaToHex } from "@/utils/figmaUtils";
+import getNodeInfoToolList from "./ptd/nodeTool";
+import prompt from "./ptd/promtp";
 const logger = createLogger("ptdTool");
 
 export function registerPTDServer(server: McpServer) {
