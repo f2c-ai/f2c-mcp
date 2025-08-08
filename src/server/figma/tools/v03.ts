@@ -19,12 +19,12 @@ export const registerV03Server = (server: McpServer) => {
       fileKey: z
         .string()
         .describe(
-          'The Figma file identifier found in the file URL (e.g., https://www.figma.com/file/XXXXXXXXXXXX/). Extract the XXXXXXXXXXXX portion as the fileKey.',
+          'Figma 文件 URL 中的文件标识符（例如：https://www.figma.com/file/XXXXXXXXXXXX/）。请提取其中的 XXXXXXXXXXXX 作为 fileKey。',
         ),
       ids: z
         .string()
         .describe(
-          'Comma-separated list of Figma node IDs for conversion. To obtain node IDs, select elements in Figma, right-click and select "Copy/Paste as" → "Copy ID".',
+          '用于转换的 Figma 节点 ID，使用英文逗号分隔。获取节点 ID 的方式：在 Figma 中选中元素，右键选择“Copy/Paste as”→“Copy ID”。',
         ),
       // format: z
       //   .enum(['html', 'react-cssmodules', 'react-tailwind'])
@@ -36,19 +36,19 @@ export const registerV03Server = (server: McpServer) => {
         .string()
         .optional()
         .describe(
-          'Figma personal access token for API authentication.The parameters are not required when the tool is called.',
+          '用于 API 认证的 Figma 个人访问令牌。调用该工具时此参数不是必填项。',
         ),
       localPath: z
         .string()
         .optional()
         .describe(
-          'Absolute path for asset(e.g., images) and code storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When this path is set, all code-related static resources are stored in this directory, while other assets (e.g., images) will be saved into the subdirectory named assets under this path.',
+          '用于存放资源（如图片）和代码的本地绝对路径；若目录不存在将自动创建。路径需符合操作系统的格式要求，无需特殊转义。设置该路径后，所有与代码相关的静态资源会存放在此目录下，其他资源（如图片）将保存在该路径下名为 assets 的子目录中。',
         ),
       imgFormat: z
         .enum(['png', 'jpg', 'svg'])
         .default('png')
         .describe(
-          'Export format for image assets: "png" for lossless quality, "jpg" for compressed files, or "svg" for vector graphics.',
+          '导出图片资源的格式：“png”为无损质量，“jpg”为压缩文件，“svg”为矢量图形。',
         ),
       scaleSize: z
         .number()
@@ -56,7 +56,7 @@ export const registerV03Server = (server: McpServer) => {
         .max(4)
         .default(2)
         .describe(
-          'Image export scale factor (1-4). Higher values yield better quality at the cost of larger file sizes.',
+          '导出图片的缩放倍数（1–4）。数值越大，质量越高，但文件体积也越大。',
         ),
     },
     async (o): Promise<CallToolResult> => {
@@ -144,41 +144,41 @@ ${summary}. Convert the Tailwind to vanilla CSS if not already used in the codeb
     'get_image',
     '在 Figma 桌面应用中，为指定节点或当前选中的节点生成图像。你可以通过 nodeId 参数指定一个节点 ID。如果没有提供节点 ID，则使用当前选中的节点。如果提供的是一个 URL，请从该 URL 中提取节点 ID。例如，如果给定的 URL 为 https://figma.com/design/:fileKey/:fileName?node-id=1-2，则提取出的节点 ID 为 1:2。同时，导出 Figma 设计图以进行视觉验证和设计保真度校验。这对于将生成的代码输出与原始设计进行对比至关重要，可确保像素级精准实现，并在设计到代码的转换过程中及时发现视觉差异。',
     {
-      fileKey: z.string().describe('Figma file identifier from the URL for accessing the design source'),
+      fileKey: z.string().describe('来自 URL 的 Figma 文件标识符，用于访问设计源文件'),
       ids: z
         .string()
         .describe(
-          'Comma-separated node IDs to export. Use "Copy ID" from Figma context menu to get precise element references for comparison',
+          '要导出的节点 ID，使用英文逗号分隔。可通过 Figma 右键菜单的“Copy ID”获取精确的元素引用以便对比。',
         ),
       format: z
         .enum(['jpg', 'png', 'svg', 'pdf'])
         .optional()
         .describe(
-          'Export format for verification: "png" for pixel-perfect comparison with transparency, "jpg" for quick previews, "svg" for scalable reference, "pdf" for print validation',
+          '用于校验的导出格式：“png”适合带透明通道的像素级对比，“jpg”适合快速预览，“svg”便于可缩放参考，“pdf”用于打印级别验证。',
         ),
       scale: z
         .number()
         .optional()
         .describe(
-          'Scale factor (1-4x) for high-resolution comparison. Use 2x+ for detailed fidelity checks on retina displays',
+          '导出倍率（1–4 倍），用于高分辨率对比。Retina 等高分屏上建议使用 2 倍及以上以便进行细节保真检查。',
         ),
       svg_include_id: z
         .boolean()
         .optional()
-        .describe('Include element IDs in SVG for precise element mapping during code validation'),
+        .describe('在 SVG 中包含元素 ID，便于代码校验时进行精确的元素映射'),
       svg_simplify_stroke: z
         .boolean()
         .optional()
-        .describe('Simplify stroke paths for cleaner reference images during visual comparison'),
+        .describe('简化描边路径，使对比用的参考图更清晰'),
       use_absolute_bounds: z
         .boolean()
         .optional()
-        .describe('Use absolute positioning for accurate layout verification against implemented code'),
-      version: z.string().optional().describe('Specific design version for consistent comparison baseline'),
+        .describe('使用绝对边界定位，便于与实现代码进行更准确的布局校验'),
+      version: z.string().optional().describe('指定设计版本，以确保对比基线一致'),
       personalToken: z
         .string()
         .optional()
-        .describe('Figma personal access token for authenticated access to design files'),
+        .describe('Figma 个人访问令牌，用于经过认证地访问设计文件'),
     },
     async (o): Promise<CallToolResult> => {
       try {
