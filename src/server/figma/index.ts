@@ -1,5 +1,5 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
-import {serverName, serverVersion} from 'src/server/figma/config'
+import config from 'src/server/figma/config'
 import {registerNotificatons} from './notifications'
 // import {registerF2cServer} from 'src/server/figma/tools/f2c'
 // import {registerFigmaServer} from 'src/server/figma/tools/figma'
@@ -7,8 +7,8 @@ import {registerV03Server} from './tools/v03'
 
 export const server = new McpServer(
   {
-    name: serverName,
-    version: serverVersion,
+    name: config.serverName,
+    version: config.serverVersion,
   },
   {
     capabilities: {

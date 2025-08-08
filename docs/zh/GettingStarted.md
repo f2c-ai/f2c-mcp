@@ -97,9 +97,11 @@ npm install -g @f2c/mcp
 {
   "mcpServers": {
       "f2c_mcp": {
-        "transport": "streamable_http",
+        "transport": "streamableHttp",
         "url": "http://localhost:3000/mcp",
-        "headers": {},
+        "headers": {
+          "personalToken": ""
+        },
         "timeout": 50
       }
     }
@@ -114,7 +116,9 @@ npm install -g @f2c/mcp
       "f2c_mcp": {
         "transport": "sse",
         "url": "http://localhost:3000/sse",
-        "headers": {},
+        "headers": {
+          "personalToken": ""
+        },
         "timeout": 50
       }
     }

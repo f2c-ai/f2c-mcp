@@ -1,19 +1,17 @@
-import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import config from 'src/server/figma/config'
 import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from 'src/server/figma/types/f2c'
 import compatFetch from 'src/utils/fetch'
 import {LogLevel, createLogger} from 'src/utils/logger'
 
 const logger = createLogger('F2cApi', LogLevel.INFO)
-
 class F2cApi {
   protected f2cHost = `https://f2c-figma-api.yy.com/api`
-  private personalToken = DEFAULT_PERSONAL_TOKEN
   //
   async nodeToCode(o: NodeToCodeWithF2COptions): Promise<NodeToCodeFile[]> {
     const op = {
       fileKey: o.fileKey,
       nodeIds: o.ids,
-      personal_token: o.personalToken || this.personalToken,
+      personal_token: o.personalToken || config.personalToken,
       option: {
         cssFramework: 'inlinecss',
         imgFormat: o.imgFormat || 'png',
@@ -31,7 +29,7 @@ class F2cApi {
     return this.fetch(url, 'json')
   }
   async fetch(url: string, resType: 'json' | 'text' = 'json'): Promise<any> {
-    // logger.debug('fetch', url, this.personalToken)
+    logger.debug('fetch', url, config.personalToken)
     try {
       const fetchOptions = {
         method: 'GET',
