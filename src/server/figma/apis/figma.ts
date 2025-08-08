@@ -1,13 +1,11 @@
 import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
-import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import config from 'src/server/figma/config'
 import compatFetch from 'src/utils/fetch'
 import {createLogger} from 'src/utils/logger'
 
 const logger = createLogger('FigmaRestApi')
-
 class FigmaRestApi {
   protected figmaHost = `https://api.figma.com/v1`
-  private personalToken = DEFAULT_PERSONAL_TOKEN
   async files(o: GetFileParams) {
     let url: string
     if (o.ids) {
@@ -37,7 +35,7 @@ class FigmaRestApi {
       const fetchOptions = {
         method: 'GET',
         headers: {
-          'X-FIGMA-TOKEN': this.personalToken,
+          'X-FIGMA-TOKEN': config.personalToken,
         },
       }
       const response = await compatFetch(url, fetchOptions)
@@ -57,7 +55,7 @@ class FigmaRestApi {
       return api
     }
     if (o.personalToken) {
-      this.personalToken = o.personalToken
+      config.personalToken = o.personalToken
     }
     const url: any = new URL(api)
     for (const [key, value] of Object.entries(o)) {

@@ -1,13 +1,13 @@
 import {afterEach, describe, expect, it} from 'bun:test'
 import f2cApi from '@/server/figma/apis/f2c'
 import figmaApi from '@/server/figma/apis/figma'
-import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import config from 'src/server/figma/config'
 
 // 测试常量
 const originalFetch = global.fetch
 const fileKey = 'DkzGbKo09kf2w1ytMPALxd'
 const ids = '293-1752'
-const personalToken = DEFAULT_PERSONAL_TOKEN
+const personalToken = config.personalToken
 
 // 模拟响应生成器
 const createMockResponse = (options: {
@@ -108,7 +108,7 @@ describe('Figma API', () => {
 
       // 验证使用了默认令牌
       expect(fetchCalls.length).toBeGreaterThan(0)
-      expect(fetchCalls[0][0]).toContain(`personal_token=${DEFAULT_PERSONAL_TOKEN}`)
+      expect(fetchCalls[0][0]).toContain(`personal_token=${personalToken}`)
 
       // 恢复原始方法
       f2cApi.fetch = originalFetchMethod

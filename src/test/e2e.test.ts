@@ -2,14 +2,14 @@ import {describe, expect, it} from 'bun:test'
 import f2cApi from '@/server/figma/apis/f2c'
 import api from '@/server/figma/apis/figma'
 import {createLogger} from '@/utils/logger'
-import {DEFAULT_PERSONAL_TOKEN} from 'src/server/figma/config'
+import config from 'src/server/figma/config'
 
 const logger = createLogger('E2ETest')
 
 // 测试常量
 const fileKey = 'DkzGbKo09kf2w1ytMPALxd'
 const ids = '293-1752'
-const personalToken = DEFAULT_PERSONAL_TOKEN
+const personalToken = config.personalToken
 
 describe('Figma API 端到端测试', () => {
   // 设置较长的超时时间，因为实际网络请求可能需要更多时间

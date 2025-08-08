@@ -1,5 +1,6 @@
 import type {Server} from 'http'
 import {randomUUID} from 'node:crypto'
+import figmaConfig from '@/server/figma/config'
 import {LogLevel, Logger, createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {SSEServerTransport} from '@modelcontextprotocol/sdk/server/sse.js'
@@ -8,15 +9,23 @@ import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express, {type Request, type Response} from 'express'
 
 const logger = createLogger('HttpServer', LogLevel.INFO)
-
 let httpServer: Server | null = null
 const transports = {
   streamable: {} as Record<string, StreamableHTTPServerTransport>,
   sse: {} as Record<string, SSEServerTransport>,
 }
-
 export async function startHttpServer(port: number, mcpServer: McpServer): Promise<void> {
   const app = express()
+
+  // 拦截所有请求，检查并更新personalToken
+  app.use((req, res, next) => {
+    const personalToken = req.headers.personaltoken as string
+    if (personalToken && personalToken.trim() !== '' && personalToken !== figmaConfig.personalToken) {
+      logger.debug('Updating Figma personal token from request headers', personalToken, figmaConfig.personalToken)
+      figmaConfig.personalToken = personalToken
+    }
+    next()
+  })
 
   app.use('/mcp', express.json())
 
