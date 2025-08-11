@@ -26,15 +26,16 @@ class F2cApi {
       op.option.cssFramework = 'tailwindcss'
     }
     const url = this.opToUrl(`${this.f2cHost}/nodes`, op)
-    return this.fetch(url, 'json')
+    return this.fetch(url, 'json', o.ideInfo || 'other')
   }
-  async fetch(url: string, resType: 'json' | 'text' = 'json'): Promise<any> {
+  async fetch(url: string, resType: 'json' | 'text' = 'json', ideInfo: string): Promise<any> {
     logger.debug('fetch', url, config.personalToken)
     try {
       const fetchOptions = {
         method: 'GET',
         headers: {
-          'F2c-Api-Platform': 'mcp',
+          'F2c-Api-Platform': `mcp-${ideInfo}`,
+
         },
       }
       logger.debug('fetch', url)
