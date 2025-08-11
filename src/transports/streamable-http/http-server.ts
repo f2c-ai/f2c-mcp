@@ -19,10 +19,13 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
 
   // 拦截所有请求，检查并更新personalToken
   app.use((req, res, next) => {
-    const personalToken = req.header('personalToken') as string
+    let personalToken = req.header('personalToken') as string
     //
     // console.log('[personalToken]', personalToken, figmaConfig.personalToken)
     //
+    if (personalToken.indexOf(',') > 0) {
+      personalToken = personalToken.split(',')?.[0]
+    }
     if (personalToken && personalToken.trim() !== '' && personalToken !== figmaConfig.personalToken) {
       logger.debug('Updating Figma personal token from request headers', personalToken, figmaConfig.personalToken)
       figmaConfig.personalToken = personalToken
