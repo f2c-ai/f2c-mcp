@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@f2c/data-reporter':
-    specifier: ^0.0.4
-    version: 0.0.4
+    specifier: ^0.0.7
+    version: 0.0.7
   cors:
     specifier: ^2.8.5
     version: 2.8.5
@@ -147,8 +147,8 @@ packages:
       '@biomejs/biome': 1.9.4
     dev: true
 
-  /@f2c/data-reporter@0.0.4:
-    resolution: {integrity: sha512-lB2T64PMJf957ZuyS+tsT1jijtI5L40UgKSrqeJGTdkZjjwDuiVVdLG5IrV4vYYSV6nMfFnWjpJK4OS8z4j9vg==}
+  /@f2c/data-reporter@0.0.7:
+    resolution: {integrity: sha512-NsIwI32rAOdOKB8sCfDmw7LiKBzqaeJMYf6Or58iI1A0nwQkbyH24xlgVm1alurow27X0umnjk55uYItNGeX3Q==}
     dependencies:
       node-fetch: 3.3.2
     dev: false
