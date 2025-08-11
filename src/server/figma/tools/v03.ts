@@ -8,9 +8,11 @@ import type {NodeToCodeFile} from 'src/server/figma/types/f2c'
 import {z} from 'zod'
 import downloader from '../helpers/downloader'
 const logger = createLogger('V3Tool')
-
+let ideInfo = ''
 export const registerV03Server = (server: McpServer) => {
-  reportMcpLoader()
+   reportMcpLoader().then((ide) => {
+    ideInfo = ide || 'other'
+   })
   // Register Figma to HTML conversion tool
   server.tool(
     'get_code',
@@ -62,7 +64,8 @@ export const registerV03Server = (server: McpServer) => {
     async (o): Promise<CallToolResult> => {
       downloader.setup(o)
       try {
-        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind'})) || []
+        const cb: NodeToCodeFile[] = (await api.nodeToCode({...o, format: 'react-tailwind', ideInfo})) || []
+
         await downloader.checkLocalAndDownload(cb)
         if (!cb) {
           return {

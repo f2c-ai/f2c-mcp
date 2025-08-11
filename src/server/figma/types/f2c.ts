@@ -12,6 +12,7 @@ export interface NodeToCodeWithF2COptions {
   fileKey: string
   imgFormat: 'png' | 'jpg' | 'svg'
   scaleSize: number
+  ideInfo?: string
 }
 
 export interface NodeToCodeAllFiles {
