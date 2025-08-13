@@ -5,17 +5,20 @@
  * @param {string|undefined} defaultValue - Default value, returned if parameter not found
  * @returns {string|undefined} Parameter value or default value
  */
-export function getArgValue(paramName: string, defaultValue?: string): string | undefined {
-  const args = process.argv
-  const paramPrefix = `--${paramName}=`
+export function getArgValue(
+  paramName: string,
+  defaultValue?: string
+): string | undefined {
+  const args = process.argv;
+  const paramPrefix = `--${paramName}=`;
 
   for (const arg of args) {
     // Check if argument starts with specified prefix
     if (arg.startsWith(paramPrefix)) {
-      return arg.substring(paramPrefix.length)
+      return arg.substring(paramPrefix.length);
     }
   }
 
   // If parameter not found, return default value
-  return defaultValue
+  return defaultValue;
 }

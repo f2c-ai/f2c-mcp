@@ -12,7 +12,21 @@ interface ComponentSet {
   description: string;
   created_at?: string;
   updated_at?: string;
-  containing_frame?: any;
+  containing_frame?: {
+    name?: string;
+    nodeId?: string;
+    pageId?: string;
+    pageName?: string;
+    backgroundColor?: string;
+    containingStateGroup?: {
+      name: string;
+      nodeId: string;
+    };
+    containingComponentSet?: {
+      name: string;
+      nodeId: string;
+    };
+  };
   user?: any;
 }
 
@@ -20,6 +34,10 @@ interface FilteredComponentSet {
   key: string;
   name: string;
   description: string;
+  containingComponentSet?: {
+    name: string;
+    nodeId: string;
+  };
 }
 
 // 组件分类接口
@@ -32,28 +50,29 @@ interface ComponentData {
   error: boolean;
   status: number;
   meta: {
-    component_sets: ComponentSet[];
+    components: ComponentSet[];
   };
   i18n: any;
 }
 
 /**
- * 过滤组件数据，只保留key、name、description字段
+ * 过滤组件数据，保留key、name、description和containingComponentSet字段
  * @param data 原始组件数据
  * @returns 过滤后的组件数据
  */
 export function filterComponentSets(
   data: ComponentData
 ): FilteredComponentSet[] {
-  return data.meta.component_sets.map((component) => ({
+  return data.meta.components.map((component) => ({
     key: component.key,
     name: component.name,
     description: component.description,
+    containingComponentSet: component.containing_frame?.containingComponentSet,
   }));
 }
 
 /**
- * 对组件进行分类
+ * 根据containingComponentSet对组件进行分类
  * @param components 过滤后的组件数据
  * @returns 分类后的组件数据
  */
@@ -63,44 +82,49 @@ export function categorizeComponents(
   const categories: { [key: string]: FilteredComponentSet[] } = {};
 
   components.forEach((component) => {
-    // 根据组件名称进行分类
-    let categoryName = "其他组件";
-
-    if (
-      component.name.includes("导航") ||
-      component.name.includes("步骤") ||
-      component.name.includes("Menu")
-    ) {
-      categoryName = "导航组件";
-    } else if (
-      component.name.includes("反馈") ||
-      component.name.includes("缺省") ||
-      component.name.includes("Result")
-    ) {
-      categoryName = "反馈组件";
-    } else if (
-      component.name.includes("Table") ||
-      component.name.includes("表格")
-    ) {
-      categoryName = "数据展示";
-    } else if (
-      component.name.includes("Input") ||
-      component.name.includes("Tag") ||
-      component.name.includes("Select")
-    ) {
-      categoryName = "数据录入";
-    } else if (
-      component.name.includes("Button") ||
-      component.name.includes("按钮")
-    ) {
-      categoryName = "通用组件";
-    } else if (
-      component.name.includes("时间") ||
-      component.name.includes("Timeline") ||
-      component.name.includes("Badge") ||
-      component.name.includes("Watermark")
-    ) {
-      categoryName = "数据展示";
+    // 根据containingComponentSet进行分类
+    let categoryName = "未分类组件";
+    
+    if (component.containingComponentSet?.name) {
+      categoryName = component.containingComponentSet.name;
+    } else {
+      // 如果没有containingComponentSet，使用原有的名称分类逻辑作为备选
+      if (
+        component.name.includes("导航") ||
+        component.name.includes("步骤") ||
+        component.name.includes("Menu")
+      ) {
+        categoryName = "导航组件";
+      } else if (
+        component.name.includes("反馈") ||
+        component.name.includes("缺省") ||
+        component.name.includes("Result")
+      ) {
+        categoryName = "反馈组件";
+      } else if (
+        component.name.includes("Table") ||
+        component.name.includes("表格")
+      ) {
+        categoryName = "数据展示";
+      } else if (
+        component.name.includes("Input") ||
+        component.name.includes("Tag") ||
+        component.name.includes("Select")
+      ) {
+        categoryName = "数据录入";
+      } else if (
+        component.name.includes("Button") ||
+        component.name.includes("按钮")
+      ) {
+        categoryName = "通用组件";
+      } else if (
+        component.name.includes("时间") ||
+        component.name.includes("Timeline") ||
+        component.name.includes("Badge") ||
+        component.name.includes("Watermark")
+      ) {
+        categoryName = "数据展示";
+      }
     }
 
     if (!categories[categoryName]) {

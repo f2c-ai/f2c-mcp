@@ -1,102 +1,12 @@
-import { filterDesignComponentSetInfo } from "@/utils/filterDesignComponentInfo";
+// import { filterDesignComponentSetInfo } from "@/utils/filterDesignComponentInfo";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { sendCommandToFigma } from "./index";
 import { DEFAULT_PERSONAL_TOKEN } from "../../config";
 import { createLogger } from "@/utils/logger";
-import { processComponentsToMarkdown } from "@/utils/ptd/filterComponent";
-const logger = createLogger("ptdTool");
+// import { processComponentsToMarkdown } from "@/utils/ptd/filterComponent";
+// const logger = createLogger("ptdTool");
 const componentToolList = (server: McpServer) => {
-  // Get File components Set Info
-  server.tool(
-    "get_file_components_set_or_component",
-    "Get a list of published component sets or component within a file library",
-    {
-      fileKey: z
-        .string()
-        .describe("The Figma file identifier found in the file URL"),
-    },
-    async ({ fileKey }) => {
-      try {
-        const token = DEFAULT_PERSONAL_TOKEN;
-        logger.log("token", token);
-        if (!token) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify({
-                  success: false,
-                  error:
-                    "Personal token not found. Please provide personalToken parameter or set FIGMA_API_KEY environment variable.",
-                }),
-              },
-            ],
-          };
-        }
-
-        // Make API call to get file components set
-        const response = await fetch(
-          `https://api.figma.com/v1/files/${fileKey}/component_sets`,
-          {
-            headers: {
-              "X-Figma-Token": token,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          return {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify({
-                  success: false,
-                  error: `API request failed: ${response.status} ${response.statusText}`,
-                  details: errorText,
-                }),
-              },
-            ],
-          };
-        }
-
-        const fileComponentSets = await response.json();
-        if (fileComponentSets.meta.component_sets) {
-          // 将文件保存到generated-ui目录下
-          const outputPath = "./generated-ui/components.md";
-          const res = processComponentsToMarkdown(fileComponentSets, outputPath);
-        }
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                success: true,
-                fileKey,
-                // components: fileComponents,
-              }),
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                success: false,
-                error: `Error getting file components: ${
-                  error instanceof Error ? error.message : String(error)
-                }`,
-              }),
-            },
-          ],
-        };
-      }
-    }
-  );
-
   // Get Component Tool
   server.tool(
     "get_component",
@@ -105,41 +15,16 @@ const componentToolList = (server: McpServer) => {
       componentKey: z
         .string()
         .describe("The unique key identifier of the component"),
-      personalToken: z
-        .string()
-        .optional()
-        .describe(
-          "Optional personal token, will use environment token if not provided"
-        ),
     },
-    async ({ componentKey, personalToken }) => {
+    async ({ componentKey }) => {
       try {
         // Get personal token - use provided one or get from environment
-        let token = personalToken;
-        if (!token) {
-          token = process.env.personalToken;
-          if (!token) {
-            return {
-              content: [
-                {
-                  type: "text",
-                  text: JSON.stringify({
-                    success: false,
-                    error:
-                      "Personal token not found. Please provide personalToken parameter or set FIGMA_API_KEY environment variable.",
-                  }),
-                },
-              ],
-            };
-          }
-        }
-
+        const token = DEFAULT_PERSONAL_TOKEN;
         // Make API call to get component details
         const response = await fetch(
           `https://api.figma.com/v1/components/${componentKey}`,
           {
             headers: {
-              // Authorization: `Bearer ${token}`,
               "X-Figma-Token": token,
             },
           }

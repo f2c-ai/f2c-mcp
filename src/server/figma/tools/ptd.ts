@@ -1,23 +1,10 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import componentToolList from "./ptd/componentToolList";
-
-import { filterFigmaNode, rgbaToHex } from "@/utils/figmaUtils";
 import { createLogger } from "@/utils/logger";
 import { z } from "zod";
-import { DEFAULT_PERSONAL_TOKEN } from "../config";
-import {
-  CommandProgressUpdate,
-  FigmaCommand,
-  ProgressMessage,
-} from "../types/design";
 import channelToolList from "./ptd/channelTool";
 import createNodeToolList from "./ptd/createTool";
-import {
-  connectToFigma,
-  joinChannel,
-  sendCommandToFigma,
-  start,
-} from "./ptd/index";
+import { sendCommandToFigma, start } from "./ptd/index";
 import getNodeInfoToolList from "./ptd/nodeTool";
 import prompt from "./ptd/promtp";
 const logger = createLogger("ptdTool");
