@@ -56,7 +56,7 @@ export const registerV03Server = (server: McpServer) => {
         .number()
         .min(1)
         .max(4)
-        .default(2)
+        .default(1)
         .describe(
           'Image export scale factor (1-4). Higher values yield better quality at the cost of larger file sizes.',
         ),
