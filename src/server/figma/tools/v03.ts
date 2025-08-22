@@ -10,13 +10,13 @@ import downloader from '../helpers/downloader'
 const logger = createLogger('V3Tool')
 let ideInfo = ''
 export const registerV03Server = (server: McpServer) => {
-   reportMcpLoader().then((ide) => {
+  reportMcpLoader().then(ide => {
     ideInfo = ide || 'other'
-   })
+  })
   // Register Figma to HTML conversion tool
   server.tool(
     'get_code',
-    'Generate UI code for a given node or the currently selected node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be 1:2. IMPORTANT: After you call this tool, you should call get_image to get an image of the node for context.',
+    'Generate UI code for a given node or the currently selected node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be 1:2.',
     {
       fileKey: z
         .string()
