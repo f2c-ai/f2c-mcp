@@ -35,6 +35,7 @@ A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c
 
 ## How it works
 1. [Configure the Server](docs/en/GettingStarted.md) in an MCP-supported IDE (e.g., Cursor, Trae).
+> recommended to use [Comate AI IDE](https://comate.baidu.com/zh/download/ai-ide) 
 2. Open your chat in IDE (e.g. agent mode in Cursor).
 3. Paste a link to a Figma Node (Right-click any node in the Figma Layer panel to copy it).
 4. Enter your requirements in the chat, such as fetching node data, downloading images, converting to code, etc.
