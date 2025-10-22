@@ -99,6 +99,79 @@ export class Downloader {
       throw error
     }
   }
+  /**
+   * 从 base64 数据保存图片到本地
+   * @param base64Data base64 图片数据（可以包含 data:image/png;base64, 前缀）
+   * @param fileName 文件名（包含扩展名）
+   * @returns 返回本地相对路径
+   */
+  private async saveImageFromBase64(base64Data: string, fileName: string): Promise<string> {
+    const localPath = this.assetsPath
+    try {
+      // 确保目标目录存在
+      if (!fs.existsSync(localPath)) {
+        fs.mkdirSync(localPath, {recursive: true})
+      }
+
+      // 移除 base64 前缀（如果存在）
+      const base64String = base64Data.replace(/^data:image\/\w+;base64,/, '')
+      
+      // 构建本地文件路径
+      const localFilePath = path.join(localPath, fileName)
+
+      // 将 base64 转换为 Buffer 并写入文件
+      const buffer = Buffer.from(base64String, 'base64')
+      fs.writeFileSync(localFilePath, buffer)
+
+      logger.debug(`Saved base64 image: ${localFilePath}`)
+
+      // 返回相对路径
+      return path.join(path.basename(localPath), fileName).replace(/\\/g, '/')
+    } catch (error) {
+      logger.error('Base64 图片保存错误:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 处理包含 base64 图片的文件列表
+   * 将 base64 图片保存到本地，并更新代码中的引用路径
+   * @param files 文件列表
+   */
+  public async downLoadImageFromBase64(files: NodeToCodeFile[]) {
+    if (!this.op.localPath) return
+
+    // 过滤出图片文件
+    const imageFiles = files.filter(f => 
+      f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i)
+    )
+
+    // 保存所有图片文件
+    for (const imageFile of imageFiles) {
+      try {
+        const fileName = path.basename(imageFile.path)
+        await this.saveImageFromBase64(imageFile.content, fileName)
+        logger.debug(`Successfully saved image: ${imageFile.path}`)
+      } catch (error) {
+        logger.error(`Failed to save image ${imageFile.path}:`, error)
+      }
+    }
+
+    // 保存代码文件
+    const codeFiles = files.filter(f => 
+      !f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i)
+    )
+
+    for (const file of codeFiles) {
+      try {
+        const savedPath = await this.saveContentToFile(file.content, file.path)
+        logger.debug(`Successfully saved: ${savedPath}`)
+      } catch (error) {
+        logger.error(`Failed to save file ${file.path}:`, error)
+      }
+    }
+  }
+
   public async checkLocalAndDownload(files: NodeToCodeFile[]) {
     if (!this.op.localPath) return
 
