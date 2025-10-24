@@ -1,6 +1,6 @@
 {
   "name": "@f2c/mcp-zh",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "",
   "repository": {
     "type": "git",
@@ -58,7 +58,7 @@
     "express": "^5.1.0",
     "node-fetch": "^3.3.2",
     "zod": "^3.22.4",
-    "@f2c/data-reporter": "^0.0.10"
+    "@f2c/data-reporter": "^0.0.20"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
