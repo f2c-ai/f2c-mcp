@@ -46,19 +46,23 @@
     "http:dev": "bun --env-file=.env --watch run src/streamable-http.ts",
     "http:prod": "bun --env-file= run src/streamable-http.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
-    "lint": "biome check . --fix",
-    "test": "bun test src/test/api.test.ts",
-    "e2e": "bun test src/test/e2e.test.ts"
+    "lint": "biome check . --fix"
   },
   "author": "ckken",
   "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
-
+    "@modelcontextprotocol/sdk": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@empjs/biome-config": "2.3.0",
-    "@modelcontextprotocol/sdk": "1.20.2",
+    "@types/bun": "^1.2.13",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.1",
+    "@types/node": "^24.9.2",
     "typescript": "^5.9.3"
   },
   "engines": {
