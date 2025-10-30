@@ -1,4 +1,4 @@
 import {server} from 'src/server'
 import {startServer} from '@/transports/streamable-http'
 
-startServer(server, 3000, 'no_session')
+startServer(server, 3000)
