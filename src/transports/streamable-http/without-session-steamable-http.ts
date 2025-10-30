@@ -23,28 +23,32 @@ const noAllowAcess = (req: any, res: any, next: any) => {
     }),
   )
 }
-// const polyfillRequest = (req: any, res: any) => {
-//   // 设置响应头
-//   res.setHeader('Content-Type', 'application/json')
-//   res.setHeader('Connection', 'keep-alive')
-//   res.setHeader('Keep-Alive', 'timeout=5')
+const polyfillRequest = (req: any, res: any) => {
+  // 标准化响应头，兼容部分 IDE/客户端的 Accept 配置
+  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Connection', 'keep-alive')
+  res.setHeader('Keep-Alive', 'timeout=5')
 
-//   // let acceptHeader = req.headers.accept as string
-//   // if (acceptHeader === '*/*') {
-//   //   acceptHeader = '*/*,application/json, text/event-stream'
-//   //   req.headers.accept = acceptHeader
-//   // }
+  const acceptHeader = String(req.headers.accept || '')
+  const needsPolyfill =
+    !acceptHeader ||
+    acceptHeader === '*/*' ||
+    !/application\/json/.test(acceptHeader) ||
+    !/text\/event-stream/.test(acceptHeader)
+  if (needsPolyfill) {
+    // Streamable HTTP 需要同时接受 JSON 与 SSE
+    req.headers.accept = '*/*,application/json,text/event-stream'
+  }
 
-//   // 确保请求的 Content-Type 存在
-//   if (!req.headers['content-type']) {
-//     req.headers['content-type'] = 'application/json'
-//   }
-// }
+  if (!req.headers['content-type']) {
+    req.headers['content-type'] = 'application/json'
+  }
+}
 export const startServer = (server: McpServer, port = 3000) => {
   app.post('/mcp', async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     logger.info('Request body:', JSON.stringify(req.body))
-    // polyfillRequest(req, res)
+    polyfillRequest(req, res)
 
     try {
       const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({

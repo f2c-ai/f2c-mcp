@@ -1,12 +1,12 @@
+import type {Server} from 'http'
 import {randomUUID} from 'node:crypto'
+import figmaConfig from '@/server/figma/config'
+import {LogLevel, Logger, createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {SSEServerTransport} from '@modelcontextprotocol/sdk/server/sse.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express, {type Request, type Response} from 'express'
-import type {Server} from 'http'
-// import figmaConfig from '@/server/figma/config'
-import {createLogger, Logger, LogLevel} from '@/utils/logger'
 
 const logger = createLogger('HttpServer', LogLevel.INFO)
 let httpServer: Server | null = null
@@ -19,14 +19,14 @@ export async function startHttpServer(port: number, mcpServer: McpServer): Promi
 
   // 拦截所有请求，检查并更新personalToken
   app.use((req, res, next) => {
-    // const personalToken = req.header('personalToken') as string
-    // //
-    // // console.log('[personalToken]', personalToken, figmaConfig.personalToken)
-    // //
-    // if (personalToken && personalToken.trim() !== '' && personalToken !== figmaConfig.personalToken) {
-    //   logger.debug('Updating Figma personal token from request headers', personalToken, figmaConfig.personalToken)
-    //   figmaConfig.personalToken = personalToken
-    // }
+    const personalToken = req.header('personalToken') as string
+    //
+    // console.log('[personalToken]', personalToken, figmaConfig.personalToken)
+    //
+    if (personalToken && personalToken.trim() !== '' && personalToken !== figmaConfig.personalToken) {
+      logger.debug('Updating Figma personal token from request headers', personalToken, figmaConfig.personalToken)
+      figmaConfig.personalToken = personalToken
+    }
     next()
   })
 
