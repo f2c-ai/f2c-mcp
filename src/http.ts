@@ -1,30 +1,46 @@
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
-import express from 'express'
+import {toFetchResponse, toReqRes} from 'fetch-to-node'
+import {Hono} from 'hono'
 import {server} from 'src/tool'
 
-const app = express()
-app.use(express.json())
+const app = new Hono()
 
-app.post('/mcp', async (req, res) => {
+app.post('/mcp', async c => {
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,
   })
 
-  res.on('close', () => {
-    transport.close()
-  })
+  try {
+    const {req, res} = toReqRes(c.req.raw)
 
-  await server.connect(transport)
-  await transport.handleRequest(req, res, req.body)
+    res.on('close', () => {
+      transport.close()
+    })
+
+    await server.connect(transport)
+    const body = await c.req.json()
+    await transport.handleRequest(req, res, body)
+
+    return toFetchResponse(res)
+  } catch (error) {
+    console.error('Error handling MCP request:', error)
+    // Return JSON-RPC error when something goes wrong
+    return c.json(
+      {
+        jsonrpc: '2.0',
+        error: {code: -32603, message: 'Internal server error'},
+        id: null,
+      },
+      500,
+    )
+  }
 })
 
 const port = Number.parseInt(process.env.PORT || '3000', 10)
-app
-  .listen(port, () => {
-    console.log(`MCP Server running on http://localhost:${port}/mcp`)
-  })
-  .on('error', error => {
-    console.error('Server error:', error)
-    process.exit(1)
-  })
+console.log(`MCP Server (Hono+Bun) listening on http://localhost:${port}/mcp`)
+
+export default {
+  port,
+  fetch: app.fetch,
+}

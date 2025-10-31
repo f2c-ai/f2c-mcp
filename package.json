@@ -40,8 +40,8 @@
     "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
-    "dev": "bun --watch run src/dev.ts",
-    "serve": "bun run src/dev.ts",
+    "dev": "bun --watch run src/http.ts",
+    "serve": "bun run src/http.ts",
     "build:prod": "bun run build.ts",
     "build:dev": "bun --watch run build.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
@@ -54,6 +54,8 @@
     "@f2c/data-reporter": "^0.0.20",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "fetch-to-node": "^2.1.0",
+    "hono": "^4.10.4",
     "node-fetch": "^3.3.2",
     "zod": "^3.22.4"
   },
