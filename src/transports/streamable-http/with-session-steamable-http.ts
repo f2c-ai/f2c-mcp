@@ -1,9 +1,9 @@
 import {randomUUID} from 'node:crypto'
-import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express from 'express'
+import {createLogger} from '@/utils/logger'
 
 const logger = createLogger('SessionStreamableHttp')
 

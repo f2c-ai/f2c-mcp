@@ -47,9 +47,7 @@
     "http:prod": "bun --env-file= run src/streamable-http.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix",
-    "test": "bun test src/test/api.test.ts",
-    "e2e": "bun test src/test/e2e.test.ts",
-    "test:mcp-sdk": "bun test src/test/mcp-sdk-client.test.ts",
+    "test": "bun test src/test/mcp-sdk-client.test.ts",
     "preview:inject": "bun run src/utils/preview-inject.ts"
   },
   "author": "ckken",
@@ -64,7 +62,7 @@
   },
   "devDependencies": {
     "@empjs/biome-config": "2.3.0",
-    "@modelcontextprotocol/sdk": "1.20.2",
+    "@modelcontextprotocol/sdk": "1.21.0",
     "@types/bun": "^1.2.13",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",

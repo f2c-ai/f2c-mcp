@@ -1,5 +1,5 @@
 import {getArgValue} from '@/utils/index'
-import {LogLevel, createLogger} from '@/utils/logger'
+import {createLogger, LogLevel} from '@/utils/logger'
 
 const logger = createLogger('FigmaConfig', LogLevel.INFO)
 

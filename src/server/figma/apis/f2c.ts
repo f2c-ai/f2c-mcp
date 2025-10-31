@@ -1,7 +1,7 @@
 import config from 'src/server/figma/config'
 import type {NodeToCodeAllFiles, NodeToCodeFile, NodeToCodeWithF2COptions} from 'src/server/figma/types/f2c'
 import compatFetch from 'src/utils/fetch'
-import {LogLevel, createLogger} from 'src/utils/logger'
+import {createLogger, LogLevel} from 'src/utils/logger'
 
 const logger = createLogger('F2cApi', LogLevel.INFO)
 class F2cApi {
@@ -35,7 +35,6 @@ class F2cApi {
         method: 'GET',
         headers: {
           'F2c-Api-Platform': `mcp-${ideInfo}`,
-
         },
       }
       logger.debug('fetch', url)

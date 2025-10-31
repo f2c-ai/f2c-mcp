@@ -1,12 +1,12 @@
-import type {Server} from 'http'
 import {randomUUID} from 'node:crypto'
-import figmaConfig from '@/server/figma/config'
-import {LogLevel, Logger, createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {SSEServerTransport} from '@modelcontextprotocol/sdk/server/sse.js'
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {isInitializeRequest} from '@modelcontextprotocol/sdk/types.js'
 import express, {type Request, type Response} from 'express'
+import type {Server} from 'http'
+import figmaConfig from '@/server/figma/config'
+import {createLogger, Logger, LogLevel} from '@/utils/logger'
 
 const logger = createLogger('HttpServer', LogLevel.INFO)
 let httpServer: Server | null = null

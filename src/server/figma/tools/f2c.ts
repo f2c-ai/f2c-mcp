@@ -1,9 +1,9 @@
-import api from '@/server/figma/apis/f2c'
-import {createLogger} from '@/utils/logger'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
 import type {NodeToCodeFile} from 'src/server/figma/types/f2c'
 import {z} from 'zod'
+import api from '@/server/figma/apis/f2c'
+import {createLogger} from '@/utils/logger'
 import downloader from '../helpers/downloader'
 
 const logger = createLogger('F2cTool')

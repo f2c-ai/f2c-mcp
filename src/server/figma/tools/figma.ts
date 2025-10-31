@@ -1,7 +1,7 @@
-import api from '@/server/figma/apis/figma'
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js'
 import {z} from 'zod'
+import api from '@/server/figma/apis/figma'
 
 export const registerFigmaServer = (server: McpServer) => {
   // Get Figma file information

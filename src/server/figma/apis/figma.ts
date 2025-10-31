@@ -1,7 +1,7 @@
-import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
 import config from 'src/server/figma/config'
 import compatFetch from 'src/utils/fetch'
 import {createLogger} from 'src/utils/logger'
+import type {GetFileParams, GetImagesParams, GetKeyParams} from '@/server/figma/types/figma'
 
 const logger = createLogger('FigmaRestApi')
 class FigmaRestApi {

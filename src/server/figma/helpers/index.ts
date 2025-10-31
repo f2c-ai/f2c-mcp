@@ -1,2 +1,2 @@
-export * from './figma'
 export * from './downloader'
+export * from './figma'

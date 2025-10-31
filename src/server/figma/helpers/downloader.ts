@@ -1,6 +1,6 @@
 import fs from 'fs'
-import path from 'path'
 import fsp from 'fs/promises'
+import path from 'path'
 import compatFetch from 'src/utils/fetch'
 import {createLogger} from 'src/utils/logger'
 import type {NodeToCodeFile, NodeToCodeWithF2COptions} from '../types/f2c'

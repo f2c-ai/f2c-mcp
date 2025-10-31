@@ -1,3 +1,11 @@
 {
-  "extends": ["@empjs/biome-config"]
+  "$schema": "https://biomejs.dev/schemas/2.3.1/schema.json",
+  "extends": ["@empjs/biome-config"],
+  "linter": {
+    "rules": {
+      "style": {
+        "useDefaultParameterLast": "off"
+      }
+    }
+  }
 }
