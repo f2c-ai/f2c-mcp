@@ -2,13 +2,14 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "src/*": ["./src/*"]
     },
     "target": "ES2020",
     "types": ["bun-types"],
     "lib": ["ES2021", "DOM"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "esnext", // 支持 ESM
+    "moduleResolution": "bundler", // 关键设置：允许省略 index.js 和文件扩展
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,

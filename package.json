@@ -2,6 +2,7 @@
   "name": "@f2c/mcp",
   "version": "0.4.9",
   "description": "",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/f2c-ai/f2c-mcp",
@@ -42,6 +43,7 @@
   "scripts": {
     "dev": "bun --watch run src/http.ts",
     "serve": "bun run src/http.ts",
+    "business": "bun run scripts/start-business-processor.ts",
     "build:prod": "bun run build.ts",
     "build:dev": "bun --watch run build.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
