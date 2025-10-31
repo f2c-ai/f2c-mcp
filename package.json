@@ -44,6 +44,7 @@
     "dev": "bun --watch run src/http.ts",
     "serve": "bun run src/http.ts",
     "business": "bun run scripts/start-business-processor.ts",
+    "test": "bun run scripts/auto-test.ts",
     "build:prod": "bun run build.ts",
     "build:dev": "bun --watch run build.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
@@ -53,12 +54,8 @@
   "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
-    "@f2c/data-reporter": "^0.0.20",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
+    "elysia": "^1.4.13",
     "fetch-to-node": "^2.1.0",
-    "hono": "^4.10.4",
-    "node-fetch": "^3.3.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -66,11 +63,7 @@
     "@empjs/biome-config": "2.3.0",
     "@modelcontextprotocol/sdk": "1.20.2",
     "@types/bun": "^1.2.13",
-    "@types/cors": "^2.8.18",
-    "@types/express": "^5.0.1",
-    "@types/node": "^22.15.0",
-    "@types/node-fetch": "^2.6.12",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=16.0.0"

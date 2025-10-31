@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { startBusinessProcessor } from '../src/examples/business-client.js'
+import {startBusinessProcessor} from './business-client.js'
 
 console.log('🚀 启动业务处理客户端...')
 
