@@ -34,7 +34,7 @@ bun run test
 bun run serve
 
 # 启动业务处理客户端（新终端）
-bun run business
+WS_URL=ws://localhost:3001/ws bun run business
 ```
 
 ## 🛠️ MCP 工具

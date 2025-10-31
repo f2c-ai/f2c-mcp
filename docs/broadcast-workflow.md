@@ -147,14 +147,14 @@ bun run business
 
 ### 3. 运行MCP客户端测试
 ```bash
-HONO_WS_URL=ws://localhost:3001/ws bun test
+WS_URL=ws://localhost:3001/ws bun test
 ```
 
 ## 日志输出示例
 
 ### 服务器日志
 ```
-🚀 MCP Server (Hono+Bun) listening on http://localhost:3001/mcp
+🚀 MCP Server (Elysia+Bun) listening on http://localhost:3001/mcp
 🔌 WebSocket Message Relay Server listening on ws://localhost:3001/ws
 📡 服务模式: 消息中继和广播 (不处理业务逻辑)
 📋 支持功能: 点对点转发、广播、连接管理

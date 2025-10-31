@@ -75,7 +75,7 @@ async function main() {
     // 2. 启动业务处理客户端
     console.log('🔧 启动业务处理客户端...')
     businessProcess = spawn(['bun', 'run', 'scripts/start-business-processor.ts'], {
-      env: {...process.env, HONO_WS_URL: SOCKET_URL},
+      env: {...process.env, WS_URL: SOCKET_URL},
       stdio: ['ignore', 'inherit', 'inherit'],
     })
 
@@ -89,7 +89,7 @@ async function main() {
       env: {
         ...process.env,
         MCP_URL,
-        HONO_WS_URL: SOCKET_URL,
+        WS_URL: SOCKET_URL,
       },
       stdio: ['inherit', 'inherit', 'inherit'],
     })

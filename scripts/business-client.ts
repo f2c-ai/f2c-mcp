@@ -196,7 +196,7 @@ class BusinessProcessorClient {
 
 // 使用示例
 export async function startBusinessProcessor() {
-  const processor = new BusinessProcessorClient(process.env.HONO_WS_URL || 'ws://localhost:3001/ws')
+  const processor = new BusinessProcessorClient(process.env.WS_URL || 'ws://localhost:3001/ws')
 
   await processor.start()
 

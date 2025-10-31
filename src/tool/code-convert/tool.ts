@@ -6,7 +6,7 @@ import {generatePromptText} from './prompt'
 export const registerCodeConvertTool = (mcpServer: McpServer) => {
   mcpServer.tool(
     'get_code_to_component',
-    'Fetch HTML code via Hono WebSocket and generate React/Vue component',
+    'Fetch HTML code via WebSocket and generate React/Vue component',
     {
       componentName: z.string().optional().describe('Optional component name hint (e.g., HelloDiv)'),
       framework: z

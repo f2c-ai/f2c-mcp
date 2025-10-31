@@ -228,5 +228,5 @@ function safeLogContent(content: any, maxLength = 100): string {
 
 // 创建并配置 MCP 客户端实例
 export const socketClient = createSocketClient({
-  url: process.env.HONO_WS_URL || 'ws://localhost:3001/ws',
+  url: process.env.WS_URL || 'ws://localhost:3001/ws',
 })
