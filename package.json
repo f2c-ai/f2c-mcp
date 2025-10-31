@@ -25,14 +25,14 @@
         "default": "./dist/stdio.js"
       }
     },
-    "./streamable-http": {
+    "./http": {
       "import": {
-        "types": "./dist/streamable-http.d.mts",
-        "default": "./dist/streamable-http.mjs"
+        "types": "./dist/http.d.mts",
+        "default": "./dist/http.mjs"
       },
       "require": {
-        "types": "./dist/streamable-http.d.ts",
-        "default": "./dist/streamable-http.js"
+        "types": "./dist/http.d.ts",
+        "default": "./dist/http.js"
       }
     }
   },
@@ -40,16 +40,12 @@
     "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
-    "mcp:dev": "bun --watch run src/mcp/server.ts",
-    "build": "bun run bun.build.script.ts",
-    "dev": "bun --watch run bun.build.script.ts",
-    "http": "node ./dist/streamable-http.js",
-    "http:dev": "bun --env-file=.env --watch run src/streamable-http.ts",
-    "http:prod": "bun --env-file= run src/streamable-http.ts",
+    "dev": "bun --watch run src/dev.ts",
+    "serve": "bun run src/dev.ts",
+    "build:prod": "bun run build.ts",
+    "build:dev": "bun --watch run build.ts",
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
-    "lint": "biome check . --fix",
-    "test": "bun test src/test/mcp-sdk-client.test.ts",
-    "preview:inject": "bun run src/utils/preview-inject.ts"
+    "lint": "biome check . --fix"
   },
   "author": "ckken",
   "maintainers": ["ckken"],

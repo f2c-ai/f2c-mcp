@@ -1,6 +1,6 @@
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
-import {mcpServer} from './code-convert'
+import {server} from 'src/tool'
 
 const app = express()
 app.use(express.json())
@@ -15,7 +15,7 @@ app.post('/mcp', async (req, res) => {
     transport.close()
   })
 
-  await mcpServer.connect(transport)
+  await server.connect(transport)
   await transport.handleRequest(req, res, req.body)
 })
 

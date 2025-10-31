@@ -1,30 +1,25 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {z} from 'zod'
-import {createLogger, LogLevel} from '@/utils/logger'
 
-export const mcpServer = new McpServer({
-  name: 'f2c-mcp',
-  version: '2.0.0',
-})
+export const registerCodeConvertTool = (mcpServer: McpServer) => {
+  mcpServer.tool(
+    'html_to_component',
+    'Convert HTML/TailwindCSS snippet into a React component',
+    {
+      source: z.string().describe('HTML + TailwindCSS code to convert'),
+      componentName: z.string().optional().describe('Name of the generated React component'),
+      framework: z.enum(['react', 'vue']).default('react').describe('Target framework: react or vue'),
+      style: z
+        .enum(['css', 'tailwind'])
+        .default('css')
+        .describe('Styling mode: convert Tailwind to CSS (scoped/module) or keep Tailwind'),
+    },
+    async ({source, componentName, framework, style}) => {
+      const name = componentName || 'ConvertedComponent'
+      const fw = framework || 'react'
+      const sm = style || 'css'
 
-mcpServer.tool(
-  'html_to_component',
-  'Convert HTML/TailwindCSS snippet into a React component',
-  {
-    source: z.string().describe('HTML + TailwindCSS code to convert'),
-    componentName: z.string().optional().describe('Name of the generated React component'),
-    framework: z.enum(['react', 'vue']).default('react').describe('Target framework: react or vue'),
-    style: z
-      .enum(['css', 'tailwind'])
-      .default('css')
-      .describe('Styling mode: convert Tailwind to CSS (scoped/module) or keep Tailwind'),
-  },
-  async ({source, componentName, framework, style}) => {
-    const name = componentName || 'ConvertedComponent'
-    const fw = framework || 'react'
-    const sm = style || 'css'
-
-    const reactPrompt = `You are a precise code converter.
+      const reactPrompt = `You are a precise code converter.
 Convert the following HTML + TailwindCSS snippet into a clean React functional component (TSX).
 
 Requirements:
@@ -40,7 +35,7 @@ Component name: ${name}
 Source:
 ${source}`
 
-    const reactPromptCss = `You are a precise code converter.
+      const reactPromptCss = `You are a precise code converter.
 Convert the following HTML + TailwindCSS snippet into a clean React functional component (TSX) using semantic CSS (no Tailwind).
 
 Requirements:
@@ -57,7 +52,7 @@ Component name: ${name}
 Source:
 ${source}`
 
-    const vuePrompt = `You are a precise code converter.
+      const vuePrompt = `You are a precise code converter.
 Convert the following HTML + TailwindCSS snippet into a Vue 3 single-file component (SFC).
 
 Requirements:
@@ -72,7 +67,7 @@ Requirements:
 Source:
 ${source}`
 
-    const vuePromptTailwind = `You are a precise code converter.
+      const vuePromptTailwind = `You are a precise code converter.
 Convert the following HTML + TailwindCSS snippet into a Vue 3 single-file component (SFC).
 
 Requirements:
@@ -87,16 +82,11 @@ Requirements:
 Source:
 ${source}`
 
-    const prompt =
-      fw === 'vue'
-        ? sm === 'css'
-          ? vuePrompt
-          : vuePromptTailwind
-        : sm === 'css'
-        ? reactPromptCss
-        : reactPrompt
-    return {
-      content: [{type: 'text', text: prompt}],
-    }
-  },
-)
+      const prompt =
+        fw === 'vue' ? (sm === 'css' ? vuePrompt : vuePromptTailwind) : sm === 'css' ? reactPromptCss : reactPrompt
+      return {
+        content: [{type: 'text', text: prompt}],
+      }
+    },
+  )
+}
