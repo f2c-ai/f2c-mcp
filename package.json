@@ -48,7 +48,9 @@
     "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix",
     "test": "bun test src/test/api.test.ts",
-    "e2e": "bun test src/test/e2e.test.ts"
+    "e2e": "bun test src/test/e2e.test.ts",
+    "test:mcp-sdk": "bun test src/test/mcp-sdk-client.test.ts",
+    "preview:inject": "bun run src/utils/preview-inject.ts"
   },
   "author": "ckken",
   "maintainers": ["ckken"],
