@@ -40,6 +40,7 @@
     "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
+    "mcp:dev": "bun --watch run src/mcp/server.ts",
     "build": "bun run bun.build.script.ts",
     "dev": "bun --watch run bun.build.script.ts",
     "http": "node ./dist/streamable-http.js",
@@ -54,15 +55,16 @@
   "maintainers": ["ckken"],
   "license": "ISC",
   "dependencies": {
+    "@f2c/data-reporter": "^0.0.20",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "zod": "^3.22.4",
-    "@f2c/data-reporter": "^0.0.20"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.2",
     "@empjs/biome-config": "2.3.0",
-    "@modelcontextprotocol/sdk": "1.21.0",
+    "@modelcontextprotocol/sdk": "1.20.2",
     "@types/bun": "^1.2.13",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
