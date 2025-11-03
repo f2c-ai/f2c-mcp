@@ -27,20 +27,11 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
 
       try {
         // 打印请求前连接状态
-        console.log('Socket 连接状态:', socketClient.isConnected())
+        console.log('Socket 连接状态:', socketClient.isConnected)
 
         // 通过消息中继请求 HTML 内容生成
         // 消息会被转发给业务处理客户端
-        const response = await socketClient.request<
-          {
-            componentName: string
-            framework: string
-            style: string
-          },
-          {
-            content: string
-          }
-        >('get_html_content', {
+        const response = await socketClient.request('get_html_content', {
           componentName: name,
           framework: fw,
           style: sm,
@@ -71,7 +62,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         }
       } catch (error) {
         // 打印错误时的连接状态
-        console.log('错误时 Socket 连接状态:', socketClient.isConnected())
+        console.log('错误时 Socket 连接状态:', socketClient.isConnected)
         console.error('Socket 请求错误:', error)
 
         return {

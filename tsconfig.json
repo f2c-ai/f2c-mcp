@@ -13,6 +13,8 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     /* EMIT RULES */
     "outDir": "./dist",
     "declaration": true,
