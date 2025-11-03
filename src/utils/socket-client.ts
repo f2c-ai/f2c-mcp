@@ -12,7 +12,7 @@ type PendingRequest = {
   timeout: NodeJS.Timeout
 }
 
-const DEFAULT_TIMEOUT_MS = 10000
+const DEFAULT_TIMEOUT_MS = 30000
 
 class SocketClient {
   private ws: WebSocket | null = null
