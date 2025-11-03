@@ -29,8 +29,6 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         // 打印请求前连接状态
         console.log('Socket 连接状态:', socketClient.isConnected)
 
-        // 通过消息中继请求 HTML 内容生成
-        // 消息会被转发给业务处理客户端
         const response = await socketClient.request('get_html_content', {
           componentName: name,
           framework: fw,
