@@ -5,3 +5,4 @@ dist/
 build/
 .comate/
 .client-out/
+.kiro

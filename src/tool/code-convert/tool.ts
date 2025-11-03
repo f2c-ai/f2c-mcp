@@ -2,6 +2,7 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {socketClient} from 'src/utils/socket-client.js'
 import {z} from 'zod'
 import {generatePromptText} from './prompt'
+import downloader from '@/utils/downloader'
 
 export const registerCodeConvertTool = (mcpServer: McpServer) => {
   mcpServer.tool(
@@ -19,11 +20,18 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         .describe(
           "Styling mode: 'css' converts Tailwind to CSS rules; 'tailwind' keeps Tailwind utilities (default: css)",
         ),
+      localPath: z
+        .string()
+        .optional()
+        .describe(
+          'Absolute path for asset(e.g., images) and code storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When this path is set, all code-related static resources are stored in this directory, while other assets (e.g., images) will be saved into the subdirectory named assets under this path.',
+        ),
     },
-    async ({componentName, framework, style}) => {
+    async ({componentName, framework, style, localPath}) => {
       const name = componentName || 'ConvertedComponent'
       const fw = framework || 'react'
       const sm = style || 'css'
+      downloader.setup({localPath, imgFormat: 'png'})
 
       try {
         // 打印请求前连接状态
@@ -51,6 +59,14 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
 
         // 生成组件代码提示
         const promptText = generatePromptText(promptName, name, source)
+
+        // 处理图片
+        const files = response.files
+        if (Array.isArray(files) && files.length > 0) {
+          await downloader.downLoadImageFromBase64(files)
+        } else {
+          console.error('Files is not a valid array:', typeof files, files)
+        }
 
         return {
           content: [
