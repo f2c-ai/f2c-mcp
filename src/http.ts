@@ -60,6 +60,30 @@ app.ws('/ws', {
 })
 
 // MCP 端点
+// 允许 CORS 预检（即便当前为同源，这可避免未来跨源访问的预检失败）
+app.options('/mcp', async () => {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '600',
+    },
+  })
+})
+app.get('/mcp', async () => {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '600',
+    },
+  })
+})
+
 app.post('/mcp', async ({request}) => {
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
@@ -85,7 +109,10 @@ app.post('/mcp', async ({request}) => {
       }),
       {
         status: 500,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       },
     )
   }
