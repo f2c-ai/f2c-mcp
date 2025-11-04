@@ -1,7 +1,7 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
+import downloader from 'src/utils/downloader'
 import {socketClient} from 'src/utils/socket-client.js'
 import {z} from 'zod'
-import downloader from '@/utils/downloader'
 import {generatePromptText} from './prompt'
 
 export const registerCodeConvertTool = (mcpServer: McpServer) => {
