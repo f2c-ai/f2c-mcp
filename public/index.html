@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>F2C MCP Demo - Streamable HTTP + WebSocket</title>
+  <title>F2C MCP | The MCP For Chrome Plugin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Import Map for MCP SDK -->
   <script type="importmap">
@@ -276,8 +276,8 @@
             <span class="text-white font-bold">F2C</span>
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">MCP Web Demo</h1>
-            <p class="text-gray-600">基于 @modelcontextprotocol/sdk 的演示</p>
+            <h1 class="text-2xl font-bold text-gray-900">MCP For Chrome Plugin</h1>
+            <p class="text-gray-600">base @modelcontextprotocol/sdk</p>
             
           </div>
         </div>
@@ -351,7 +351,7 @@
     <!-- 消息显示 -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-900">消息历史</h2>
+        <h2 class="text-xl font-semibold text-gray-900">History</h2>
       </div>
       <div class="h-96 overflow-y-auto bg-gray-50 rounded-md p-4 space-y-2">
         <template x-if="messages.length === 0">
@@ -379,7 +379,7 @@
 
     <!-- 最新内容显示 -->
     <div class="bg-white rounded-lg shadow-md p-6" x-show="latestText">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">MCP 返回内容</h2>
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">MCP CALLBACK LLM Prompts</h2>
       <div class="bg-gray-900 text-green-400 rounded-md p-4 font-mono text-sm overflow-x-auto">
         <pre class="whitespace-pre-wrap" x-text="latestText"></pre>
       </div>
