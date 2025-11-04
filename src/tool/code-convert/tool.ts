@@ -1,8 +1,8 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {socketClient} from 'src/utils/socket-client.js'
 import {z} from 'zod'
-import {generatePromptText} from './prompt'
 import downloader from '@/utils/downloader'
+import {generatePromptText} from './prompt'
 
 export const registerCodeConvertTool = (mcpServer: McpServer) => {
   mcpServer.tool(
@@ -63,7 +63,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         if (Array.isArray(files) && files.length > 0) {
           await downloader.downLoadImageFromBase64(files)
         } else {
-          console.error('Files is not a valid array:', typeof files, files)
+          console.info('files不做处理')
         }
 
         return {
