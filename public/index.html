@@ -5,6 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>F2C MCP | The MCP For Chrome Plugin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 确保网格容器有最小高度，让所有列等高 */
+    .equal-height-grid {
+      min-height: 600px;
+    }
+    .equal-height-grid > div {
+      height: 100%;
+    }
+    
+    /* 自定义滚动条样式 */
+    .scrollbar-thin {
+      scrollbar-width: thin;
+      scrollbar-color: #d1d5db #f9fafb;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #f9fafb;
+      border-radius: 2px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 2px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+    
+    /* 消息卡片样式 */
+    .border-l-3 {
+      border-left-width: 3px;
+    }
+  </style>
   <!-- Import Map for MCP SDK -->
   <script type="importmap">
     {
@@ -15,281 +53,444 @@
     }
   </script>
   <script>
-    window.mcpDemo = function () {
-        return {
-          // MCP client
-          mcpClient: null,
-          mcpTransport: null,
-          mcpStatus: 'disconnected',
-          mcpStatusText: '',
-          // WebSocket (simplified - removed complex logic)
-          ws: null,
-          wsStatus: 'disconnected',
-          wsStatusText: 'WS 未连接',
-          // UI state
-          messages: [],
-          latestText: '',
-          componentName: 'ConvertedComponent',
-          framework: 'react',
-          styleMode: 'css',
-          defaultHtml: '<div class="flex flex-col items-center p-7 rounded-2xl">demo</div>',
+    // ===== 工具类和服务层 =====
+    class MessageService {
+      constructor(addMessageCallback) {
+        this.addMessage = addMessageCallback
+        this.messages = []
+      }
 
-        init () {
-          this.connectWS()
-          setTimeout(() => this.connectMcp(), 200)
-        },
+      add(type, content) {
+        const timestamp = new Date().toLocaleTimeString()
+        const message = { type, content, timestamp }
+        this.messages.unshift(message)
+        if (this.messages.length > 50) {
+          this.messages = this.messages.slice(0, 50)
+        }
+        this.addMessage(message)
+      }
 
-        addMessage (type, content) {
-          const timestamp = new Date().toLocaleTimeString()
-          this.messages.unshift({ type, content, timestamp })
-          if (this.messages.length > 50) this.messages = this.messages.slice(0, 50)
-        },
+      clear() {
+        this.messages = []
+      }
+    }
 
-        clearMessages () {
-          this.messages = []
-          this.latestText = ''
-        },
+    class McpService {
+      constructor(messageService) {
+        this.client = null
+        this.transport = null
+        this.status = 'disconnected'
+        this.statusText = ''
+        this.messageService = messageService
+      }
 
-        // MCP 连接
-        async connectMcp () {
-          if (this.mcpStatus === 'connecting') {
-            this.addMessage('info', '⏳ MCP 正在连接，请稍候')
-            return
-          }
-          if (this.mcpClient) {
-            this.addMessage('info', '✅ MCP 已连接，不重复建立连接')
-            return
-          }
+      async connect() {
+        if (this.status === 'connecting') {
+          this.messageService.add('info', '⏳ MCP 正在连接，请稍候')
+          return
+        }
+        if (this.client) {
+          this.messageService.add('info', '✅ MCP 已连接，不重复建立连接')
+          return
+        }
+
+        try {
+          this.status = 'connecting'
+          this.statusText = 'MCP 连接中...'
+          const endpoint = new URL('/mcp', window.location.origin)
+
+          const { Client, StreamableHTTPClientTransport } = await window.loadMcpSdk()
+          const transport = new StreamableHTTPClientTransport(endpoint)
+          const client = new Client(
+            { name: 'web-demo', version: '1.0.0' },
+            { capabilities: {} }
+          )
+
+          await client.connect(transport)
+          this.transport = transport
+          this.client = client
+          this.status = 'connected'
+          this.statusText = 'MCP 已连接'
+          this.messageService.add('system', '✅ MCP 客户端连接成功')
+
+          const tools = await client.listTools()
+          const toolNames = Array.isArray(tools?.tools) 
+            ? tools.tools.map(t => t.name).join(', ') 
+            : '未知'
+          this.messageService.add('info', `🧰 可用工具: ${toolNames}`)
+        } catch (error) {
+          this.status = 'disconnected'
+          this.statusText = ''
+          this.messageService.add('error', `MCP 连接失败: ${error?.message || error}`)
+        }
+      }
+
+      async callTool(name, args) {
+        if (!this.client) {
+          throw new Error('MCP 未连接')
+        }
+        return await this.client.callTool({ name, arguments: args })
+      }
+    }
+
+    class WebSocketService {
+      constructor(messageService) {
+        this.ws = null
+        this.status = 'disconnected'
+        this.statusText = 'WS 未连接'
+        this.messageService = messageService
+      }
+
+      connect(defaultHtml) {
+        this.status = 'connecting'
+        this.statusText = 'WS 连接中...'
+        const wsUrl = `ws://${window.location.hostname}:${window.location.port || 3000}/ws?device=web`
+        this.ws = new WebSocket(wsUrl)
+
+        this.ws.onopen = () => {
+          this.status = 'connected'
+          this.statusText = 'WS 已连接'
+          this.messageService.add('system', '✅ WebSocket 连接成功')
+        }
+
+        this.ws.onmessage = (event) => {
           try {
-            this.mcpStatus = 'connecting'
-            this.mcpStatusText = 'MCP 连接中...'
-            const endpoint = new URL('/mcp', window.location.origin)
-
-            const { Client, StreamableHTTPClientTransport } = await window.loadMcpSdk()
-            const transport = new StreamableHTTPClientTransport(endpoint)
-            const client = new Client(
-              { name: 'web-demo', version: '1.0.0' },
-              { capabilities: {} }
-            )
-
-            await client.connect(transport)
-            this.mcpTransport = transport
-            this.mcpClient = client
-            this.mcpStatus = 'connected'
-            this.mcpStatusText = 'MCP 已连接'
-            this.addMessage('system', '✅ MCP 客户端连接成功')
-
-            const tools = await client.listTools()
-            const toolNames = Array.isArray(tools?.tools) ? tools.tools.map(t => t.name).join(', ') : '未知'
-            this.addMessage('info', `🧰 可用工具: ${toolNames}`)
+            const message = JSON.parse(event.data)
+            this.messageService.add('info', `📨 收到消息: ${message.type}`)
+            
+            if (message.requestId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+              const response = {
+                type: message.type,
+                requestId: message.requestId,
+                data: message.type === 'get_html_content' 
+                  ? { content: defaultHtml }
+                  : message.data,
+                timestamp: Date.now()
+              }
+              this.ws.send(JSON.stringify(response))
+              this.messageService.add('response', `↩️ 已回传响应: ${response.type}`)
+            }
           } catch (error) {
-            this.mcpStatus = 'disconnected'
-            this.mcpStatusText = ''
-            this.addMessage('error', `MCP 连接失败: ${error?.message || error}`)
+            this.messageService.add('error', `消息处理失败: ${error?.message || error}`)
           }
+        }
+
+        this.ws.onclose = () => {
+          this.status = 'disconnected'
+          this.statusText = 'WS 连接断开'
+          this.messageService.add('system', '❌ WebSocket 连接断开')
+        }
+
+        this.ws.onerror = () => {
+          this.messageService.add('error', '❌ WebSocket 连接错误')
+        }
+      }
+    }
+
+    // ===== Alpine.js 组件定义 =====
+    document.addEventListener('alpine:init', () => {
+      // 主应用组件
+      Alpine.data('mcpApp', () => ({
+        // 服务实例
+        messageService: null,
+        mcpService: null,
+        wsService: null,
+
+        // 响应式状态
+        messages: [],
+        latestText: '',
+        
+        // 表单数据
+        componentName: 'ConvertedComponent',
+        framework: 'react',
+        styleMode: 'css',
+        defaultHtml: '<div class="flex flex-col items-center p-7 rounded-2xl">demo</div>',
+
+        // 计算属性
+        get mcpStatus() { return this.mcpService?.status || 'disconnected' },
+        get wsStatus() { return this.wsService?.status || 'disconnected' },
+
+        init() {
+          // 初始化服务
+          this.messageService = new MessageService((message) => {
+            this.messages.unshift(message)
+            if (this.messages.length > 50) {
+              this.messages = this.messages.slice(0, 50)
+            }
+          })
+          
+          this.mcpService = new McpService(this.messageService)
+          this.wsService = new WebSocketService(this.messageService)
+
+          // 启动连接
+          this.wsService.connect(this.defaultHtml)
+          setTimeout(() => this.mcpService.connect(), 200)
         },
 
-
-        // 调用工具进行组件转换
-        async requestConvert () {
-          if (!this.mcpClient) {
-            this.addMessage('error', '请先连接 MCP')
-            return
-          }
+        // 业务方法
+        async requestConvert() {
           try {
             const args = {
               componentName: this.componentName || 'ConvertedComponent',
               framework: this.framework || 'react',
               style: this.styleMode || 'css'
             }
-            this.addMessage('request', `🎨 请求组件转换: ${args.componentName} (${args.framework}, ${args.style})`)
+            
+            this.messageService.add('request', 
+              `🎨 请求组件转换: ${args.componentName} (${args.framework}, ${args.style})`)
 
-            const result = await this.mcpClient.callTool({ 
-              name: 'get_code_to_component', 
-              arguments: args 
-            })
-
+            const result = await this.mcpService.callTool('get_code_to_component', args)
             const text = result.content?.find?.(c => c.type === 'text')?.text || ''
+            
             this.latestText = text
-            this.addMessage('response', `✅ 收到转换文本，长度: ${text.length} 字符`)
+            this.messageService.add('response', `✅ 收到转换文本，长度: ${text.length} 字符`)
           } catch (error) {
-            this.addMessage('error', `工具调用失败: ${error?.message || error}`)
+            this.messageService.add('error', `工具调用失败: ${error?.message || error}`)
           }
         },
 
-        copyLatest () {
+        clearMessages() {
+          this.messages = []
+          this.latestText = ''
+          this.messageService.clear()
+        },
+
+        copyLatest() {
           if (!this.latestText) return
           navigator.clipboard.writeText(this.latestText)
-            .then(() => this.addMessage('system', '📋 内容已复制到剪贴板'))
-            .catch(() => this.addMessage('error', '❌ 复制失败'))
-        },
-
-        // WebSocket 连接 (简化版)
-        connectWS () {
-          this.wsStatus = 'connecting'
-          this.wsStatusText = 'WS 连接中...'
-          const wsUrl = `ws://${window.location.hostname}:${window.location.port || 3000}/ws?device=web`
-          this.ws = new WebSocket(wsUrl)
-
-          this.ws.onopen = () => {
-            this.wsStatus = 'connected'
-            this.wsStatusText = 'WS 已连接'
-            this.addMessage('system', '✅ WebSocket 连接成功')
-          }
-
-          this.ws.onmessage = (event) => {
-            try {
-              const message = JSON.parse(event.data)
-              this.addMessage('info', `📨 收到消息: ${message.type}`)
-              
-              // 简化的消息处理
-              if (message.requestId && this.ws && this.ws.readyState === WebSocket.OPEN) {
-                const response = {
-                  type: message.type,
-                  requestId: message.requestId,
-                  data: message.type === 'get_html_content' 
-                    ? { content: this.defaultHtml }
-                    : message.data,
-                  timestamp: Date.now()
-                }
-                this.ws.send(JSON.stringify(response))
-                this.addMessage('response', `↩️ 已回传响应: ${response.type}`)
-              }
-            } catch (error) {
-              this.addMessage('error', `消息处理失败: ${error?.message || error}`)
-            }
-          }
-
-          this.ws.onclose = () => {
-            this.wsStatus = 'disconnected'
-            this.wsStatusText = 'WS 连接断开'
-            this.addMessage('system', '❌ WebSocket 连接断开')
-          }
-
-          this.ws.onerror = () => {
-            this.addMessage('error', '❌ WebSocket 连接错误')
-          }
-        },
+            .then(() => this.messageService.add('system', '📋 内容已复制到剪贴板'))
+            .catch(() => this.messageService.add('error', '❌ 复制失败'))
         }
-    }
+      }))
+
+      // 状态指示器组件
+      Alpine.data('statusIndicator', () => ({
+        getStatusClass(status) {
+          return {
+            'w-3 h-3 rounded-full': true,
+            'bg-green-500': status === 'connected',
+            'bg-yellow-500 animate-pulse': status === 'connecting',
+            'bg-red-500': status === 'disconnected'
+          }
+        },
+
+        getIconClass(status) {
+          return {
+            'text-green-500': status === 'connected',
+            'text-yellow-500 animate-pulse': status === 'connecting',
+            'text-red-500': status === 'disconnected'
+          }
+        }
+      }))
+
+      // 消息组件
+      Alpine.data('messageList', () => ({
+        getMessageClass(type) {
+          return {
+            'p-3 rounded-md': true,
+            'bg-blue-100 text-blue-800': type === 'system',
+            'bg-green-100 text-green-800': type === 'response',
+            'bg-yellow-100 text-yellow-800': type === 'request',
+            'bg-red-100 text-red-800': type === 'error',
+            'bg-gray-100 text-gray-800': type === 'info'
+          }
+        }
+      }))
+    })
   </script>
   <script src="https://unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-  <div class="container mx-auto px-4 py-8" x-data="mcpDemo()">
+  <div class="container mx-auto px-4 py-4 sm:py-8 max-w-7xl" x-data="mcpApp()">
     <!-- Header -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-      <div class="flex items-center justify-between">
+    <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
             <span class="text-white font-bold">F2C</span>
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">MCP For Chrome Plugin</h1>
-            <p class="text-gray-600">base @modelcontextprotocol/sdk</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">MCP For Chrome Plugin</h1>
+            <p class="text-sm sm:text-base text-gray-600">base @modelcontextprotocol/sdk</p>
           </div>
         </div>
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-3" x-data="statusIndicator()">
           <!-- MCP 状态 -->
           <div class="flex items-center space-x-2" x-show="mcpStatus !== 'disconnected'" title="MCP 状态">
-            <div :class="{
-              'w-3 h-3 rounded-full': true,
-              'bg-green-500': mcpStatus === 'connected',
-              'bg-yellow-500 animate-pulse': mcpStatus === 'connecting'
-            }"></div>
-            <span :class="{
-              'text-green-500': mcpStatus === 'connected',
-              'text-yellow-500 animate-pulse': mcpStatus === 'connecting'
-            }" class="text-xl">🔌</span>
+            <div :class="getStatusClass(mcpStatus)"></div>
+            <span :class="getIconClass(mcpStatus)" class="text-lg sm:text-xl">🔌</span>
           </div>
 
           <!-- WebSocket 状态 -->
           <div class="flex items-center space-x-2" title="WebSocket 状态">
-            <div :class="{
-              'w-3 h-3 rounded-full': true,
-              'bg-green-500': wsStatus === 'connected',
-              'bg-yellow-500 animate-pulse': wsStatus === 'connecting',
-              'bg-red-500': wsStatus === 'disconnected'
-            }"></div>
-            <span :class="{
-              'text-green-500': wsStatus === 'connected',
-              'text-yellow-500 animate-pulse': wsStatus === 'connecting',
-              'text-red-500': wsStatus === 'disconnected'
-            }" class="text-xl">📡</span>
+            <div :class="getStatusClass(wsStatus)"></div>
+            <span :class="getIconClass(wsStatus)" class="text-lg sm:text-xl">📡</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 控件区 -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">组件名</label>
-          <input type="text" class="w-full border rounded-md px-3 py-2" x-model="componentName" placeholder="ConvertedComponent" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">框架</label>
-          <select class="w-full border rounded-md px-3 py-2" x-model="framework">
-            <option value="react">react</option>
-            <option value="vue">vue</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">样式</label>
-          <select class="w-full border rounded-md px-3 py-2" x-model="styleMode">
-            <option value="css">css</option>
-            <option value="tailwind">tailwind</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mt-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">默认 HTML 内容（用于响应 get_html_content）</label>
-        <textarea class="w-full border rounded-md px-3 py-2 font-mono text-sm" rows="6" x-model="defaultHtml"></textarea>
-        <p class="text-xs text-gray-500 mt-1">当服务端通过 WebSocket 请求 <code>get_html_content</code> 时，会返回此内容；若为空将使用内置默认值。</p>
-      </div>
-
-      <div class="mt-4 flex items-center space-x-3">
-        <button @click="requestConvert()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">请求组件转换</button>
-        <button @click="clearMessages()" class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md">清空消息</button>
-      </div>
-    </div>
-
-    <!-- 消息显示 -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-900">History</h2>
-      </div>
-      <div class="h-96 overflow-y-auto bg-gray-50 rounded-md p-4 space-y-2">
-        <template x-if="messages.length === 0">
-          <div class="text-gray-500 text-center py-8">等待消息...</div>
-        </template>
-        <template x-for="(message, index) in messages" :key="index">
-          <div :class="{
-            'p-3 rounded-md': true,
-            'bg-blue-100 text-blue-800': message.type === 'system',
-            'bg-green-100 text-green-800': message.type === 'response',
-            'bg-yellow-100 text-yellow-800': message.type === 'request',
-            'bg-red-100 text-red-800': message.type === 'error',
-            'bg-gray-100 text-gray-800': message.type === 'info'
-          }">
-            <div class="flex justify-between items-start">
-              <div class="flex-1" x-html="message.content"></div>
-              <div class="text-xs opacity-75 ml-2" x-text="message.timestamp"></div>
+    <!-- 主要内容区域 - 三等分响应式布局 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6 equal-height-grid">
+      
+      <!-- 第一列：转换设置 -->
+      <div class="md:col-span-2 xl:col-span-1 h-full">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 xl:sticky xl:top-4 h-full flex flex-col">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <span class="text-blue-600 text-sm">⚙️</span>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900">转换设置</h2>
+          </div>
+          
+          <!-- 表单字段 - 单列布局 -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">组件名称</label>
+              <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="componentName" placeholder="ConvertedComponent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">目标框架</label>
+              <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="framework">
+                <option value="react">React</option>
+                <option value="vue">Vue</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">样式方案</label>
+              <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="styleMode">
+                <option value="css">CSS</option>
+                <option value="tailwind">Tailwind CSS</option>
+              </select>
             </div>
           </div>
-        </template>
-      </div>
-    </div>
 
-    <!-- 最新内容显示 -->
-    <div class="bg-white rounded-lg shadow-md p-6" x-show="latestText">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">MCP CALLBACK LLM Prompts</h2>
-      <div class="bg-gray-900 text-green-400 rounded-md p-4 font-mono text-sm overflow-x-auto">
-        <pre class="whitespace-pre-wrap" x-text="latestText"></pre>
+          <!-- HTML 内容区域 - 使用 flex-1 自动填充剩余空间 -->
+          <div class="mt-6 flex-1 flex flex-col">
+            <label class="block text-sm font-medium text-gray-700 mb-2">默认 HTML 内容</label>
+            <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex-1 min-h-0 resize-none" x-model="defaultHtml"></textarea>
+            <p class="text-xs text-gray-500 mt-2">用于响应 WebSocket 的 <code class="bg-gray-100 px-1 rounded">get_html_content</code> 请求</p>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="mt-6 space-y-3">
+            <button @click="requestConvert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+              <span>🎨</span>
+              <span>请求组件转换</span>
+            </button>
+            <button @click="clearMessages()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+              <span>🗑️</span>
+              <span>清空消息历史</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <button @click="copyLatest()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md">复制内容</button>
+
+      <!-- 第二列：消息历史 -->
+      <div class="md:col-span-2 xl:col-span-1 h-full">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 h-full flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <span class="text-green-600 text-sm">📝</span>
+              </div>
+              <h2 class="text-lg font-semibold text-gray-900">消息历史</h2>
+            </div>
+            <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full" x-text="`${messages.length} 条`"></span>
+          </div>
+          <div class="overflow-y-auto bg-gray-50 rounded-md p-2 flex-1 min-h-0 scrollbar-thin" style="max-height: 450px;">
+            <div x-show="messages.length === 0" class="text-gray-500 text-center py-8 text-xs">
+              <div class="text-2xl mb-2">📋</div>
+              <div class="font-medium">暂无消息记录</div>
+              <div class="text-xs mt-1 opacity-75">执行操作后消息将显示在这里</div>
+            </div>
+            <div class="space-y-1">
+              <template x-for="(message, index) in messages" :key="index">
+                <div class="p-1.5 rounded border-l-3 text-xs cursor-pointer transition-all hover:shadow-sm"
+                     :class="{
+                       'bg-blue-50 text-blue-700 border-blue-400': message.type === 'system',
+                       'bg-green-50 text-green-700 border-green-400': message.type === 'response', 
+                       'bg-yellow-50 text-yellow-700 border-yellow-400': message.type === 'request',
+                       'bg-red-50 text-red-700 border-red-400': message.type === 'error',
+                       'bg-gray-50 text-gray-700 border-gray-400': message.type === 'info'
+                     }"
+                     x-data="{ expanded: false }"
+                     @click="expanded = !expanded">
+                  <div class="flex items-start gap-1.5">
+                    <span class="shrink-0 text-xs mt-0.5" 
+                          x-text="{
+                            'system': '🔧',
+                            'response': '✅', 
+                            'request': '📤',
+                            'error': '❌',
+                            'info': 'ℹ️'
+                          }[message.type] || 'ℹ️'"></span>
+                    <div class="flex-1 min-w-0">
+                      <div x-show="!expanded" 
+                           x-text="message.content.length > 60 ? message.content.substring(0, 60) + '...' : message.content"
+                           class="font-medium leading-tight"></div>
+                      <div x-show="expanded" 
+                           x-html="message.content"
+                           class="leading-relaxed"></div>
+                      <div class="flex justify-between items-center mt-0.5">
+                        <span class="opacity-60 text-xs" x-text="message.timestamp"></span>
+                        <span x-show="message.content.length > 60"
+                              class="opacity-40 hover:opacity-60 text-xs"
+                              x-text="expanded ? '收起' : '展开'"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第三列：转换结果 -->
+      <div class="md:col-span-2 xl:col-span-1 h-full">
+        <!-- 有结果时显示 -->
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 h-full flex flex-col" x-show="latestText" x-transition>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <span class="text-purple-600 text-sm">⚡</span>
+              </div>
+              <h2 class="text-lg font-semibold text-gray-900">转换结果</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full" x-text="`${latestText.length} 字符`"></span>
+              <button @click="copyLatest()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1">
+                <span>📋</span>
+                <span>复制</span>
+              </button>
+            </div>
+          </div>
+          <div class="bg-gray-900 text-green-400 rounded-md p-4 font-mono text-xs overflow-x-auto overflow-y-auto flex-1 min-h-0 scrollbar-thin">
+            <pre class="whitespace-pre-wrap" x-text="latestText"></pre>
+          </div>
+        </div>
+        
+        <!-- 空状态提示 -->
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 text-center h-full flex flex-col" x-show="!latestText">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <span class="text-purple-600 text-sm">⚡</span>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900">转换结果</h2>
+          </div>
+          <div class="flex flex-col items-center justify-center bg-gray-50 rounded-md flex-1 min-h-0">
+            <div class="text-gray-300 text-5xl mb-4">⚡</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">等待转换结果</h3>
+            <p class="text-sm text-gray-500 mb-4">点击"请求组件转换"按钮开始转换</p>
+            <div class="text-xs text-gray-400 space-y-1">
+              <div>• 支持 React 和 Vue 框架</div>
+              <div>• 支持 CSS 和 Tailwind 样式</div>
+              <div>• 自动生成组件代码</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
