@@ -1,8 +1,8 @@
 import fs from 'fs'
-import path from 'path'
 import fsp from 'fs/promises'
-import compatFetch from './fetch'
+import path from 'path'
 import {createLogger} from 'src/utils/logger'
+import compatFetch from './fetch'
 
 export interface NodeToCodeFile {
   content: string
@@ -124,7 +124,7 @@ export class Downloader {
 
       // 移除 base64 前缀（如果存在）
       const base64String = base64Data.replace(/^data:image\/\w+;base64,/, '')
-      
+
       // 构建本地文件路径
       const localFilePath = path.join(localPath, fileName)
 
@@ -151,9 +151,7 @@ export class Downloader {
     if (!this.op.localPath) return
 
     // 过滤出图片文件
-    const imageFiles = files.filter(f => 
-      f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i)
-    )
+    const imageFiles = files.filter(f => f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i))
 
     // 保存所有图片文件
     for (const imageFile of imageFiles) {
@@ -167,9 +165,7 @@ export class Downloader {
     }
 
     // 保存代码文件
-    const codeFiles = files.filter(f => 
-      !f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i)
-    )
+    const codeFiles = files.filter(f => !f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i))
 
     for (const file of codeFiles) {
       try {

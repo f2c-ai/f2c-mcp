@@ -11,7 +11,7 @@ const COMMON_REQUIREMENTS = {
 - Convert inline 'style="..."' to a React style object: 'style={{...}}'.`,
     css: `- Replace Tailwind utility classes with semantic class names and reference a CSS Module: import styles from './{{componentName}}.module.css'.
 - Apply classes via 'className={styles.className}'.
-- Convert inline 'style="..."' to a React style object only when dynamic; prefer moving static styles into the CSS Module.`
+- Convert inline 'style="..."' to a React style object only when dynamic; prefer moving static styles into the CSS Module.`,
   },
   vue: {
     base: `- Output only the .vue code in a single block; no explanations.
@@ -24,8 +24,8 @@ const COMMON_REQUIREMENTS = {
     css: `- Use <template>, <script setup lang="ts">, and <style scoped> (leave script empty if no logic).
 - Do not use Tailwind utility classes. Replace them with semantic class names and equivalent CSS rules inside <style scoped>.
 - Map HTML DOM events to Vue listeners using '@event': 'onclick'→'@click', 'oninput'→'@input', 'onchange'→'@change', 'onsubmit'→'@submit', 'onfocus'→'@focus', 'onblur'→'@blur'.
-- Prefer moving static inline styles into <style scoped>; keep dynamic expressions with ':style="{...}"'.`
-  }
+- Prefer moving static inline styles into <style scoped>; keep dynamic expressions with ':style="{...}"'.`,
+  },
 }
 
 export const registerCodeConvertPrompts = (mcpServer: McpServer) => {
@@ -35,7 +35,7 @@ export const registerCodeConvertPrompts = (mcpServer: McpServer) => {
     'Convert HTML + TailwindCSS to React component (preserving Tailwind)',
     {
       componentName: z.string().describe('Name for the React component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert')
+      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
     },
     async ({componentName, source}) => ({
       messages: [
@@ -53,11 +53,11 @@ ${COMMON_REQUIREMENTS.react.tailwind}
 Component name: ${componentName}
 
 Source:
-${source}`
-          }
-        }
-      ]
-    })
+${source}`,
+          },
+        },
+      ],
+    }),
   )
 
   // React with CSS Modules
@@ -66,7 +66,7 @@ ${source}`
     'Convert HTML + TailwindCSS to React component with CSS Modules',
     {
       componentName: z.string().describe('Name for the React component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert')
+      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
     },
     async ({componentName, source}) => ({
       messages: [
@@ -84,11 +84,11 @@ ${COMMON_REQUIREMENTS.react.css.replace(/\{\{componentName\}\}/g, componentName)
 Component name: ${componentName}
 
 Source:
-${source}`
-          }
-        }
-      ]
-    })
+${source}`,
+          },
+        },
+      ],
+    }),
   )
 
   // Vue with Tailwind
@@ -97,7 +97,7 @@ ${source}`
     'Convert HTML + TailwindCSS to Vue SFC (preserving Tailwind)',
     {
       componentName: z.string().describe('Name for the Vue component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert')
+      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
     },
     async ({componentName, source}) => ({
       messages: [
@@ -113,11 +113,11 @@ ${COMMON_REQUIREMENTS.vue.base.replace(/\{\{componentName\}\}/g, componentName)}
 ${COMMON_REQUIREMENTS.vue.tailwind}
 
 Source:
-${source}`
-          }
-        }
-      ]
-    })
+${source}`,
+          },
+        },
+      ],
+    }),
   )
 
   // Vue with CSS
@@ -126,7 +126,7 @@ ${source}`
     'Convert HTML + TailwindCSS to Vue SFC with scoped CSS',
     {
       componentName: z.string().describe('Name for the Vue component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert')
+      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
     },
     async ({componentName, source}) => ({
       messages: [
@@ -142,20 +142,18 @@ ${COMMON_REQUIREMENTS.vue.base.replace(/\{\{componentName\}\}/g, componentName)}
 ${COMMON_REQUIREMENTS.vue.css}
 
 Source:
-${source}`
-          }
-        }
-      ]
-    })
+${source}`,
+          },
+        },
+      ],
+    }),
   )
 }
-
-
 
 // Helper function to generate prompt text based on framework and style
 export function generatePromptText(promptName: string, componentName: string, source: string): string {
   const basePrompt = 'You are a precise code converter.'
-  
+
   switch (promptName) {
     case 'html-to-react-tailwind':
       return `${basePrompt}

@@ -25,7 +25,9 @@ async function getCompatibleFetch(): Promise<typeof fetch> {
     try {
       nodeFetchModule = await import('node-fetch')
     } catch (error) {
-      throw new Error('Neither native fetch nor node-fetch is available. Please install node-fetch or upgrade to Node.js 18+')
+      throw new Error(
+        'Neither native fetch nor node-fetch is available. Please install node-fetch or upgrade to Node.js 18+',
+      )
     }
   }
 
