@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F2C MCP Server - WebSocket Client</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8" x-data="websocketClient()">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">F2C</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">MCP WebSocket Client</h1>
+                        <p class="text-gray-600">等待远程消息接收</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div :class="{
+                        'w-3 h-3 rounded-full': true,
+                        'bg-green-500': status === 'connected',
+                        'bg-yellow-500 animate-pulse': status === 'connecting',
+                        'bg-red-500': status === 'disconnected'
+                    }"></div>
+                    <span class="text-sm text-gray-600" x-text="statusText"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 消息显示区域 -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">消息历史</h2>
+                <button @click="clearMessages()" 
+                        class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-1 px-3 rounded-md transition-colors text-sm">
+                    清空
+                </button>
+            </div>
+            
+            <div class="h-96 overflow-y-auto bg-gray-50 rounded-md p-4 space-y-2">
+                <template x-if="messages.length === 0">
+                    <div class="text-gray-500 text-center py-8">等待消息...</div>
+                </template>
+                
+                <template x-for="(message, index) in messages" :key="index">
+                    <div :class="{
+                        'p-3 rounded-md': true,
+                        'bg-blue-100 text-blue-800': message.type === 'system',
+                        'bg-green-100 text-green-800': message.type === 'response',
+                        'bg-yellow-100 text-yellow-800': message.type === 'request',
+                        'bg-red-100 text-red-800': message.type === 'error',
+                        'bg-gray-100 text-gray-800': message.type === 'info'
+                    }">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1" x-html="message.content"></div>
+                            <div class="text-xs opacity-75 ml-2" x-text="message.timestamp"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- 最新消息代码显示 -->
+        <div class="bg-white rounded-lg shadow-md p-6 mt-6" x-show="latestCode">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">最新接收的代码</h2>
+            <div class="bg-gray-900 text-green-400 rounded-md p-4 font-mono text-sm overflow-x-auto">
+                <pre class="whitespace-pre-wrap" x-text="latestCode"></pre>
+            </div>
+            <button @click="copyCode()" 
+                    class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                复制代码
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function websocketClient() {
+            return {
+                ws: null,
+                status: 'disconnected',
+                statusText: '未连接',
+                messages: [],
+                latestCode: '',
+
+                init() {
+                    this.connect();
+                },
+
+                connect() {
+                    this.status = 'connecting';
+                    this.statusText = '连接中...';
+                    
+                    const wsUrl = `ws://${window.location.host}/ws?device=web`;
+                    this.ws = new WebSocket(wsUrl);
+
+                    this.ws.onopen = () => {
+                        this.status = 'connected';
+                        this.statusText = '已连接';
+                        this.addMessage('system', '✅ WebSocket 自动连接成功');
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const message = JSON.parse(event.data);
+                            this.handleMessage(message);
+                        } catch (error) {
+                            this.addMessage('error', `消息解析失败: ${error.message}`);
+                        }
+                    };
+
+                    this.ws.onclose = () => {
+                        this.status = 'disconnected';
+                        this.statusText = '连接断开';
+                        this.addMessage('system', '❌ WebSocket 连接断开');
+                        
+                        // 5秒后自动重连
+                        setTimeout(() => {
+                            if (this.status === 'disconnected') {
+                                this.addMessage('system', '🔄 尝试自动重连...');
+                                this.connect();
+                            }
+                        }, 5000);
+                    };
+
+                    this.ws.onerror = () => {
+                        this.addMessage('error', '❌ WebSocket 连接错误');
+                    };
+                },
+
+                handleMessage(message) {
+                    switch (message.type) {
+                        case 'component_response':
+                            this.addMessage('response', `✅ 收到组件代码: ${message.componentName || '未知组件'}`);
+                            if (message.code) {
+                                this.latestCode = message.code;
+                                this.addMessage('info', `📄 代码长度: ${message.code.length} 字符`);
+                            }
+                            break;
+                        case 'component_request':
+                            this.addMessage('request', `🎨 收到组件请求: ${message.componentName} (${message.framework}, ${message.style})`);
+                            break;
+                        case 'connection_established':
+                            this.addMessage('system', `🔗 连接已建立，客户端ID: ${message.clientId || '未知'}`);
+                            break;
+                        default:
+                            this.addMessage('info', `📨 收到消息类型: ${message.type}`);
+                            if (message.data) {
+                                this.addMessage('info', `📄 消息内容: ${JSON.stringify(message.data).substring(0, 100)}...`);
+                            }
+                            // 收到泛化请求后，按 requestId 回传（点对点）
+                            // 如果是 get_html_content，返回固定示例 HTML 内容
+                            if (message.requestId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+                                let response;
+                                if (message.type === 'get_html_content') {
+                                    response = {
+                                        type: 'get_html_content',
+                                        requestId: message.requestId,
+                                        data: { content: '<div class="flex flex-col items-center p-7 rounded-2xl">demo</div>' },
+                                        timestamp: Date.now()
+                                    };
+                                } else {
+                                    response = {
+                                        type: message.type,
+                                        requestId: message.requestId,
+                                        data: message.data ?? message,
+                                        timestamp: Date.now()
+                                    };
+                                }
+                                try {
+                                    this.ws.send(JSON.stringify(response));
+                                    this.addMessage('response', `↩️ 已回传响应: ${response.type}`);
+                                } catch (error) {
+                                    this.addMessage('error', `响应发送失败: ${error.message}`);
+                                }
+                            }
+                    }
+                },
+
+                addMessage(type, content) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    this.messages.unshift({
+                        type,
+                        content,
+                        timestamp
+                    });
+                    
+                    // 只保留最新的50条消息
+                    if (this.messages.length > 50) {
+                        this.messages = this.messages.slice(0, 50);
+                    }
+                },
+
+                clearMessages() {
+                    this.messages = [];
+                    this.latestCode = '';
+                },
+
+                copyCode() {
+                    if (this.latestCode) {
+                        navigator.clipboard.writeText(this.latestCode).then(() => {
+                            this.addMessage('system', '📋 代码已复制到剪贴板');
+                        }).catch(() => {
+                            this.addMessage('error', '❌ 复制失败');
+                        });
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
