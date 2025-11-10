@@ -3,8 +3,11 @@ import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/st
 import {Elysia, t} from 'elysia'
 import {toFetchResponse, toReqRes} from 'fetch-to-node'
 import {server} from 'src/tool'
+import {createLogger} from 'src/utils/logger'
 import {socketClient} from 'src/utils/socket-client'
 import config from './config'
+
+const logger = createLogger('http')
 
 const app = new Elysia().use(
   staticPlugin({
@@ -29,7 +32,7 @@ app.ws('/ws', {
   open(ws) {
     ws.subscribe('f2c-mcp-channel')
     const device = ws.data.query.device
-    console.log(`[${device}]客户端连接`)
+    logger.info(`[${device}]客户端连接`)
     // if (device === 'web' && socketClient.isConnected) {
     //   setInterval(async () => {
     //     const response = await socketClient.request('get_html_content', {
@@ -46,7 +49,7 @@ app.ws('/ws', {
     const msg = typeof message === 'string' ? JSON.parse(message) : message
     const device = ws.data.query.device
     const sendMsg = {...msg, device}
-    console.log(`[${device}]发送消息 [${msg.type}] [${msg.requestId}]: ${JSON.stringify(sendMsg)}`)
+    logger.info(`[${device}]发送消息 [${msg.type}] [${msg.requestId}]: ${JSON.stringify(sendMsg)}`)
 
     // ws.send(JSON.stringify({...msg, forwarded: true}))
     ws.publish('f2c-mcp-channel', sendMsg)
@@ -54,7 +57,7 @@ app.ws('/ws', {
 
   close(ws) {
     const device = ws.data.query.device
-    console.log(`[${device}]客户端断开`)
+    logger.info(`[${device}]客户端断开`)
     ws.unsubscribe('f2c-mcp-channel')
   },
 })
@@ -100,7 +103,7 @@ app.post('/mcp', async ({request}) => {
 
     return toFetchResponse(res)
   } catch (error) {
-    console.error('MCP 请求错误:', error)
+    logger.error('MCP 请求错误:', error)
     return new Response(
       JSON.stringify({
         jsonrpc: '2.0',
@@ -120,11 +123,12 @@ app.post('/mcp', async ({request}) => {
 
 // 启动服务器
 app.listen(config.port, async () => {
-  console.log(`MCP Server: http://${config.ip}:${config.port}/mcp`)
-  console.log(`WebSocket: ${config.wsUrl}`)
+  logger.info(`MCP Server: ${config.httpUrl}/mcp`)
+  logger.info(`WebSocket: ${config.wsUrl}`)
+  logger.info(`Demo Case: ${config.httpUrl}`)
   try {
     await socketClient.connect()
   } catch (error: any) {
-    console.warn('[web callback msp] 示例请求失败:', error?.message || error)
+    logger.warn('[web callback msp] 示例请求失败:', error?.message || error)
   }
 })

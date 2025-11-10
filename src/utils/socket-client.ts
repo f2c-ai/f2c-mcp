@@ -1,23 +1,25 @@
 import config from 'src/config'
+import {createLogger} from 'src/utils/logger'
 
 // 简化版 WebSocket 客户端：保留外部 API，不改变使用方式
 interface SocketClientOptions {
   url: string
-  timeout?: number
+  timeout?: number // 0 或未设置表示不启用超时
 }
 
 type PendingRequest = {
   resolve: (value: any) => void
   reject: (error: Error) => void
-  timeout: NodeJS.Timeout
+  timeout?: NodeJS.Timeout
 }
 
-const DEFAULT_TIMEOUT_MS = 30000
+const DEFAULT_TIMEOUT_MS = process.env.WS_WEB_TIMEOUT_MS ? Number(process.env.WS_WEB_TIMEOUT_MS) : 0
 
 class SocketClient {
   private ws: WebSocket | null = null
   private options: {url: string; timeout: number}
   private pendingRequests = new Map<string, PendingRequest>()
+  private logger = createLogger('socket-client')
 
   constructor(options: SocketClientOptions) {
     this.options = {
@@ -36,6 +38,10 @@ class SocketClient {
       ws.onopen = () => resolve()
       ws.onerror = () => reject(new Error('WebSocket connection failed'))
       ws.onmessage = e => this.handleMessage(e.data)
+      ws.onclose = () => {
+        // 主动清理，避免挂起的请求泄漏
+        this.disconnect()
+      }
     })
   }
 
@@ -44,20 +50,20 @@ class SocketClient {
     try {
       msg = JSON.parse(raw)
     } catch (err) {
-      console.error('消息解析错误:', err)
+      this.logger.error('消息解析错误:', err)
       return
     }
 
     const id = msg.requestId
     if (!id) return
-
+    // 只处理 web 端的请求
     const device = msg.device
     if (device !== 'web') return
 
     const req = this.pendingRequests.get(id)
     if (!req) return
 
-    clearTimeout(req.timeout)
+    if (req.timeout) clearTimeout(req.timeout)
     this.pendingRequests.delete(id)
     req.resolve(msg.data ?? msg)
   }
@@ -71,12 +77,16 @@ class SocketClient {
         return reject(new Error('WebSocket not connected'))
       }
 
-      const requestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+      const requestId = `f2c_web_req_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
 
-      const timeout = setTimeout(() => {
-        this.pendingRequests.delete(requestId)
-        reject(new Error(`Request timeout: ${type}`))
-      }, this.options.timeout)
+      let timeout: NodeJS.Timeout | undefined
+      if (this.options.timeout && this.options.timeout > 0) {
+        timeout = setTimeout(() => {
+          this.pendingRequests.delete(requestId)
+          this.logger.warn(`请求超时: ${type}`, {requestId})
+          reject(new Error(`Request timeout: ${type}`))
+        }, this.options.timeout)
+      }
 
       this.pendingRequests.set(requestId, {resolve, reject, timeout})
 
@@ -96,7 +106,7 @@ class SocketClient {
     this.ws = null
 
     this.pendingRequests.forEach(req => {
-      clearTimeout(req.timeout)
+      if (req.timeout) clearTimeout(req.timeout)
       req.reject(new Error('Connection closed'))
     })
     this.pendingRequests.clear()

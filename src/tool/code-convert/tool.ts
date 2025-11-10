@@ -1,8 +1,11 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import downloader from 'src/utils/downloader'
+import {createLogger, LogLevel} from 'src/utils/logger'
 import {socketClient} from 'src/utils/socket-client.js'
 import {z} from 'zod'
 import {generatePromptText} from './prompt'
+
+const logger = createLogger('code-convert-tool', LogLevel.DEBUG)
 
 export const registerCodeConvertTool = (mcpServer: McpServer) => {
   mcpServer.tool(
@@ -35,13 +38,14 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
 
       try {
         // 打印请求前连接状态
-        console.log('Socket 连接状态:', socketClient.isConnected)
+        logger.info('Socket 连接状态:', socketClient.isConnected)
 
         const response = await socketClient.request('get_html_content', {
           componentName: name,
           framework: fw,
           style: sm,
         })
+        logger.debug('Socket 响应:', response)
 
         const htmlContent = response.content
 
@@ -63,7 +67,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         if (Array.isArray(files) && files.length > 0) {
           await downloader.downLoadImageFromBase64(files)
         } else {
-          console.info('files不做处理')
+          logger.info('files 为空，跳过图片处理')
         }
 
         return {
@@ -76,8 +80,8 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         }
       } catch (error) {
         // 打印错误时的连接状态
-        console.log('错误时 Socket 连接状态:', socketClient.isConnected)
-        console.error('Socket 请求错误:', error)
+        logger.info('错误时 Socket 连接状态:', socketClient.isConnected)
+        logger.error('Socket 请求错误:', error)
 
         return {
           content: [
