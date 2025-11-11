@@ -202,9 +202,7 @@
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
           const msg = {
             type: 'figma-selection',
-            data: { online: true },
-            uid: this.uid,
-            from: 'web',
+            data: {id: '2001:170'},
             timestamp: Date.now()
           }
           try {

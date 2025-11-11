@@ -36,7 +36,7 @@ export class CodeWS {
         this.logger.debug('[收到消息]', message)
         const msg = message
         if (msg.type === 'figma-selection') {
-          this.lastUpdateWebUid = msg.uid
+          this.lastUpdateWebUid = ws.data.params.uid
           this.logger.debug('[模拟Figma选择设计稿] lastUpdateWebUid', this.lastUpdateWebUid)
         } else if (msg.type === 'mcp-request-code' && this.lastUpdateWebUid) {
           const useWS = this.users.get(this.lastUpdateWebUid)

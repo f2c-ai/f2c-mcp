@@ -1,74 +1,45 @@
-# Code WebSocket 接入手册（/code/:uid）
+# Code WebSocket 接入指南（仅 Web 与 Figma）
 
-本文档说明如何接入后端的代码生成 WebSocket（`/code/:uid`），以及在多人同时在线时的消息路由优先级策略。
+本文档提供 Web 页面与 Figma 插件接入 `/code/:uid` 的说明，并明确多人同时在线时的优先级与各消息类型语义。MCP 客户端的接入说明不在本文范围内。
 
-## 连接地址
-- WebSocket 路径：`ws://<host>:<port>/code/:uid`
-- `uid` 用于标识客户端实例，建议按角色使用前缀：
-  - MCP 客户端：`mcp_<timestamp>`
-  - Web 前端页面：`web_<timestamp>`
-  - Figma 插件（可选）：`figma_<timestamp>`
+## 连接地址与角色识别
+- 连接：`ws://<host>:<port>/code/:uid`
+- `uid` 建议按角色前缀：
+  - Web 页面：`web_<timestamp>`
+  - Figma 插件：`figma_<timestamp>`
+- 服务器角色识别（`from`）：
+  - `origin` 包含 `figma.com` → 识别为 `figma`
+  - 否则 → 识别为 `web`
 
-## 身份识别规则
-- 服务器根据以下规则识别客户端角色（`from`）：
-  - 当 `uid` 以 `mcp` 开头 → 识别为 `mcp`
-  - 否则，如果请求头 `origin` 包含 `figma.com` → 识别为 `figma`
-  - 其他情况 → 识别为 `web`
+## 消息类型与含义
+- `figma-selection`
+  - 作用：声明“当前活跃的选择上下文”，用于告知服务器后续请求应路由到哪个客户端。
+  - 发送方：Web 或 Figma。
+  - 影响：服务器记录最近一次发送该消息的客户端 `uid` 为活跃目标（优先级持有者）。
 
-## 消息格式（MessageType）
-所有消息均为 JSON，结构：
-```json
-{
-  "type": "figma-gen-code | figma-selection | mcp-request-code",
-  "data": {},
-  "requestId": "string",
-  "from": "mcp | web | figma",
-  "uid": "string",
-  "timestamp": 1710000000000
-}
-```
+- `mcp-request-code`
+  - 作用：由 MCP 发起的“生成代码”请求消息。
+  - 路由：服务器会将该请求转发给“最近一次发送 `figma-selection` 的客户端”。
+  - 备注：本文不涉及 MCP 客户端接入，仅说明路由行为。
 
-## 典型交互流程
-1) Web 端接入并绑定当前页面
-   - Web 页面连接后立即发送 `figma-selection`，用于声明“当前活跃页面”。
-   - 服务器将该 `uid` 记录为 `lastUpdateWebUid`。
+- `figma-gen-code`
+  - 作用：客户端返回生成的代码内容（如 HTML/CSS/JS、文件列表）。
+  - 路由：服务器会将该响应转发给当前活跃的 MCP 客户端。
 
-2) MCP 请求代码
-   - MCP 发送 `mcp-request-code`。
-   - 服务器把该请求转发给 `lastUpdateWebUid` 对应的 Web 页面。
+## 多人协作优先级（Web 与 Figma）
+- 优先级核心规则：在 Web 与 Figma 的选择节点期间，“谁最后发送 `figma-selection`”，MCP 就会采用“该客户端后续发送的 `figma-gen-code`”作为最终结果。
+- 切换优先级：任意客户端（Web 或 Figma）再次发送 `figma-selection`，即可成为新的优先级持有者。
+- 断线行为：优先级持有者断线后，服务器清空活跃目标；新的 `figma-selection` 到达前，`mcp-request-code` 将无法转发到具体客户端。
 
-3) Web 返回生成结果
-   - Web 收到请求后，发送 `figma-gen-code`（携带生成的内容与文件）。
-   - 服务器将响应转发给当前活跃的 MCP（记录在 `mcpUid`）。
-
-## 多人协作与优先级策略
-- Web 端优先级（谁接收 MCP 请求）
-  - “最后一个发送 `figma-selection` 的 Web 客户端”拥有路由优先级。
-  - 即：`lastUpdateWebUid` 会被最新的选择事件覆盖，后续所有 `mcp-request-code` 都只转发给这个 `uid`。
-
-- MCP 端优先级（谁接收生成结果）
-  - “最后一个建立连接且角色为 MCP 的客户端”拥有路由优先级。
-  - 即：`mcpUid` 在 MCP 连接时更新，后续所有 `figma-gen-code` 都转发给该 MCP。
-
-- 断线与优先级重置
-  - 当优先级持有者断线：
-    - 若断线的是活跃 MCP → `mcpUid` 被清空，`figma-gen-code` 将无法投递，直到有新的 MCP 连接。
-    - 若断线的是活跃 Web → `lastUpdateWebUid` 被清空，`mcp-request-code` 将无法被转发，直到有新的 Web 发送 `figma-selection`。
-
-## 最佳实践建议
-- Web 页面：
-  - 在 `onopen` 主动发送一次 `figma-selection` 进行绑定。
-  - 提供“刷新绑定”按钮，手动重发 `figma-selection`，以在多页面场景下切换当前路由目标。
-  - 响应 `mcp-request-code` 时始终携带最新的页面内容。
-
-- MCP 客户端：
-  - 使用唯一 `uid` 并在连接成功后开始请求。
-  - 如果长时间无响应，检查是否存在活跃 Web（是否已发送 `figma-selection`），或自身是否为当前活跃 MCP（最近连接者）。
+## 接入步骤（Web 与 Figma 通用）
+- 连接成功后，立即发送一次 `figma-selection`，声明当前活跃上下文。
+- 收到 `mcp-request-code` 时，生成并返回 `figma-gen-code`，其中 `data` 包含：
+  - `content`: 生成的 HTML 字符串或其他代码内容
+  - `files`: 相关文件列表（可选）
+  - 保持原样返回 `requestId`、`uid`、`timestamp` 等字段以便链路追踪。
 
 ## 示例消息
-以下示例展示典型的三种消息：
-
-1) Web 声明当前页面活跃（绑定路由目标）
+1) `figma-selection`（Web 或 Figma 声明活跃上下文）
 ```json
 {
   "type": "figma-selection",
@@ -80,7 +51,7 @@
 }
 ```
 
-2) MCP 请求生成代码并由服务器转发到活跃 Web
+2) `mcp-request-code`（服务器会转发给最近一次选择的客户端）
 ```json
 {
   "type": "mcp-request-code",
@@ -92,7 +63,7 @@
 }
 ```
 
-3) Web 返回生成结果并由服务器转发到活跃 MCP
+3) `figma-gen-code`（客户端返回生成结果，服务器转发给 MCP）
 ```json
 {
   "type": "figma-gen-code",
@@ -107,7 +78,7 @@
 }
 ```
 
-## 故障排查提示
-- MCP 收不到响应：检查是否有 Web 端发送了 `figma-selection`，或活跃 MCP 是否断线。
-- Web 收不到请求：检查是否有 MCP 在线并发送了 `mcp-request-code`，或此前是否被其他页面覆盖了 `lastUpdateWebUid`。
+## 提示
+- 在多页面或多人（Web 与 Figma 同时在线）场景中，使用“刷新绑定”（重新发送 `figma-selection`）来明确当前优先级。
+- 如发现请求未到达本客户端，检查是否被其他客户端的最新 `figma-selection` 覆盖优先级。
 - 多人同时在线：明确通过手动“刷新绑定”选择当前页面，让路由目标可预期。
