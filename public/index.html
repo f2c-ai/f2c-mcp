@@ -139,18 +139,27 @@
         this.status = 'disconnected'
         this.statusText = 'WS 未连接'
         this.messageService = messageService
+        this.uid = `web_${Date.now()}`
+        this.getDefaultHtml = () => ''
       }
 
-      connect(defaultHtml) {
+      connect(getDefaultHtml) {
         this.status = 'connecting'
         this.statusText = 'WS 连接中...'
-        const wsUrl = `ws://${window.location.hostname}:${window.location.port || 3000}/ws?device=web`
+        const wsUrl = `ws://${window.location.hostname}:${window.location.port || 3000}/code/${this.uid}`
+        // 保存 HTML 获取函数，确保后续发送使用最新内容
+        if (typeof getDefaultHtml === 'function') {
+          this.getDefaultHtml = getDefaultHtml
+        }
         this.ws = new WebSocket(wsUrl)
 
         this.ws.onopen = () => {
           this.status = 'connected'
           this.statusText = 'WS 已连接'
           this.messageService.add('system', '✅ WebSocket 连接成功')
+
+          // 首次连接后发送一次初始选择消息，用于绑定当前 Web 客户端 UID
+          this.sendSelection()
         }
 
         this.ws.onmessage = (event) => {
@@ -158,13 +167,15 @@
             const message = JSON.parse(event.data)
             this.messageService.add('info', `📨 收到消息: ${message.type}`)
             
-            if (message.requestId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+            // 仅针对 MCP 的代码请求进行响应
+            if (message.type === 'mcp-request-code' && message.requestId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+              const html = typeof this.getDefaultHtml === 'function' ? this.getDefaultHtml() : ''
               const response = {
-                type: message.type,
+                type: 'figma-gen-code',
                 requestId: message.requestId,
-                data: message.type === 'get_html_content' 
-                  ? { content: defaultHtml }
-                  : message.data,
+                data: { content: html, files: [] },
+                uid: this.uid,
+                from: 'web',
                 timestamp: Date.now()
               }
               this.ws.send(JSON.stringify(response))
@@ -183,6 +194,27 @@
 
         this.ws.onerror = () => {
           this.messageService.add('error', '❌ WebSocket 连接错误')
+        }
+      }
+
+      // 主动发送 figma-selection，用于刷新当前页面的路由绑定
+      sendSelection() {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+          const msg = {
+            type: 'figma-selection',
+            data: { online: true },
+            uid: this.uid,
+            from: 'web',
+            timestamp: Date.now()
+          }
+          try {
+            this.ws.send(JSON.stringify(msg))
+            this.messageService.add('info', '📡 已发送 figma-selection 绑定')
+          } catch (error) {
+            this.messageService.add('error', `发送绑定失败: ${error?.message || error}`)
+          }
+        } else {
+          this.messageService.add('error', 'WS 未连接，无法发送绑定')
         }
       }
     }
@@ -223,7 +255,7 @@
           this.wsService = new WebSocketService(this.messageService)
 
           // 启动连接
-          this.wsService.connect(this.defaultHtml)
+          this.wsService.connect(() => this.defaultHtml)
           setTimeout(() => this.mcpService.connect(), 200)
         },
 
@@ -369,7 +401,7 @@
           <div class="mt-6 flex-1 flex flex-col">
             <label class="block text-sm font-medium text-gray-700 mb-2">默认 HTML 内容</label>
             <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex-1 min-h-0 resize-none" x-model="defaultHtml"></textarea>
-            <p class="text-xs text-gray-500 mt-2">用于响应 WebSocket 的 <code class="bg-gray-100 px-1 rounded">get_html_content</code> 请求</p>
+            <p class="text-xs text-gray-500 mt-2">用于响应 WebSocket 的 <code class="bg-gray-100 px-1 rounded">mcp-request-code</code> 请求</p>
           </div>
 
           <!-- 操作按钮 -->
@@ -377,6 +409,10 @@
             <button @click="requestConvert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
               <span>🎨</span>
               <span>请求组件转换</span>
+            </button>
+            <button @click="wsService && wsService.sendSelection()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+              <span>🔄</span>
+              <span>模拟选择设计稿</span>
             </button>
             <button @click="clearMessages()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
               <span>🗑️</span>

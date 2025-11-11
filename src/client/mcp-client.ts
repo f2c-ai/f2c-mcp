@@ -1,5 +1,6 @@
-import config from 'src/config'
+import config, {ws_web_timeout_ms} from 'src/config'
 import {createLogger} from 'src/utils/logger'
+import {EventType, MessageType} from '@/server/code-ws'
 
 // 简化版 WebSocket 客户端：保留外部 API，不改变使用方式
 interface SocketClientOptions {
@@ -13,18 +14,25 @@ type PendingRequest = {
   timeout?: NodeJS.Timeout
 }
 
-const DEFAULT_TIMEOUT_MS = process.env.WS_WEB_TIMEOUT_MS ? Number(process.env.WS_WEB_TIMEOUT_MS) : 0
-
 class SocketClient {
   private ws: WebSocket | null = null
   private options: {url: string; timeout: number}
   private pendingRequests = new Map<string, PendingRequest>()
-  private logger = createLogger('socket-client')
+  private logger = createLogger('mcp-client')
+  private uid: string
 
   constructor(options: SocketClientOptions) {
     this.options = {
       url: options.url,
-      timeout: options.timeout ?? DEFAULT_TIMEOUT_MS,
+      timeout: options.timeout ?? ws_web_timeout_ms,
+    }
+    // 提取 uid（最后一个路径段）用于消息标识
+    try {
+      const u = new URL(this.options.url)
+      const parts = u.pathname.split('/')
+      this.uid = parts[parts.length - 1] || `mcp_${Date.now()}`
+    } catch {
+      this.uid = `mcp_${Date.now()}`
     }
   }
 
@@ -56,19 +64,16 @@ class SocketClient {
 
     const id = msg.requestId
     if (!id) return
-    // 只处理 web 端的请求
-    const device = msg.device
-    if (device !== 'web') return
 
     const req = this.pendingRequests.get(id)
     if (!req) return
 
     if (req.timeout) clearTimeout(req.timeout)
     this.pendingRequests.delete(id)
-    req.resolve(msg.data ?? msg)
+    req.resolve(msg)
   }
 
-  async request(type: string, data: any): Promise<any> {
+  async request(type: EventType, data: any): Promise<MessageType> {
     await this.connect()
 
     return new Promise((resolve, reject) => {
@@ -77,7 +82,7 @@ class SocketClient {
         return reject(new Error('WebSocket not connected'))
       }
 
-      const requestId = `f2c_web_req_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+      const requestId = `mcp_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
 
       let timeout: NodeJS.Timeout | undefined
       if (this.options.timeout && this.options.timeout > 0) {
@@ -95,6 +100,8 @@ class SocketClient {
           type,
           data,
           requestId,
+          from: 'mcp',
+          uid: this.uid,
           timestamp: Date.now(),
         }),
       )
@@ -117,4 +124,4 @@ class SocketClient {
   }
 }
 
-export const socketClient = new SocketClient({url: config.getWS('mcp')})
+export const socketClient = new SocketClient({url: config.getCodeWS(`mcp_${Date.now()}`)})

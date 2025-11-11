@@ -1,8 +1,8 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import downloader from 'src/utils/downloader'
 import {createLogger, LogLevel} from 'src/utils/logger'
-import {socketClient} from 'src/utils/socket-client.js'
 import {z} from 'zod'
+import {socketClient} from '@/client/mcp-client.js'
 import {generatePromptText} from './prompt'
 
 const logger = createLogger('code-convert-tool', LogLevel.DEBUG)
@@ -40,14 +40,14 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         // 打印请求前连接状态
         logger.info('Socket 连接状态:', socketClient.isConnected)
 
-        const response = await socketClient.request('get_html_content', {
+        const rs = await socketClient.request('mcp-request-code', {
           componentName: name,
           framework: fw,
           style: sm,
         })
-        logger.debug('Socket 响应:', response)
+        logger.debug('Socket 响应:', rs)
 
-        const htmlContent = response.content
+        const htmlContent = rs.data.content
 
         // 提取 body 内容或使用完整 HTML
         const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i)
@@ -63,7 +63,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         const promptText = generatePromptText(promptName, name, source)
 
         // 处理图片
-        const files = response.files
+        const files = rs.data.files
         if (Array.isArray(files) && files.length > 0) {
           await downloader.downLoadImageFromBase64(files)
         } else {

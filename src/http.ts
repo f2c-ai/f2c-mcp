@@ -4,8 +4,9 @@ import {Elysia, t} from 'elysia'
 import {toFetchResponse, toReqRes} from 'fetch-to-node'
 import {server} from 'src/tool'
 import {createLogger} from 'src/utils/logger'
-import {socketClient} from 'src/utils/socket-client'
+import {socketClient} from '@/client/mcp-client'
 import config from './config'
+import {CodeWS} from './server/code-ws'
 
 const logger = createLogger('http')
 
@@ -24,43 +25,8 @@ app.get('/', async () => {
   })
 })
 
-// 泛化的 WebSocket 处理
-app.ws('/ws', {
-  query: t.Object({
-    device: t.String(),
-  }),
-  open(ws) {
-    ws.subscribe('f2c-mcp-channel')
-    const device = ws.data.query.device
-    logger.info(`[${device}]客户端连接`)
-    // if (device === 'web' && socketClient.isConnected) {
-    //   setInterval(async () => {
-    //     const response = await socketClient.request('get_html_content', {
-    //       componentName: 'TestComponent',
-    //       framework: 'react',
-    //       style: 'css',
-    //     })
-    //     console.log('Web response:', response)
-    //   }, 1000)
-    // }
-  },
-
-  message(ws, message) {
-    const msg = typeof message === 'string' ? JSON.parse(message) : message
-    const device = ws.data.query.device
-    const sendMsg = {...msg, device}
-    logger.info(`[${device}]发送消息 [${msg.type}] [${msg.requestId}]: ${JSON.stringify(sendMsg)}`)
-
-    // ws.send(JSON.stringify({...msg, forwarded: true}))
-    ws.publish('f2c-mcp-channel', sendMsg)
-  },
-
-  close(ws) {
-    const device = ws.data.query.device
-    logger.info(`[${device}]客户端断开`)
-    ws.unsubscribe('f2c-mcp-channel')
-  },
-})
+// 通过类注册 /code WebSocket 路由
+new CodeWS().register(app)
 
 // MCP 端点
 // 允许 CORS 预检（即便当前为同源，这可避免未来跨源访问的预检失败）
@@ -124,7 +90,7 @@ app.post('/mcp', async ({request}) => {
 // 启动服务器
 app.listen(config.port, async () => {
   logger.info(`MCP Server: ${config.httpUrl}/mcp`)
-  logger.info(`WebSocket: ${config.wsUrl}`)
+  logger.info(`WebSocket: ${config.codeWsUrl}`)
   logger.info(`Demo Case: ${config.httpUrl}`)
   try {
     await socketClient.connect()
