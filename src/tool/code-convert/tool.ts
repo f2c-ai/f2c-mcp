@@ -31,7 +31,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         ),
     },
     async ({componentName, framework, style, localPath}) => {
-      const name = componentName || 'ConvertedComponent'
+      let name = componentName || 'ConvertedComponent'
       const fw = framework || 'react'
       const sm = style || 'css'
       downloader.setup({localPath, imgFormat: 'png'})
@@ -46,6 +46,10 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
           style: sm,
         })
         logger.debug('Socket 响应:', rs)
+        if (rs.data?.error) {
+          throw new Error(rs.data.error)
+        }
+        name = rs.data?.nodeName || name
 
         const htmlContent = rs.data.content
 

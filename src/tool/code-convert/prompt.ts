@@ -152,7 +152,8 @@ ${source}`,
 
 // Helper function to generate prompt text based on framework and style
 export function generatePromptText(promptName: string, componentName: string, source: string): string {
-  const basePrompt = 'You are a precise code converter.'
+  const basePrompt =
+    'You are a precise code converter. Standardize the component name to English PascalCase; translate non-English names (e.g., Chinese) into concise English identifiers.'
 
   switch (promptName) {
     case 'html-to-react-tailwind':
