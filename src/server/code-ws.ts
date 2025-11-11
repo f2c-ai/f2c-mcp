@@ -6,8 +6,6 @@ export type MessageType = {
   type: EventType
   data: any
   requestId: string
-  from: 'mcp' | 'web' | 'figma'
-  uid: string
   timestamp: number
 }
 
