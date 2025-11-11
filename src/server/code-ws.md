@@ -43,10 +43,8 @@
 ```json
 {
   "type": "figma-selection",
-  "data": {"online": true},
+  "data": {"id": "10-0-1"},
   "requestId": "select-001",
-  "from": "web",
-  "uid": "web_1710000000000",
   "timestamp": 1710000000000
 }
 ```
@@ -57,8 +55,6 @@
   "type": "mcp-request-code",
   "data": {"prompt": "convert current page to HTML"},
   "requestId": "req-abc-123",
-  "from": "mcp",
-  "uid": "mcp_1710000000001",
   "timestamp": 1710000000001
 }
 ```
@@ -72,8 +68,6 @@
     "files": []
   },
   "requestId": "req-abc-123",
-  "from": "web",
-  "uid": "web_1710000000000",
   "timestamp": 1710000000002
 }
 ```
