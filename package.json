@@ -18,16 +18,6 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/stdio.d.mts",
-        "default": "./dist/stdio.mjs"
-      },
-      "require": {
-        "types": "./dist/stdio.d.ts",
-        "default": "./dist/stdio.js"
-      }
-    },
-    "./http": {
-      "import": {
         "types": "./dist/http.d.mts",
         "default": "./dist/http.mjs"
       },
@@ -36,9 +26,6 @@
         "default": "./dist/http.js"
       }
     }
-  },
-  "bin": {
-    "f2c-mcp": "dist/cli.js"
   },
   "scripts": {
     "dev": "bun --watch run src/http.ts",
