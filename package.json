@@ -43,11 +43,6 @@
   "scripts": {
     "dev": "bun --watch run src/http.ts",
     "serve": "bun run src/http.ts",
-    "business": "bun run scripts/start-business-processor.ts",
-    "test": "bun run scripts/auto-test.ts",
-    "build:prod": "bun run build.ts",
-    "build:dev": "bun --watch run build.ts",
-    "inspector": "npx @modelcontextprotocol/inspector node ./dist/stdio.js",
     "lint": "biome check . --fix"
   },
   "author": "ckken",
