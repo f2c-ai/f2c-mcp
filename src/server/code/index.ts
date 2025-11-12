@@ -7,7 +7,7 @@ export {registerCodeWS} from './ws'
 
 const logger = createLogger('code')
 
-export const codeLog = () => {
+export const codeLogPrint = () => {
   logger.info(`MCP Server: ${config.httpUrl}/mcp`)
   logger.info(`MCP Config: ${config.httpUrl}/mcp-config`)
   logger.info(`WebSocket: ${config.codeWsUrl}`)

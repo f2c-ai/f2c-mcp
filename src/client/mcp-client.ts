@@ -1,6 +1,6 @@
 import config, {ws_web_timeout_ms} from 'src/config'
+import {EventType, MessageType} from 'src/server/code/ws'
 import {createLogger} from 'src/utils/logger'
-import {EventType, MessageType} from '@/server/code-ws'
 
 // 简化版 WebSocket 客户端：保留外部 API，不改变使用方式
 interface SocketClientOptions {

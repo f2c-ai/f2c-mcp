@@ -2,7 +2,7 @@ import staticPlugin from '@elysiajs/static'
 import {Elysia} from 'elysia'
 import {createLogger} from 'src/utils/logger'
 import config from './config'
-import {codeLog, registerCodeConfig, registerCodeMCP, registerCodeWS} from './server/code'
+import {codeLogPrint, registerCodeConfig, registerCodeMCP, registerCodeWS} from './server/code'
 
 const logger = createLogger('http')
 
@@ -27,5 +27,5 @@ registerCodeConfig(app)
 
 // 启动服务器
 app.listen(config.port, async () => {
-  codeLog()
+  codeLogPrint()
 })
