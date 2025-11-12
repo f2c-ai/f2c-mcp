@@ -33,15 +33,15 @@ export const registerCodeMCP = async (app: Elysia) => {
     const accessToken = request.headers.get('accessToken') || undefined
     // console.log('accessToken', accessToken)
     // 检查 accessToken 是否存在
-    if (!accessToken) {
-      return new Response('Missing accessToken', {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-    }
+    // if (!accessToken) {
+    //   return new Response('Missing accessToken', {
+    //     status: 400,
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Access-Control-Allow-Origin': '*',
+    //     },
+    //   })
+    // }
     //
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
