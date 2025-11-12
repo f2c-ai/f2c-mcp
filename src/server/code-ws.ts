@@ -35,7 +35,7 @@ export class CodeWS {
         const msg = message
         if (msg.type === 'figma-selection') {
           this.lastUpdateWebUid = ws.data.params.uid
-          this.logger.info('[选择节点] lastUpdateWebUid', this.lastUpdateWebUid, msg.data)
+          this.logger.info(`${this.lastUpdateWebUid}:选择节点`, msg.data)
         } else if (msg.type === 'mcp-request-code' && this.lastUpdateWebUid) {
           const useWS = this.users.get(this.lastUpdateWebUid)
           if (useWS) {
