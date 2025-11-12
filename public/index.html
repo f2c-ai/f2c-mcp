@@ -202,7 +202,7 @@
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
           const msg = {
             type: 'figma-selection',
-            data: {id: '2001:170'},
+            data: {},
             timestamp: Date.now()
           }
           try {
@@ -234,6 +234,7 @@
         componentName: 'ConvertedComponent',
         framework: 'react',
         styleMode: 'css',
+        frameworkStyle: 'react:css',
         defaultHtml: '<div class="flex flex-col items-center p-7 rounded-2xl">demo</div>',
 
         // 计算属性
@@ -255,6 +256,8 @@
           // 启动连接
           this.wsService.connect(() => this.defaultHtml)
           setTimeout(() => this.mcpService.connect(), 200)
+          // 保持合并选项与单独字段一致
+          this.frameworkStyle = `${this.framework}:${this.styleMode}`
         },
 
         // 业务方法
@@ -380,17 +383,13 @@
               <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="componentName" placeholder="ConvertedComponent" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">目标框架</label>
-              <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="framework">
-                <option value="react">React</option>
-                <option value="vue">Vue</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">样式方案</label>
-              <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="styleMode">
-                <option value="css">CSS</option>
-                <option value="tailwind">Tailwind CSS</option>
+              <label class="block text-sm font-medium text-gray-700 mb-2">目标框架与样式</label>
+              <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="frameworkStyle" @change="const [f,s] = ($event.target.value || 'react:css').split(':'); framework = f; styleMode = s;">
+                <option value="react:css">React + CSS</option>
+                <option value="react:tailwind">React + Tailwind CSS</option>
+                <option value="html:tailwind">HTML + Tailwind CSS</option>
+                <option value="vue:css">Vue + CSS</option>
+                <option value="vue:tailwind">Vue + Tailwind CSS</option>
               </select>
             </div>
           </div>

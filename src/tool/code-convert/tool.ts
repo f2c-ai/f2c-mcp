@@ -3,6 +3,7 @@ import downloader from 'src/utils/downloader'
 import {createLogger, LogLevel} from 'src/utils/logger'
 import {z} from 'zod'
 import {socketClient} from '@/client/mcp-client.js'
+import {wrapTailwindCode} from '@/utils/code'
 import {generatePromptText} from './prompt'
 
 const logger = createLogger('code-convert-tool', LogLevel.DEBUG)
@@ -10,13 +11,13 @@ const logger = createLogger('code-convert-tool', LogLevel.DEBUG)
 export const registerCodeConvertTool = (mcpServer: McpServer) => {
   mcpServer.tool(
     'get_code_to_component',
-    'Fetch HTML code via WebSocket and generate React/Vue component',
+    'Fetch HTML code via WebSocket and generate React/Vue/HTML output',
     {
       componentName: z.string().optional().describe('Optional component name hint (e.g., HelloDiv)'),
       framework: z
-        .enum(['react', 'vue'])
+        .enum(['react', 'vue', 'html'])
         .default('react')
-        .describe('Target framework to generate: react or vue (default: react)'),
+        .describe('Target framework to generate: react, vue, or html (default: react)'),
       style: z
         .enum(['css', 'tailwind'])
         .default('css')
@@ -33,8 +34,12 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
     async ({componentName, framework, style, localPath}) => {
       let name = componentName || 'ConvertedComponent'
       const fw = framework || 'react'
-      const sm = style || 'css'
+      let sm = style || 'css'
       downloader.setup({localPath, imgFormat: 'png'})
+
+      if (fw === 'html') {
+        sm = 'tailwind'
+      }
 
       try {
         // 打印请求前连接状态
@@ -55,13 +60,18 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
 
         // 提取 body 内容或使用完整 HTML
         const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i)
-        const source = bodyMatch ? bodyMatch[1].trim() : htmlContent.trim()
+        let source = bodyMatch ? bodyMatch[1].trim() : htmlContent.trim()
 
         if (!source) {
           throw new Error('No HTML content received from socket')
         }
 
         const promptName = `html-to-${fw}-${sm}`
+
+        if (sm === 'tailwind' && fw === 'html') {
+          // 包装 Tailwind 代码
+          source = wrapTailwindCode(source)
+        }
 
         // 生成组件代码提示
         const promptText = generatePromptText(promptName, name, source)

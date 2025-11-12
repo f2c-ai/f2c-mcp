@@ -148,6 +148,36 @@ ${source}`,
       ],
     }),
   )
+
+  // HTML + Tailwind: 原样回显（不做任何代码改变）
+  mcpServer.prompt(
+    'html-to-html-tailwind',
+    'Return HTML snippet as-is without any modification',
+    {
+      componentName: z.string().optional().describe('Optional component name hint'),
+      source: z.string().describe('HTML + TailwindCSS snippet to wrap into HTML document'),
+    },
+    async ({source}) => ({
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `You are a precise passthrough responder.
+Output exactly the provided HTML snippet, unchanged.
+
+Rules:
+- Do not reformat, wrap, or inject any tags or scripts.
+- Do not add explanations, backticks, prefixes, or suffixes.
+- Return raw HTML only.
+
+Snippet:
+${source}`,
+          },
+        },
+      ],
+    }),
+  )
 }
 
 // Helper function to generate prompt text based on framework and style
@@ -202,6 +232,18 @@ ${COMMON_REQUIREMENTS.vue.base.replace(/\{\{componentName\}\}/g, componentName)}
 ${COMMON_REQUIREMENTS.vue.css}
 
 Source:
+${source}`
+
+    case 'html-to-html-tailwind':
+      return `You are a precise passthrough responder.
+Output exactly the provided HTML snippet, unchanged.
+
+Rules:
+- Do not reformat, wrap, or inject any tags or scripts.
+- Do not add explanations, backticks, prefixes, or suffixes.
+- Return raw HTML only.
+
+Snippet:
 ${source}`
 
     default:
