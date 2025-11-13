@@ -4,7 +4,7 @@ import {createLogger, LogLevel} from 'src/utils/logger'
 import {z} from 'zod'
 import {mcpClients} from '@/client/mcp-client.js'
 import {wrapTailwindCode} from '@/utils/code'
-import {generatePromptText} from './prompt'
+import {generatePromptText} from './prompt-en'
 
 const logger = createLogger('code-convert-tool', LogLevel.DEBUG)
 
