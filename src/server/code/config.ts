@@ -13,6 +13,7 @@
  */
 import {randomUUID} from 'node:crypto'
 import Elysia from 'elysia'
+import config from '@/config'
 
 export const registerCodeConfig = async (app: Elysia) => {
   app.get('/mcp-config', async () => {
@@ -21,7 +22,7 @@ export const registerCodeConfig = async (app: Elysia) => {
         mcpServers: {
           f2c_mcp: {
             transport: 'streamableHttp',
-            url: 'http://localhost:3000/mcp',
+            url: config.mcpWsUrl,
             headers: {
               accessToken: `${randomUUID()}`,
             },
