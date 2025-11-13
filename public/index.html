@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>F2C MCP | The MCP For Chrome Plugin</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     /* 确保网格容器有最小高度，让所有列等高 */
     .equal-height-grid {
@@ -53,6 +54,7 @@
     }
   </script>
   <script>
+    const clientUser = '915e7eca-64b5-43fb-84ef-431e7c2b7cd8'
     // ===== 工具类和服务层 =====
     class MessageService {
       constructor(addMessageCallback) {
@@ -100,7 +102,13 @@
           const endpoint = new URL('/mcp', window.location.origin)
 
           const { Client, StreamableHTTPClientTransport } = await window.loadMcpSdk()
-          const transport = new StreamableHTTPClientTransport(endpoint)
+          const transport = new StreamableHTTPClientTransport(endpoint, {
+            requestInit: {
+              headers: {
+                accessToken: clientUser
+              }
+            }
+          })
           const client = new Client(
             { name: 'web-demo', version: '1.0.0' },
             { capabilities: {} }
@@ -139,8 +147,11 @@
         this.status = 'disconnected'
         this.statusText = 'WS 未连接'
         this.messageService = messageService
-        this.uid = `web_${Date.now()}`
+        this.uid = this.getUid()
         this.getDefaultHtml = () => ''
+      }
+      getUid() {
+        return `figma_${clientUser}_device_${Date.now()}`
       }
 
       connect(getDefaultHtml) {

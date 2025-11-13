@@ -1,46 +1,34 @@
+import {randomUUID} from 'crypto'
 import config, {ws_web_timeout_ms} from 'src/config'
 import {EventType, MessageType} from 'src/server/code/ws'
-import {createLogger} from 'src/utils/logger'
+import {createLogger, LogLevel} from 'src/utils/logger'
 
-// 简化版 WebSocket 客户端：保留外部 API，不改变使用方式
-interface SocketClientOptions {
-  url: string
-  timeout?: number // 0 或未设置表示不启用超时
-}
-
+const log = createLogger('mcp-client', LogLevel.DEBUG)
 type PendingRequest = {
   resolve: (value: any) => void
   reject: (error: Error) => void
   timeout?: NodeJS.Timeout
 }
 
-class SocketClient {
+class McpClient {
   private ws: WebSocket | null = null
-  private options: {url: string; timeout: number}
+  private timeout = ws_web_timeout_ms
   private pendingRequests = new Map<string, PendingRequest>()
-  private logger = createLogger('mcp-client')
   private uid: string
 
-  constructor(options: SocketClientOptions) {
-    this.options = {
-      url: options.url,
-      timeout: options.timeout ?? ws_web_timeout_ms,
+  constructor(uid: string, timeout?: number) {
+    if (timeout && timeout > 0) {
+      this.timeout = timeout
     }
-    // 提取 uid（最后一个路径段）用于消息标识
-    try {
-      const u = new URL(this.options.url)
-      const parts = u.pathname.split('/')
-      this.uid = parts[parts.length - 1] || `mcp_${Date.now()}`
-    } catch {
-      this.uid = `mcp_${Date.now()}`
-    }
+
+    this.uid = uid
   }
 
   async connect(): Promise<void> {
     if (this.ws?.readyState === WebSocket.OPEN) return
 
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(this.options.url)
+      const ws = new WebSocket(`${config.getCodeWS('mcp_' + this.uid)}`)
       this.ws = ws
 
       ws.onopen = () => resolve()
@@ -58,7 +46,7 @@ class SocketClient {
     try {
       msg = JSON.parse(raw)
     } catch (err) {
-      this.logger.error('消息解析错误:', err)
+      log.error('消息解析错误:', err)
       return
     }
 
@@ -74,6 +62,7 @@ class SocketClient {
   }
 
   async request(type: EventType, data: any): Promise<MessageType> {
+    log.debug('request', this.uid, type, data)
     await this.connect()
 
     return new Promise((resolve, reject) => {
@@ -85,12 +74,12 @@ class SocketClient {
       const requestId = `mcp_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
 
       let timeout: NodeJS.Timeout | undefined
-      if (this.options.timeout && this.options.timeout > 0) {
+      if (this.timeout > 0) {
         timeout = setTimeout(() => {
           this.pendingRequests.delete(requestId)
-          this.logger.warn(`请求超时: ${type}`, {requestId})
+          log.warn(`请求超时: ${type}`, {requestId})
           reject(new Error(`Request timeout: ${type}`))
-        }, this.options.timeout)
+        }, this.timeout)
       }
 
       this.pendingRequests.set(requestId, {resolve, reject, timeout})
@@ -101,7 +90,6 @@ class SocketClient {
           data,
           requestId,
           from: 'mcp',
-          uid: this.uid,
           timestamp: Date.now(),
         }),
       )
@@ -124,4 +112,41 @@ class SocketClient {
   }
 }
 
-export const socketClient = new SocketClient({url: config.getCodeWS(`mcp_${Date.now()}`)})
+export const createMcpClient = (uid: string, timeout?: number) => new McpClient(uid, timeout)
+
+class McpClientPoolImpl {
+  private pool = new Map<string, McpClient>()
+  private getUid(o: any): string {
+    const token = (o?.requestInfo?.headers as any)?.accesstoken
+    return typeof token === 'string' && token.length > 0 ? token : randomUUID()
+  }
+  get(o: any, timeout?: number): McpClient {
+    const uid = typeof o === 'string' ? o : this.getUid(o)
+    const c = this.pool.get(uid)
+    if (c) return c
+    const client = createMcpClient(uid, timeout)
+    this.pool.set(uid, client)
+    return client
+  }
+  disconnect(o: any): boolean {
+    const uid = this.getUid(o)
+    const c = this.pool.get(uid)
+    if (!c) return false
+    c.disconnect()
+    this.pool.delete(uid)
+    return true
+  }
+  disconnectAll(): void {
+    for (const [id, c] of this.pool.entries()) {
+      c.disconnect()
+      this.pool.delete(id)
+    }
+  }
+  isConnected(o: any): boolean {
+    const uid = this.getUid(o)
+    const c = this.pool.get(uid)
+    return c?.isConnected ?? false
+  }
+}
+
+export const mcpClients = new McpClientPoolImpl()

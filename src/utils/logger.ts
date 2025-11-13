@@ -6,38 +6,9 @@ export enum LogLevel {
 }
 // Determine if stdio or http mode by checking the run command
 function detectTransportMode(): boolean {
-  const args = process.argv.join(' ').toLowerCase()
-  const script = (process.env.npm_lifecycle_script || '').toLowerCase()
-  const envTransport = (process.env.MCP_TRANSPORT || process.env.F2C_TRANSPORT || '').toLowerCase()
-
-  // 1) 优先使用显式环境变量覆盖
-  if (envTransport === 'http') return true
-  if (envTransport === 'stdio') return false
-
-  // 2) 根据启动脚本与 argv 提示判断（兼容 bun、node、测试场景）
-  const httpHints = [
-    'src/http.ts',
-    'dist/http.js',
-    'dist/http.mjs',
-    'express.ts',
-    'streamable-http.js',
-    'streamable-http.ts',
-  ]
-  const stdioHints = ['src/stdio.ts', 'dist/stdio.js', 'dist/stdio.mjs']
-
-  const hasHttpHint = httpHints.some(h => args.includes(h) || script.includes(h))
-  const hasStdioHint = stdioHints.some(h => args.includes(h) || script.includes(h))
-
-  if (hasHttpHint && !hasStdioHint) return true
-  if (hasStdioHint && !hasHttpHint) return false
-
-  // 3) 兜底：在 Bun 环境且存在端口配置，认为是 HTTP 服务器模式
-  const isPortDefined = !!process.env.PORT
-  const isBunRuntime = typeof (globalThis as any).Bun !== 'undefined'
-  if (isPortDefined && isBunRuntime) return true
-
-  // 默认回退为 stdio
-  return false
+  // const args = process.argv.join(' ').toLowerCase()
+  // console.log('args', args)
+  return true
 }
 export const isHttp = detectTransportMode()
 export class Logger {

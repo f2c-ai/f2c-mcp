@@ -2,7 +2,7 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import downloader from 'src/utils/downloader'
 import {createLogger, LogLevel} from 'src/utils/logger'
 import {z} from 'zod'
-import {socketClient} from '@/client/mcp-client.js'
+import {mcpClients} from '@/client/mcp-client.js'
 import {wrapTailwindCode} from '@/utils/code'
 import {generatePromptText} from './prompt'
 
@@ -31,7 +31,8 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
           'Absolute path for asset(e.g., images) and code storage. Directory will be created if non-existent. Path must follow OS-specific format without special character escaping. When this path is set, all code-related static resources are stored in this directory, while other assets (e.g., images) will be saved into the subdirectory named assets under this path.',
         ),
     },
-    async ({componentName, framework, style, localPath}) => {
+    async ({componentName, framework, style, localPath}, o) => {
+      // logger.debug('get_code_to_component', o.requestInfo?.headers.accesstoken)
       let name = componentName || 'ConvertedComponent'
       const fw = framework || 'react'
       let sm = style || 'css'
@@ -42,10 +43,10 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
       }
 
       try {
-        // 打印请求前连接状态
-        logger.info('Socket 连接状态:', socketClient.isConnected)
+        const client = mcpClients.get(o)
+        logger.info('Socket 连接状态:', client.isConnected)
 
-        const rs = await socketClient.request('mcp-request-code', {
+        const rs = await client.request('mcp-request-code', {
           componentName: name,
           framework: fw,
           style: sm,
@@ -93,8 +94,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
           ],
         }
       } catch (error) {
-        // 打印错误时的连接状态
-        logger.info('错误时 Socket 连接状态:', socketClient.isConnected)
+        logger.info('错误时 Socket 连接状态:', false)
         logger.error('Socket 请求错误:', error)
 
         return {
