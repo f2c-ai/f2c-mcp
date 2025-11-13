@@ -43,6 +43,10 @@
     .border-l-3 {
       border-left-width: 3px;
     }
+    body {
+      background-color: #f9fafb;
+      min-height: 100vh;
+    }
   </style>
   <!-- Import Map for MCP SDK -->
   <script type="importmap">
@@ -54,7 +58,13 @@
     }
   </script>
   <script>
-    const clientUser = '915e7eca-64b5-43fb-84ef-431e7c2b7cd8'
+   window.accessToken = '915e7eca-64b5-43fb-84ef-431e7c2b7cd8'
+    try {
+      const cfgEl = document.getElementById('server-config')
+      if (cfgEl && cfgEl.textContent) {
+        window.__serverConfig = JSON.parse(cfgEl.textContent)
+      }
+    } catch {}
     // ===== 工具类和服务层 =====
     class MessageService {
       constructor(addMessageCallback) {
@@ -105,7 +115,7 @@
           const transport = new StreamableHTTPClientTransport(endpoint, {
             requestInit: {
               headers: {
-                accessToken: clientUser
+                accessToken: window.accessToken
               }
             }
           })
@@ -151,13 +161,14 @@
         this.getDefaultHtml = () => ''
       }
       getUid() {
-        return `figma_${clientUser}_device_${Date.now()}`
+        return `figma_${window.accessToken}_device_${Date.now()}`
       }
 
       connect(getDefaultHtml) {
         this.status = 'connecting'
         this.statusText = 'WS 连接中...'
-        const wsUrl = `ws://${window.location.hostname}:${window.location.port || 3000}/code/${this.uid}`
+        const baseWs = (window.__serverConfig && window.__serverConfig.codeWsUrl) || `ws://${window.location.hostname}:${window.location.port || 3000}/code`
+        const wsUrl = `${baseWs}/${this.uid}`
         // 保存 HTML 获取函数，确保后续发送使用最新内容
         if (typeof getDefaultHtml === 'function') {
           this.getDefaultHtml = getDefaultHtml
@@ -208,6 +219,12 @@
         }
       }
 
+      reconnect(getDefaultHtml) {
+        try { this.ws?.close() } catch {}
+        this.uid = this.getUid()
+        this.connect(typeof getDefaultHtml === 'function' ? getDefaultHtml : this.getDefaultHtml)
+      }
+
       // 主动发送 figma-selection，用于刷新当前页面的路由绑定
       sendSelection() {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -242,6 +259,7 @@
         latestText: '',
         
         // 表单数据
+        accessToken: window.accessToken || '',
         componentName: 'ConvertedComponent',
         framework: 'react',
         styleMode: 'css',
@@ -269,6 +287,11 @@
           setTimeout(() => this.mcpService.connect(), 200)
           // 保持合并选项与单独字段一致
           this.frameworkStyle = `${this.framework}:${this.styleMode}`
+          this.$watch('accessToken', (v) => {
+            window.accessToken = v
+            this.wsService && this.wsService.reconnect(() => this.defaultHtml)
+            this.messageService.add('system', '🔄 已重连 WebSocket 到新令牌')
+          })
         },
 
         // 业务方法
@@ -344,7 +367,7 @@
   </script>
   <script src="https://unpkg.com/alpinejs" defer></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
   <div class="container mx-auto px-4 py-4 sm:py-8 max-w-7xl" x-data="mcpApp()">
     <!-- Header -->
     <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
@@ -358,27 +381,25 @@
             <p class="text-sm sm:text-base text-gray-600">base @modelcontextprotocol/sdk</p>
           </div>
         </div>
-        <div class="flex items-center space-x-3" x-data="statusIndicator()">
-          <!-- MCP 状态 -->
-          <div class="flex items-center space-x-2" x-show="mcpStatus !== 'disconnected'" title="MCP 状态">
-            <div :class="getStatusClass(mcpStatus)"></div>
-            <span :class="getIconClass(mcpStatus)" class="text-lg sm:text-xl">🔌</span>
-          </div>
-
-          <!-- WebSocket 状态 -->
-          <div class="flex items-center space-x-2" title="WebSocket 状态">
+        <div class="flex items-center space-x-3">
+          <input type="text" class="w-56 border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="accessToken" placeholder="accessToken" />
+          <div class="flex items-center space-x-2" x-data="statusIndicator()" title="WebSocket 状态">
             <div :class="getStatusClass(wsStatus)"></div>
             <span :class="getIconClass(wsStatus)" class="text-lg sm:text-xl">📡</span>
+          </div>
+          <div class="flex items-center space-x-2" x-data="statusIndicator()" x-show="mcpStatus !== 'disconnected'" title="MCP 状态">
+            <div :class="getStatusClass(mcpStatus)"></div>
+            <span :class="getIconClass(mcpStatus)" class="text-lg sm:text-xl">🔌</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 主要内容区域 - 三等分响应式布局 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6 equal-height-grid">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 equal-height-grid">
       
       <!-- 第一列：转换设置 -->
-      <div class="md:col-span-2 xl:col-span-1 h-full">
+      <div class="xl:col-span-1 h-full">
         <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 xl:sticky xl:top-4 h-full flex flex-col">
           <div class="flex items-center gap-2 mb-4">
             <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -431,7 +452,7 @@
       </div>
 
       <!-- 第二列：消息历史 -->
-      <div class="md:col-span-2 xl:col-span-1 h-full">
+      <div class="xl:col-span-1 h-full">
         <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 h-full flex flex-col">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
@@ -492,7 +513,7 @@
       </div>
 
       <!-- 第三列：转换结果 -->
-      <div class="md:col-span-2 xl:col-span-1 h-full">
+      <div class="xl:col-span-1 h-full">
         <!-- 有结果时显示 -->
         <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 h-full flex flex-col" x-show="latestText" x-transition>
           <div class="flex items-center justify-between mb-4">

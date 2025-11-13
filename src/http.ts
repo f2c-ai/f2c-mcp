@@ -16,7 +16,11 @@ const app = new Elysia().use(
 // 首页路由
 app.get('/', async () => {
   const file = Bun.file('public/index.html')
-  return new Response(await file.text(), {
+  let html = await file.text()
+  const json = JSON.stringify({mcpWsUrl: config.mcpWsUrl, codeWsUrl: config.codeWsUrl, httpUrl: config.httpUrl})
+  const inject = `<script type="application/json" id="server-config">${json}</script>`
+  html = html.includes('</head>') ? html.replace('</head>', `${inject}\n</head>`) : `${inject}\n${html}`
+  return new Response(html, {
     headers: {'Content-Type': 'text/html'},
   })
 })
