@@ -74,11 +74,18 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
           source = wrapTailwindCode(source)
         }
 
-        // 生成组件代码提示
-        const promptText = generatePromptText(promptName, name, source)
+        // 从 socket 返回的 files 中提取资源列表（图片类）
+        const files = rs.data.files
+        const assetList = Array.isArray(files)
+          ? files
+              .filter((f: {path: string}) => f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i))
+              .map((f: {path: string}) => f.path)
+          : []
+
+        // 生成组件代码提示（附带资产列表）
+        const promptText = generatePromptText(promptName, name, source, assetList)
 
         // 处理图片
-        const files = rs.data.files
         if (Array.isArray(files) && files.length > 0) {
           await downloader.downLoadImageFromBase64(files)
         } else {
