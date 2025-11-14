@@ -34,8 +34,8 @@ export class AppConfig {
     return `${proto}://${this.ip}${this.portSuffix(proto)}/code`
   }
 
-  get mcpWsUrl(): string {
-    const proto = this.wsProto
+  get mcpHttpUrl(): string {
+    const proto = this.httpProto as 'http' | 'https'
     return `${proto}://${this.ip}${this.portSuffix(proto)}/mcp`
   }
 

@@ -22,7 +22,7 @@ export const registerCodeConfig = async (app: Elysia) => {
         mcpServers: {
           f2c_mcp: {
             transport: 'streamableHttp',
-            url: config.mcpWsUrl,
+            url: config.mcpHttpUrl,
             headers: {
               accessToken: `${randomUUID()}`,
             },
