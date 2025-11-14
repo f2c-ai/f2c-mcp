@@ -24,7 +24,7 @@ export const registerCodeConfig = async (app: Elysia) => {
             transport: 'streamableHttp',
             url: config.mcpHttpUrl,
             headers: {
-              accessToken: `${randomUUID()}`,
+              accessToken: `${randomUUID()}-${Date.now()}`,
             },
           },
         },
