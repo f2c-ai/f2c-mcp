@@ -37,6 +37,7 @@ export const registerCodeWS = (app: Elysia) => {
       // const from = uid.startsWith('mcp') ? 'mcp' : origin?.includes('figma.com') ? 'figma' : 'web'
       const from = uid.startsWith('mcp') ? 'mcp' : 'figma'
       ws.data.store = {uid, accessToken, from}
+      // 当mcp客户端连接时 关闭已有的MCP连接
       if (from === 'mcp' && users.has(uid)) {
         const mcpWs = users.get(uid)
         mcpWs.close()
