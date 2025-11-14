@@ -37,6 +37,12 @@ export const registerCodeWS = (app: Elysia) => {
       // const from = uid.startsWith('mcp') ? 'mcp' : origin?.includes('figma.com') ? 'figma' : 'web'
       const from = uid.startsWith('mcp') ? 'mcp' : 'figma'
       ws.data.store = {uid, accessToken, from}
+      // 如果from 是 mcp users 已经存在 则不允许重复连接
+      if (from === 'mcp' && users.has(uid)) {
+        const mcpWs = users.get(uid)
+        mcpWs.close()
+        return
+      }
       users.set(uid, ws)
       logger.info('[客户端连接]', ws.data.store)
     },
@@ -63,7 +69,7 @@ export const registerCodeWS = (app: Elysia) => {
           useWS.send(msg)
         }
       } else if (msg.type === 'figma-gen-code') {
-        const mcpWs = users.get(`mcp_${accessToken}`)
+        const mcpWs = users.get(uid)
         if (mcpWs) {
           mcpWs.send(msg)
         }
@@ -76,7 +82,7 @@ export const registerCodeWS = (app: Elysia) => {
       if (uid) {
         users.delete(uid)
         userLastActive.delete(accessToken)
-        mcpClients.get(`mcp_${accessToken}`).disconnect()
+        mcpClients.get(uid).disconnect()
         console.log(`User ${uid} disconnected`)
       }
     },
