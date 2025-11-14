@@ -68,6 +68,7 @@ export const registerCodeWS = (app: Elysia) => {
           useWS.send(msg)
         }
       } else if (msg.type === 'figma-gen-code') {
+        // 当figma客户端生成代码时 发送给mcp客户端
         const mcpWs = users.get(`mcp_${accessToken}`)
         if (mcpWs) {
           mcpWs.send(msg)
@@ -81,6 +82,7 @@ export const registerCodeWS = (app: Elysia) => {
       if (uid) {
         users.delete(uid)
         userLastActive.delete(accessToken)
+        // 当figma客户端退出时 关闭mcp客户端连接
         mcpClients.get(`mcp_${accessToken}`).disconnect()
         console.log(`User ${uid} disconnected`)
       }
