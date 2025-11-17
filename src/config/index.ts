@@ -1,3 +1,9 @@
+const PRESET: Record<'dev' | 'prod' | 'deploy', {protocol: string; host: string; port: number}> = {
+  dev: {protocol: 'http', host: 'localhost', port: 3000},
+  prod: {protocol: 'http', host: 'localhost', port: 3000},
+  deploy: {protocol: 'https', host: 'f2c-mcp.baidu.com', port: 80},
+}
+
 export class AppConfig {
   public port: number
   public ip: string
@@ -42,13 +48,21 @@ export class AppConfig {
   getCodeWS(uid: string): string {
     return `${this.codeWsUrl}/${uid}`
   }
+
+  static fromEnv(): AppConfig {
+    const env = (typeof process !== 'undefined' && process.env.APP_ENV) || 'dev'
+    const base = (PRESET as Record<string, {protocol: string; host: string; port: number}>)[env] || PRESET.dev
+    if (env === 'deploy') {
+      return new AppConfig(base)
+    }
+    const protocol = (typeof process !== 'undefined' && process.env.APP_PROTOCOL) || base.protocol
+    const host = (typeof process !== 'undefined' && process.env.APP_HOST) || base.host
+    const port = (typeof process !== 'undefined' && process.env.APP_PORT) || base.port
+    return new AppConfig({protocol, host, port})
+  }
 }
 
-export default new AppConfig({
-  protocol: 'http',
-  host: 'localhost',
-  port: 3000,
-})
+export default AppConfig.fromEnv()
 
 export const ws_web_timeout_ms =
   typeof process !== 'undefined' && process.env.WS_WEB_TIMEOUT_MS
