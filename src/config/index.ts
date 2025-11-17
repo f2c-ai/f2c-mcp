@@ -1,9 +1,5 @@
-const PRESET: Record<'dev' | 'prod' | 'deploy', {protocol: string; host: string; port: number}> = {
-  dev: {protocol: 'http', host: 'localhost', port: 3000},
-  prod: {protocol: 'http', host: '127.0.0.1', port: 3000},
-  deploy: {protocol: 'http', host: '172.29.97.154', port: 3000},
-}
-
+const PRESET = {protocol: 'http', host: 'localhost', port: 3000}
+export const env = (typeof process !== 'undefined' && process.env.APP_ENV) || 'dev'
 export class AppConfig {
   public port: number
   public ip: string
@@ -41,6 +37,7 @@ export class AppConfig {
   }
 
   get mcpHttpUrl(): string {
+    if (env === 'deploy') return `https://f2c-mcp.yy.com/mcp`
     const proto = this.httpProto as 'http' | 'https'
     return `${proto}://${this.ip}${this.portSuffix(proto)}/mcp`
   }
@@ -50,11 +47,7 @@ export class AppConfig {
   }
 
   static fromEnv(): AppConfig {
-    const env = (typeof process !== 'undefined' && process.env.APP_ENV) || 'dev'
-    const base = (PRESET as Record<string, {protocol: string; host: string; port: number}>)[env] || PRESET.dev
-    if (env === 'deploy') {
-      return new AppConfig(base)
-    }
+    const base = PRESET
     const protocol = (typeof process !== 'undefined' && process.env.APP_PROTOCOL) || base.protocol
     const host = (typeof process !== 'undefined' && process.env.APP_HOST) || base.host
     const port = (typeof process !== 'undefined' && process.env.APP_PORT) || base.port

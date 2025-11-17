@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "cross-env APP_ENV=dev bun --watch run src/http.ts",
-    "prod": "cross-env APP_ENV=prod bun run src/http.ts",
+    "serve": "cross-env APP_ENV=prod bun run src/http.ts",
     "dep": "cross-env APP_ENV=deploy bun run src/http.ts",
     "lint": "biome check . --fix"
   },
