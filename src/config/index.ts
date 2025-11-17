@@ -1,7 +1,7 @@
 const PRESET: Record<'dev' | 'prod' | 'deploy', {protocol: string; host: string; port: number}> = {
   dev: {protocol: 'http', host: 'localhost', port: 3000},
-  prod: {protocol: 'http', host: 'localhost', port: 3000},
-  deploy: {protocol: 'https', host: 'f2c-mcp.baidu.com', port: 80},
+  prod: {protocol: 'http', host: '127.0.0.1', port: 3000},
+  deploy: {protocol: 'http', host: '172.29.97.154', port: 3000},
 }
 
 export class AppConfig {
