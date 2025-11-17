@@ -28,9 +28,9 @@
     }
   },
   "scripts": {
-    "dev": "cross-env APP_ENV=dev bun --watch run src/http.ts",
-    "serve": "cross-env APP_ENV=prod bun run src/http.ts",
-    "dep": "cross-env APP_ENV=deploy bun run src/http.ts",
+    "dev": "bun --watch run src/http.ts",
+    "serve": "bun run src/http.ts",
+    "dep": "bun --env-file=.env.deploy run src/http.ts",
     "lint": "biome check . --fix"
   },
   "author": "ckken",
@@ -47,7 +47,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "@biomejs/biome": "2.3.1",
     "@empjs/biome-config": "2.3.0",
     "@modelcontextprotocol/sdk": "1.20.2",

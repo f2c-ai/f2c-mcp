@@ -37,7 +37,7 @@ export class AppConfig {
   }
 
   get mcpHttpUrl(): string {
-    if (env === 'deploy') return `https://f2c-mcp.yy.com/mcp`
+    if (Bun.env.MCP_CONFIG_URL) return Bun.env.MCP_CONFIG_URL
     const proto = this.httpProto as 'http' | 'https'
     return `${proto}://${this.ip}${this.portSuffix(proto)}/mcp`
   }
