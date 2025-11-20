@@ -62,7 +62,6 @@ export const registerCodeWS = (app: Elysia) => {
     },
 
     message: (ws, message: MessageType) => {
-      logger.debug('[收到消息]', message)
       const msg = message
       const uid = ws.data.params.uid
       if (msg.type === 'pong') {
@@ -71,6 +70,7 @@ export const registerCodeWS = (app: Elysia) => {
         // console.log('收到客户端心跳响应:', ws.id)
         return
       }
+      logger.debug('[收到消息]', message)
       if (!uid) {
         return
       }
