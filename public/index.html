@@ -195,7 +195,9 @@
               const response = {
                 type: 'figma-gen-code',
                 requestId: message.requestId,
-                data: { content: html, files: [] },
+                data: { content: html, files: [
+                  { path: 'logo.png', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=' }
+                ] },
                 uid: this.uid,
                 from: 'web',
                 timestamp: Date.now()
@@ -264,7 +266,7 @@
         framework: 'react',
         styleMode: 'css',
         frameworkStyle: 'react:css',
-        defaultHtml: '<div class="flex flex-col items-center p-7 rounded-2xl">demo</div>',
+        defaultHtml: `<div class="flex flex-col items-center p-7 rounded-2xl"><img class="mt-3 w-8 h-8" alt="logo.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" /><h1>demo</h1></div>`,
 
         // 计算属性
         get mcpStatus() { return this.mcpService?.status || 'disconnected' },

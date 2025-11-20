@@ -1,4 +1,5 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
+import path from 'path'
 import downloader from 'src/utils/downloader'
 import {createLogger, LogLevel} from 'src/utils/logger'
 import {z} from 'zod'
@@ -36,7 +37,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
       let name = componentName || 'ConvertedComponent'
       const fw = framework || 'react'
       let sm = style || 'css'
-      downloader.setup({localPath, imgFormat: 'png'})
+      // downloader.setup({localPath: localPath || process.cwd(), imgFormat: 'png'})
 
       if (fw === 'html') {
         sm = 'tailwind'
@@ -76,29 +77,36 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
 
         // 从 socket 返回的 files 中提取资源列表（图片类）
         const files = rs.data.files
-        const assetList = Array.isArray(files)
-          ? files
-              .filter((f: {path: string}) => f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i))
-              .map((f: {path: string}) => f.path)
+        const imageFiles = Array.isArray(files)
+          ? files.filter((f: {path: string}) => f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i))
+          : []
+        const codeFiles = Array.isArray(files)
+          ? files.filter((f: {path: string}) => !f.path.match(/\.(png|jpg|jpeg|svg|gif|webp)$/i))
           : []
 
         // 生成组件代码提示（附带资产列表）
+        const assetList = imageFiles.map((f: {path: string}) => `assets/${path.basename(f.path)}`)
         const promptText = generatePromptText(promptName, name, source, assetList)
-
-        // 处理图片
-        if (Array.isArray(files) && files.length > 0) {
-          await downloader.downLoadImageFromBase64(files)
-        } else {
-          logger.info('files 为空，跳过图片处理')
-        }
+        const imgFormat = 'png'
+        // const localMCP = !Bun.env.MCP_CONFIG_URL
+        // if (localMCP && Array.isArray(files)) {
+        //   downloader.setup({localPath: localPath || process.cwd(), imgFormat})
+        //   await downloader.downLoadImageFromBase64(imageFiles)
+        // }
 
         return {
-          content: [
-            {
-              type: 'text',
-              text: promptText,
-            },
-          ],
+          content: [{type: 'text', text: promptText}],
+          structuredContent: {
+            files: codeFiles.map((f: {path: string; content: string}) => ({
+              path: f.path,
+              content: f.content,
+            })),
+            assets: imageFiles.map((f: {path: string; content: string}) => ({
+              filename: path.basename(f.path),
+              base64: f.content,
+              format: imgFormat,
+            })),
+          },
         }
       } catch (error) {
         logger.info('错误时 Socket 连接状态:', false)
