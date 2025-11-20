@@ -10,6 +10,10 @@ export type MessageType = {
   timestamp: number
 }
 
+// 心跳配置（可根据需求调整）
+const HEARTBEAT_INTERVAL = 10000 // 10秒发送一次心跳
+const HEARTBEAT_TIMEOUT = 30000 // 30秒未收到客户端响应则断开
+
 const logger = createLogger('code-ws', LogLevel.DEBUG)
 const users = new Map<string, any>()
 const userLastActive = new Map<string, string>()
@@ -45,6 +49,26 @@ export const registerCodeWS = (app: Elysia) => {
       }
       users.set(uid, ws)
       logger.info('[客户端连接]', ws.data.store)
+
+      // 1. 定时发送心跳包（ping）
+      const heartbeatTimer = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send('ping') // 发送心跳标识
+          console.log('向客户端发送心跳:', ws.id)
+        }
+      }, HEARTBEAT_INTERVAL)
+
+      // 2. 超时检测：若长时间未收到 pong，关闭连接
+      const timeoutTimer = setInterval(() => {
+        const lastPongTime = (ws as any).lastPongTime || Date.now()
+        if (Date.now() - lastPongTime > HEARTBEAT_TIMEOUT) {
+          console.log('客户端心跳超时，断开连接:', ws.id)
+          ws.close(4008, 'heartbeat timeout') // 4008 为自定义超时状态码
+          clearInterval(heartbeatTimer)
+          clearTimeout(timeoutTimer)
+        }
+      }, HEARTBEAT_INTERVAL)
+      
     },
 
     message: (ws, message: MessageType) => {
