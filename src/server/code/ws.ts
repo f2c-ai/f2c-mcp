@@ -2,7 +2,7 @@ import {Elysia} from 'elysia'
 import {createLogger, LogLevel} from 'src/utils/logger'
 import {mcpClients} from '@/client/mcp-client'
 
-export type EventType = 'figma-gen-code' | 'figma-selection' | 'mcp-request-code'
+export type EventType = 'figma-gen-code' | 'figma-selection' | 'mcp-request-code' | 'pong'
 export type MessageType = {
   type: EventType
   data: any
@@ -53,7 +53,7 @@ export const registerCodeWS = (app: Elysia) => {
       // 1. 定时发送心跳包（ping）
       const heartbeatTimer = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
-          ws.send('ping') // 发送心跳标识
+          ws.send({type: 'ping'}) // 发送心跳标识
           console.log('向客户端发送心跳:', ws.id)
         }
       }, HEARTBEAT_INTERVAL)
@@ -68,13 +68,22 @@ export const registerCodeWS = (app: Elysia) => {
           clearTimeout(timeoutTimer)
         }
       }, HEARTBEAT_INTERVAL)
-      
+
+      ;(ws as any).heartbeatTimer = heartbeatTimer
+      ;(ws as any).timeoutTimer = timeoutTimer
+      ;(ws as any).lastPongTime = Date.now()
     },
 
     message: (ws, message: MessageType) => {
       logger.debug('[收到消息]', message)
       const msg = message
       const uid = ws.data.params.uid
+      if (msg.type === 'pong') {
+        // 更新最后一次 pong 时间（表示客户端在线）
+        ;(ws as any).lastPongTime = Date.now()
+        console.log('收到客户端心跳响应:', ws.id)
+        return
+      }
       if (!uid) {
         return
       }
@@ -104,6 +113,9 @@ export const registerCodeWS = (app: Elysia) => {
     close: ws => {
       const uid = ws.data.params.uid
       const accessToken = getAccessToken(uid)
+      console.log('客户端断开连接:', ws.id)
+      clearInterval((ws as any).heartbeatTimer)
+      clearInterval((ws as any).timeoutTimer)
       if (uid) {
         users.delete(uid)
         userLastActive.delete(accessToken)
