@@ -53,10 +53,9 @@ export const registerCodeWS = (app: Elysia) => {
       const heartbeatTimer = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send({type: 'ping'}) // 发送心跳标识
-          console.log('向客户端发送心跳:', ws.id)
+          // console.log('向客户端发送心跳:', ws.id)
         }
       }, HEARTBEAT_INTERVAL)
-
 
       ;(ws as any).heartbeatTimer = heartbeatTimer
       ;(ws as any).lastPongTime = Date.now()
@@ -69,7 +68,7 @@ export const registerCodeWS = (app: Elysia) => {
       if (msg.type === 'pong') {
         // 更新最后一次 pong 时间（表示客户端在线）
         ;(ws as any).lastPongTime = Date.now()
-        console.log('收到客户端心跳响应:', ws.id)
+        // console.log('收到客户端心跳响应:', ws.id)
         return
       }
       if (!uid) {
