@@ -89,10 +89,11 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         const promptText = generatePromptText(promptName, name, source, assetList)
         const imgFormat = 'png'
         // const localMCP = !Bun.env.MCP_CONFIG_URL
-        // if (localMCP && Array.isArray(files)) {
-        //   downloader.setup({localPath: localPath || process.cwd(), imgFormat})
-        //   await downloader.downLoadImageFromBase64(imageFiles)
-        // }
+        const localMCP = true
+        if (localMCP && Array.isArray(files)) {
+          downloader.setup({localPath: localPath || process.cwd(), imgFormat})
+          await downloader.downLoadImageFromBase64(imageFiles)
+        }
 
         return {
           content: [{type: 'text', text: promptText}],
