@@ -85,7 +85,7 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
           : []
 
         // 生成组件代码提示（附带资产列表）
-        const assetList = imageFiles.map((f: {path: string}) => f.path)
+        const assetList = imageFiles.map((f: {path: string}) => `assets/${path.basename(f.path)}`)
         const promptText = generatePromptText(promptName, name, source, assetList)
         const imgFormat = 'png'
         // const localMCP = !Bun.env.MCP_CONFIG_URL
@@ -93,15 +93,18 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
         //   downloader.setup({localPath: localPath || process.cwd(), imgFormat})
         //   await downloader.downLoadImageFromBase64(imageFiles)
         // }
+        //
+
+        //
         const structuredContent = {
-          files: codeFiles.map((f: {path: string; content: string}) => ({
-            path: f.path,
-            content: f.content,
-          })),
-          assets: imageFiles.map((f: {path: string; content: string}) => ({
-            filename: f.path,
-            base64: f.content,
-            format: imgFormat,
+          content: imageFiles.map((f: {path: string; content: string}) => ({
+            type: 'image',
+            // filename: `assets/${path.basename(f.path)}`,
+            data: f.content,
+            mimeType: `image/${imgFormat}`,
+            annotations: {
+              filename: path.basename(f.path),
+            },
           })),
         }
         logger.debug('structuredContent', structuredContent)

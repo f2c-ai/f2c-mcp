@@ -25,7 +25,7 @@ server.tool(
       .array(
         z.object({
           filename: z.string(),
-          base64: z.string(),
+          data: z.string(),
           format: z.enum(['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp']).optional(),
         }),
       )
@@ -36,7 +36,7 @@ server.tool(
   async ({assets, localPath, imgFormat}) => {
     const imageFiles = (assets || []).map(a => ({
       path: a.filename,
-      content: a.base64,
+      content: a.data,
     }))
 
     const lp = localPath || process.cwd()
