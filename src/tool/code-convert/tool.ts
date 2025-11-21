@@ -5,7 +5,7 @@ import {createLogger, LogLevel} from 'src/utils/logger'
 import {z} from 'zod'
 import {mcpClients} from '@/client/mcp-client.js'
 import {wrapTailwindCode} from '@/utils/code'
-import {generatePromptText} from './prompt-en'
+import {generatePromptText} from './prompt'
 
 const logger = createLogger('code-convert-tool', LogLevel.DEBUG)
 
@@ -85,29 +85,29 @@ export const registerCodeConvertTool = (mcpServer: McpServer) => {
           : []
 
         // 生成组件代码提示（附带资产列表）
-        const assetList = imageFiles.map((f: {path: string}) => `assets/${path.basename(f.path)}`)
+        const assetList = imageFiles.map((f: {path: string}) => f.path)
         const promptText = generatePromptText(promptName, name, source, assetList)
         const imgFormat = 'png'
         // const localMCP = !Bun.env.MCP_CONFIG_URL
-        const localMCP = true
-        if (localMCP && Array.isArray(files)) {
-          downloader.setup({localPath: localPath || process.cwd(), imgFormat})
-          await downloader.downLoadImageFromBase64(imageFiles)
+        // if (localMCP && Array.isArray(files)) {
+        //   downloader.setup({localPath: localPath || process.cwd(), imgFormat})
+        //   await downloader.downLoadImageFromBase64(imageFiles)
+        // }
+        const structuredContent = {
+          files: codeFiles.map((f: {path: string; content: string}) => ({
+            path: f.path,
+            content: f.content,
+          })),
+          assets: imageFiles.map((f: {path: string; content: string}) => ({
+            filename: f.path,
+            base64: f.content,
+            format: imgFormat,
+          })),
         }
-
+        logger.debug('structuredContent', structuredContent)
         return {
           content: [{type: 'text', text: promptText}],
-          structuredContent: {
-            files: codeFiles.map((f: {path: string; content: string}) => ({
-              path: f.path,
-              content: f.content,
-            })),
-            assets: imageFiles.map((f: {path: string; content: string}) => ({
-              filename: path.basename(f.path),
-              base64: f.content,
-              format: imgFormat,
-            })),
-          },
+          structuredContent,
         }
       } catch (error) {
         logger.info('错误时 Socket 连接状态:', false)

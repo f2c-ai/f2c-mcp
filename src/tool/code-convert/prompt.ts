@@ -97,7 +97,7 @@ ${source}${assetListSection}`
 - 仅输出下方源码文本；不得添加或删除任何字符；输出必须与源码逐字符一致。
 
 源码:
-${source}`
+${source}${assetListSection}`
 
     default:
       return `${basePrompt}

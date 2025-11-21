@@ -1,6 +1,6 @@
 {
   "name": "@f2c/mcp",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "",
   "type": "module",
   "repository": {
@@ -11,27 +11,23 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "f2c-filesystem-mcp": "dist/filesystem.js"
+  },
   "keywords": ["f2c", "mcp"],
   "files": ["dist"],
-  "main": "dist/stdio.js",
-  "types": "dist/stdio.d.ts",
+  "main": "dist/filesystem.js",
+  "types": "dist/filesystem.d.ts",
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/http.d.mts",
-        "default": "./dist/http.mjs"
-      },
-      "require": {
-        "types": "./dist/http.d.ts",
-        "default": "./dist/http.js"
-      }
-    }
+    "./filesystem": "./dist/filesystem.js"
   },
   "scripts": {
     "dev": "bun --watch run src/http.ts",
     "serve": "bun run src/http.ts",
     "dep": "bun --env-file=.env.deploy run src/http.ts",
-    "lint": "biome check . --fix"
+    "lint": "biome check . --fix",
+    "file-build": "bun run build.ts",
+    "file-dev": "bun --watch run build.ts"
   },
   "author": "ckken",
   "maintainers": ["ckken"],
@@ -56,6 +52,6 @@
     "ws": "^8.18.3"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   }
 }
