@@ -13,7 +13,7 @@ export type MessageType = {
 // 心跳配置（可根据需求调整）
 const HEARTBEAT_INTERVAL = 10000 // 10秒发送一次心跳
 
-const logger = createLogger('code-ws', LogLevel.DEBUG)
+const logger = createLogger('code-ws', LogLevel.INFO)
 const users = new Map<string, any>()
 const userLastActive = new Map<string, string>()
 const getAccessToken = (uid: string) => {
