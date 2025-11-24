@@ -26,9 +26,10 @@ export const server = new McpServer(
 const logger = createLogger('local-gen-code-client', LogLevel.DEBUG)
 let client = new Client({name: 'web-demo', version: '1.0.0'}, {capabilities: {}})
 //
-genCodeTool(server, async ({componentName, framework, style, localPath}: any) => {
+genCodeTool(server, async (toolName, {componentName, framework, style, localPath}: any) => {
+  logger.info('genCodeTool', componentName, framework, style, localPath)
   const rs: any = await client.callTool({
-    name: 'get_code_to_component',
+    name: toolName,
     arguments: {
       componentName,
       framework,
@@ -39,7 +40,8 @@ genCodeTool(server, async ({componentName, framework, style, localPath}: any) =>
   //
   if (Array.isArray(rs?.structuredContent?.assets)) {
     try {
-      downloader.setup({localPath: localPath || process.cwd(), imgFormat: 'png'})
+      localPath = localPath || process.cwd()
+      downloader.setup({localPath, imgFormat: 'png'})
       //
       const imageFiles = rs?.structuredContent?.assets.map((f: {filename: string; base64: string}) => ({
         path: f.filename,
@@ -47,6 +49,7 @@ genCodeTool(server, async ({componentName, framework, style, localPath}: any) =>
       }))
       logger.info(
         'download image files',
+        localPath,
         imageFiles.map((f: {path: any}) => f.path),
       )
       await downloader.downLoadImageFromBase64(imageFiles)

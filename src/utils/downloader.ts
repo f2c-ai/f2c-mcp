@@ -1,7 +1,7 @@
 import fs from 'fs'
 import fsp from 'fs/promises'
 import path from 'path'
-import {createLogger} from 'src/utils/logger'
+import {createLogger, LogLevel} from 'src/utils/logger'
 import compatFetch from './fetch'
 
 export interface NodeToCodeFile {
@@ -14,7 +14,7 @@ export interface DownloaderOptions {
   imgFormat: 'png' | 'jpg' | 'svg'
 }
 
-const logger = createLogger('Downloader')
+const logger = createLogger('Downloader', LogLevel.DEBUG)
 
 export class Downloader {
   op!: DownloaderOptions
