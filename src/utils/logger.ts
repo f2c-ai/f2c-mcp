@@ -13,7 +13,9 @@ function detectTransportMode(): boolean {
     typeof process !== 'undefined' && process.env.transportType ? process.env.transportType.toLowerCase() : ''
   const forceStdio =
     typeof process !== 'undefined' && (process.env.MCP_STDIO === '1' || process.env.F2C_FORCE_STDIO === '1')
+  const forceHttp = typeof process !== 'undefined' && process.env.F2C_FORCE_HTTP === '1'
   if (envTransport === 'stdio' || forceStdio) return false
+  if (envTransport === 'http' || forceHttp) return true
   if (args.includes('http.ts')) return true
   if (hasMcpUrl) return true
   if (proto === 'http' || proto === 'https') return true
@@ -23,9 +25,11 @@ export const isHttp = detectTransportMode()
 export class Logger {
   private context: string
   private level: LogLevel
+  private useTimestamp: boolean
   constructor(context: string, level: LogLevel = LogLevel.INFO) {
     this.context = context
     this.level = level
+    this.useTimestamp = typeof process !== 'undefined' && process.env.F2C_LOG_TIMESTAMP === '1'
   }
 
   setLevel(level: LogLevel): void {
@@ -47,25 +51,45 @@ export class Logger {
   }
   debug(...args: any[]): void {
     if (this.level <= LogLevel.DEBUG) {
-      this.log(`[DEBUG] [${this.context}]`, ...args) // 使用 console.error 而不是 console.log
+      const prefix = this.useTimestamp
+        ? `[${new Date().toISOString()}] [DEBUG] [${this.context}]`
+        : `[DEBUG] [${this.context}]`
+      this.log(prefix, ...args)
     }
   }
 
   info(...args: any[]): void {
     if (this.level <= LogLevel.INFO) {
-      this.log(`[INFO] [${this.context}]`, ...args)
+      const prefix = this.useTimestamp
+        ? `[${new Date().toISOString()}] [INFO] [${this.context}]`
+        : `[INFO] [${this.context}]`
+      this.log(prefix, ...args)
     }
   }
 
   warn(...args: any[]): void {
     if (this.level <= LogLevel.WARN) {
-      this.logWarn(`[WARN] [${this.context}]`, ...args)
+      const prefix = this.useTimestamp
+        ? `[${new Date().toISOString()}] [WARN] [${this.context}]`
+        : `[WARN] [${this.context}]`
+      this.logWarn(prefix, ...args)
     }
   }
 
   error(...args: any[]): void {
     if (this.level <= LogLevel.ERROR) {
-      console.error(`[ERROR] [${this.context}]`, ...args)
+      const prefix = this.useTimestamp
+        ? `[${new Date().toISOString()}] [ERROR] [${this.context}]`
+        : `[ERROR] [${this.context}]`
+      console.error(prefix, ...args)
+    }
+  }
+
+  raw(...args: any[]): void {
+    if (isHttp) {
+      console.log(...args)
+    } else {
+      console.error(...args)
     }
   }
 }

@@ -19,7 +19,7 @@ export const genCodeTool = (
   mcpServer.registerTool(
     'get_code_to_component',
     {
-      title: 'get code',
+      title: 'get code to component',
       description: 'Fetch HTML code via WebSocket and generate React/Vue/HTML output',
       inputSchema: {
         componentName: z.string().optional().describe('Optional component name hint (e.g., HelloDiv)'),
@@ -63,7 +63,11 @@ export const genCodeTool = (
       },
     },
     async ({componentName, framework, style, localPath}, o) => {
-      //   if (fn) return fn('get_code_to_component', {componentName, framework, style, localPath}, o)
+      // console.error('get_code_to_component', o)
+      if (fn) {
+        const rs: any = await fn('get_code_to_component', {componentName, framework, style, localPath})
+        return rs
+      }
       logger.debug('get_code_to_component', o.requestInfo?.headers.accesstoken)
       let name = componentName || 'ConvertedComponent'
       const fw = framework || 'react'
