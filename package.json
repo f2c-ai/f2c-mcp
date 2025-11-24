@@ -16,10 +16,9 @@
   },
   "keywords": ["f2c", "mcp"],
   "files": ["dist"],
-  "main": "dist/filesystem.js",
-  "types": "dist/filesystem.d.ts",
+  "main": "dist/index.js",
   "exports": {
-    "./filesystem": "./dist/filesystem.js"
+    ".": "./dist/index.js"
   },
   "scripts": {
     "dev": "bun --watch run src/http.ts",
