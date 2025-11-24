@@ -7,7 +7,9 @@ import {createLogger, LogLevel} from 'src/utils/logger'
 // import z from 'zod'
 import config from './config'
 import {genCodeTool} from './tool/code-convert/gen-code-tool'
+import {getCliParam} from './utils'
 import downloader from './utils/downloader'
+
 export const server = new McpServer(
   {
     name: 'f2c-local-mcp',
@@ -57,8 +59,13 @@ genCodeTool(server, async ({componentName, framework, style, localPath}: any) =>
   return rs
 })
 
-const REMOTE_SERVER_URL = process.env.MCP_SERVER_URL || config.mcpHttpUrl
-const accessToken = process.env.MCP_CLIENT_TOKEN || ''
+const cliToken = getCliParam(['accessToken'])
+const cliMcp = getCliParam(['mcpServer'])
+//
+console.error('connect to server', cliMcp, cliToken)
+//
+const REMOTE_SERVER_URL = cliMcp || process.env.MCP_SERVER_URL || config.mcpHttpUrl
+const accessToken = cliToken || process.env.MCP_CLIENT_TOKEN || ''
 const transport = new StreamableHTTPClientTransport(new URL(REMOTE_SERVER_URL), {
   requestInit: {
     headers: {
