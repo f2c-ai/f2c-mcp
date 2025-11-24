@@ -6,9 +6,18 @@ export enum LogLevel {
 }
 // Determine if stdio or http mode by checking the run command
 function detectTransportMode(): boolean {
-  // const args = process.argv.join(' ').toLowerCase()
-  // console.log('args', args)
-  return true
+  const args = Array.isArray(process.argv) ? process.argv.join(' ').toLowerCase() : ''
+  const proto = typeof process !== 'undefined' && process.env.APP_PROTOCOL ? process.env.APP_PROTOCOL.toLowerCase() : ''
+  const hasMcpUrl = typeof process !== 'undefined' && !!process.env.MCP_CONFIG_URL
+  const envTransport =
+    typeof process !== 'undefined' && process.env.transportType ? process.env.transportType.toLowerCase() : ''
+  const forceStdio =
+    typeof process !== 'undefined' && (process.env.MCP_STDIO === '1' || process.env.F2C_FORCE_STDIO === '1')
+  if (envTransport === 'stdio' || forceStdio) return false
+  if (args.includes('http.ts')) return true
+  if (hasMcpUrl) return true
+  if (proto === 'http' || proto === 'https') return true
+  return false
 }
 export const isHttp = detectTransportMode()
 export class Logger {
