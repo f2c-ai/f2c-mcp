@@ -23,11 +23,11 @@ export const server = new McpServer(
   },
 )
 
-const logger = createLogger('local-gen-code-client', LogLevel.DEBUG)
+const logger = createLogger('local-gen-code-client', LogLevel.INFO)
 let client = new Client({name: 'web-demo', version: '1.0.0'}, {capabilities: {}})
 //
 genCodeTool(server, async (toolName, {componentName, framework, style, localPath}: any) => {
-  logger.info('genCodeTool', componentName, framework, style, localPath)
+  logger.debug('genCodeTool', componentName, framework, style, localPath)
   const rs: any = await client.callTool({
     name: toolName,
     arguments: {
@@ -47,7 +47,7 @@ genCodeTool(server, async (toolName, {componentName, framework, style, localPath
         path: f.filename,
         content: f.base64,
       }))
-      logger.info(
+      logger.debug(
         'download image files',
         localPath,
         imageFiles.map((f: {path: any}) => f.path),
