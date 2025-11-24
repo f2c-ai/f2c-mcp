@@ -10,7 +10,7 @@ bun ./src/index.ts --accessToken=你的TOKEN --mcpServer=http://localhost:3000/m
     "f2c-local-mcp": {
       "command": "bun",
       "args": [
-        "/Users/xuhongbin/Desktop/Develop/f2c-github-workspace/f2c-mcp/dist/index.js",
+        "你的项目绝对路径/dist/index.js",
         "--accessToken=你的TOKEN",
         "--mcpServer=http://localhost:3000/mcp"
       ]
