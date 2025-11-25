@@ -123,7 +123,7 @@ export const genCodeTool = (
         const assetList = imageFiles.map((f: {path: string}) => f.path)
         const promptText = generatePromptText(promptName, name, source, assetList)
         const imgFormat = 'png'
-        // const localMCP = !Bun.env.MCP_CONFIG_URL
+        // const localMCP = false
         // if (localMCP && Array.isArray(files)) {
         //   downloader.setup({localPath: localPath || process.cwd(), imgFormat})
         //   await downloader.downLoadImageFromBase64(imageFiles)

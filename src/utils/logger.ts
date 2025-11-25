@@ -8,7 +8,6 @@ export enum LogLevel {
 function detectTransportMode(): boolean {
   const args = Array.isArray(process.argv) ? process.argv.join(' ').toLowerCase() : ''
   const proto = typeof process !== 'undefined' && process.env.APP_PROTOCOL ? process.env.APP_PROTOCOL.toLowerCase() : ''
-  const hasMcpUrl = typeof process !== 'undefined' && !!process.env.MCP_CONFIG_URL
   const envTransport =
     typeof process !== 'undefined' && process.env.transportType ? process.env.transportType.toLowerCase() : ''
   const forceStdio =
@@ -17,7 +16,6 @@ function detectTransportMode(): boolean {
   if (envTransport === 'stdio' || forceStdio) return false
   if (envTransport === 'http' || forceHttp) return true
   if (args.includes('http.ts')) return true
-  if (hasMcpUrl) return true
   if (proto === 'http' || proto === 'https') return true
   return false
 }
