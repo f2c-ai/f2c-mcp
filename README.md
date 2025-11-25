@@ -23,8 +23,8 @@ npx -y @f2c/mcp@1.0.0-alpha.1 --mcpServer=http://localhost:3000/mcp --accessToke
       "args": [
         "-y",
         "@f2c/mcp@1.0.0-alpha.1",
-        "--mcpServer=http://localhost:3000/mcp",
-        "--accessToken=你的TOKEN"
+        "--mcpServer=https://f2c-figma-mcp.yy.com/mcp",
+        "--accessToken=xxx-xxx-xxx-xxx"
       ]
     }
   }
