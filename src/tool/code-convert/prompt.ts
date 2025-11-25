@@ -5,7 +5,8 @@ const COMMON_REQUIREMENTS = {
     base: `- 仅返回有效的 TSX 代码；不要添加任何解释。
 - 属性重命名：'class'→'className'，'for'→'htmlFor'，'tabindex'→'tabIndex'。
 - 将 HTML DOM 事件映射为 React 驼峰事件：'onclick'→'onClick'，'oninput'→'onInput'，'onchange'→'onChange'，'onsubmit'→'onSubmit'，'onfocus'→'onFocus'，'onblur'→'onBlur'。
-- 保持语义与结构；不得添加任何业务逻辑。`,
+- 保持语义与结构；不得添加任何业务逻辑。
+- 图片引用：非 public 目录的静态资源用 require() 引用，例如 <img src={require('assets/image.png')} />。`,
     tailwind: `- Tailwind 工具类保留在 'className'。
 - 将内联 'style="..."' 转为 React 样式对象：'style={{...}}'。`,
     css: `- 用语义化类名替换 Tailwind 工具类，并通过 CSS Module 引用：import styles from './{{componentName}}.module.css'。
