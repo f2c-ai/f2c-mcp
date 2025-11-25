@@ -6,7 +6,8 @@ const COMMON_REQUIREMENTS = {
     base: `- Return only valid TSX code; no explanations.
 - Rename attributes: 'class'→'className', 'for'→'htmlFor', 'tabindex'→'tabIndex'.
 - Map HTML DOM events to React camelCase: 'onclick'→'onClick', 'oninput'→'onInput', 'onchange'→'onChange', 'onsubmit'→'onSubmit', 'onfocus'→'onFocus', 'onblur'→'onBlur'.
-- Keep semantics and structure; do not add business logic.`,
+- Keep semantics and structure; do not add business logic.
+- Image references: for static assets outside the public directory, use require(), e.g., <img src={require('assets/image.png')} />.`,
     tailwind: `- Preserve Tailwind utility classes under 'className'.
 - Convert inline 'style="..."' to a React style object: 'style={{...}}'.`,
     css: `- Replace Tailwind utility classes with semantic class names and reference a CSS Module: import styles from './{{componentName}}.module.css'.
