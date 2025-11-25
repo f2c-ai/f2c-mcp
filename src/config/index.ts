@@ -2,21 +2,17 @@ const PRESET = {protocol: 'http', host: 'localhost', port: 3000}
 export const env = (typeof process !== 'undefined' && process.env.APP_ENV) || 'dev'
 export class AppConfig {
   public port: number
-  public ip: string
-  public httpProto: string
+  public host: string
+  public protocol: string
 
-  constructor(init: {protocol?: string; host?: string; port?: string | number}) {
-    const httpProto = (init?.protocol || 'http').toLowerCase()
-    const host = init?.host || 'localhost'
-    const portStr = typeof init?.port === 'number' ? String(init.port) : init?.port || '3000'
-    const port = Number.parseInt(portStr, 10)
-    this.httpProto = httpProto
-    this.port = port
-    this.ip = host
+  constructor(init: {protocol: string; host: string; port: string | number}) {
+    this.protocol = init.protocol
+    this.port = typeof init.port === 'number' ? init.port : Number.parseInt(init.port, 10)
+    this.host = init.host
   }
 
   private get wsProto(): 'ws' | 'wss' {
-    return this.httpProto === 'https' ? 'wss' : 'ws'
+    return this.protocol === 'https' ? 'wss' : 'ws'
   }
 
   private portSuffix(proto: 'http' | 'https' | 'ws' | 'wss'): string {
@@ -27,19 +23,18 @@ export class AppConfig {
   }
 
   get httpUrl(): string {
-    const proto = this.httpProto as 'http' | 'https'
-    return `${proto}://${this.ip}${this.portSuffix(proto)}`
+    const proto = this.protocol as 'http' | 'https'
+    return `${proto}://${this.host}${this.portSuffix(proto)}`
   }
 
   get codeWsUrl(): string {
     const proto = this.wsProto
-    return `${proto}://${this.ip}${this.portSuffix(proto)}/code`
+    return `${proto}://${this.host}${this.portSuffix(proto)}/code`
   }
 
   get mcpHttpUrl(): string {
-    if (Bun && Bun.env.MCP_CONFIG_URL) return Bun.env.MCP_CONFIG_URL
-    const proto = this.httpProto as 'http' | 'https'
-    return `${proto}://${this.ip}${this.portSuffix(proto)}/mcp`
+    const proto = this.protocol as 'http' | 'https'
+    return `${proto}://${this.host}${this.portSuffix(proto)}/mcp`
   }
 
   getCodeWS(uid: string): string {
@@ -48,8 +43,8 @@ export class AppConfig {
   toJSONString(): string {
     const data = {
       port: this.port,
-      ip: this.ip,
-      httpProto: this.httpProto,
+      host: this.host,
+      protocol: this.protocol,
       httpUrl: this.httpUrl,
       codeWsUrl: this.codeWsUrl,
       mcpHttpUrl: this.mcpHttpUrl,
@@ -58,11 +53,14 @@ export class AppConfig {
   }
 
   static fromEnv(): AppConfig {
-    const base = PRESET
-    const protocol = (typeof process !== 'undefined' && process.env.APP_PROTOCOL) || base.protocol
-    const host = (typeof process !== 'undefined' && process.env.APP_HOST) || base.host
-    const port = (typeof process !== 'undefined' && process.env.APP_PORT) || base.port
-    return new AppConfig({protocol, host, port})
+    if (Bun) {
+      const protocol = Bun.env.MCP_PROTOCOL || PRESET.protocol
+      const host = Bun.env.MCP_HOST || PRESET.host
+      const port = Bun.env.MCP_PORT || PRESET.port
+      return new AppConfig({protocol, host, port})
+    } else {
+      return new AppConfig(PRESET)
+    }
   }
 }
 
