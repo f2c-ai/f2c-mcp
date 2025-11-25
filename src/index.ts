@@ -4,6 +4,7 @@ import {StreamableHTTPClientTransport} from '@modelcontextprotocol/sdk/client/st
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import {startServer} from 'src/server/common/stdio'
 import {createLogger, LogLevel} from 'src/utils/logger'
+import {name as pkgName, version as pkgVersion} from '../package.json'
 // import z from 'zod'
 import config from './config'
 import {genCodeTool} from './tool/code-convert/gen-code-tool'
@@ -65,11 +66,15 @@ genCodeTool(server, async (toolName, {componentName, framework, style, localPath
 const cliToken = getCliParam(['accessToken'])
 const cliMcp = getCliParam(['mcpServer'])
 //
-console.error('connect to server', cliMcp, cliToken)
-//
-const REMOTE_SERVER_URL = cliMcp || process.env.MCP_SERVER_URL || config.mcpHttpUrl
+const mcpServer = cliMcp || process.env.MCP_SERVER_URL || 'https://f2c-figma-mcp.yy.com/mcp'
 const accessToken = cliToken || process.env.MCP_CLIENT_TOKEN || ''
-const transport = new StreamableHTTPClientTransport(new URL(REMOTE_SERVER_URL), {
+//
+logger.info('McpName:', pkgName)
+logger.info('McpVersion:', pkgVersion)
+logger.info('McpServer', mcpServer)
+logger.info('MccessToken:', accessToken || 'NONE')
+//
+const transport = new StreamableHTTPClientTransport(new URL(mcpServer), {
   requestInit: {
     headers: {
       accesstoken: accessToken,

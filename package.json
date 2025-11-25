@@ -1,6 +1,6 @@
 {
   "name": "@f2c/mcp",
-  "version": "0.5.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "type": "module",
   "repository": {
@@ -12,7 +12,7 @@
     "access": "public"
   },
   "bin": {
-    "f2c-filesystem-mcp": "dist/filesystem.js"
+    "f2c-mcp": "dist/index.js"
   },
   "keywords": ["f2c", "mcp"],
   "files": ["dist"],

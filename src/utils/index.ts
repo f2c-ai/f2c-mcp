@@ -1,4 +1,5 @@
 export const getCliParam = (names: string[]): string | undefined => {
+  // console.log('process.argv', process.argv)
   const argv = Array.isArray(process.argv) ? process.argv.slice(2) : []
   for (const name of names) {
     for (let i = 0; i < argv.length; i++) {
