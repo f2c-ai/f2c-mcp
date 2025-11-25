@@ -59,12 +59,6 @@
   </script>
   <script>
    window.accessToken = 'e2d52bd7-441a-4426-9fc5-9aeac2186ada-1763605269813'
-    try {
-      const cfgEl = document.getElementById('server-config')
-      if (cfgEl && cfgEl.textContent) {
-        window.__serverConfig = JSON.parse(cfgEl.textContent)
-      }
-    } catch {}
     // ===== 工具类和服务层 =====
     class MessageService {
       constructor(addMessageCallback) {

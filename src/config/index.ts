@@ -45,6 +45,17 @@ export class AppConfig {
   getCodeWS(uid: string): string {
     return `${this.codeWsUrl}/${uid}`
   }
+  toJSONString(): string {
+    const data = {
+      port: this.port,
+      ip: this.ip,
+      httpProto: this.httpProto,
+      httpUrl: this.httpUrl,
+      codeWsUrl: this.codeWsUrl,
+      mcpHttpUrl: this.mcpHttpUrl,
+    }
+    return JSON.stringify(data)
+  }
 
   static fromEnv(): AppConfig {
     const base = PRESET

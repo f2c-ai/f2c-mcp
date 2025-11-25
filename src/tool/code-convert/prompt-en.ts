@@ -6,7 +6,8 @@ const COMMON_REQUIREMENTS = {
     base: `- Return only valid TSX code; no explanations.
 - Rename attributes: 'class'→'className', 'for'→'htmlFor', 'tabindex'→'tabIndex'.
 - Map HTML DOM events to React camelCase: 'onclick'→'onClick', 'oninput'→'onInput', 'onchange'→'onChange', 'onsubmit'→'onSubmit', 'onfocus'→'onFocus', 'onblur'→'onBlur'.
-- Keep semantics and structure; do not add business logic.`,
+- Keep semantics and structure; do not add business logic.
+- Image references: for static assets outside the public directory, use require(), e.g., <img src={require('assets/image.png')} />.`,
     tailwind: `- Preserve Tailwind utility classes under 'className'.
 - Convert inline 'style="..."' to a React style object: 'style={{...}}'.`,
     css: `- Replace Tailwind utility classes with semantic class names and reference a CSS Module: import styles from './{{componentName}}.module.css'.
@@ -30,12 +31,15 @@ const COMMON_REQUIREMENTS = {
 
 export const registerCodeConvertPrompts = (mcpServer: McpServer) => {
   // React with Tailwind
-  mcpServer.prompt(
+  mcpServer.registerPrompt(
     'html-to-react-tailwind',
-    'Convert HTML + TailwindCSS to React component (preserving Tailwind)',
     {
-      componentName: z.string().describe('Name for the React component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      title: 'Convert HTML + TailwindCSS to React component (preserving Tailwind)',
+      description: 'Convert HTML + TailwindCSS to React component (preserving Tailwind)',
+      argsSchema: {
+        componentName: z.string().describe('Name for the React component'),
+        source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      },
     },
     async ({componentName, source}) => ({
       messages: [
@@ -61,12 +65,15 @@ ${source}`,
   )
 
   // React with CSS Modules
-  mcpServer.prompt(
+  mcpServer.registerPrompt(
     'html-to-react-css',
-    'Convert HTML + TailwindCSS to React component with CSS Modules',
     {
-      componentName: z.string().describe('Name for the React component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      title: 'Convert HTML + TailwindCSS to React component with CSS Modules',
+      description: 'Convert HTML + TailwindCSS to React component with CSS Modules',
+      argsSchema: {
+        componentName: z.string().describe('Name for the React component'),
+        source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      },
     },
     async ({componentName, source}) => ({
       messages: [
@@ -92,12 +99,15 @@ ${source}`,
   )
 
   // Vue with Tailwind
-  mcpServer.prompt(
+  mcpServer.registerPrompt(
     'html-to-vue-tailwind',
-    'Convert HTML + TailwindCSS to Vue SFC (preserving Tailwind)',
     {
-      componentName: z.string().describe('Name for the Vue component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      title: 'Convert HTML + TailwindCSS to Vue SFC (preserving Tailwind)',
+      description: 'Convert HTML + TailwindCSS to Vue SFC (preserving Tailwind)',
+      argsSchema: {
+        componentName: z.string().describe('Name for the Vue component'),
+        source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      },
     },
     async ({componentName, source}) => ({
       messages: [
@@ -121,12 +131,15 @@ ${source}`,
   )
 
   // Vue with CSS
-  mcpServer.prompt(
+  mcpServer.registerPrompt(
     'html-to-vue-css',
-    'Convert HTML + TailwindCSS to Vue SFC with scoped CSS',
     {
-      componentName: z.string().describe('Name for the Vue component'),
-      source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      title: 'Convert HTML + TailwindCSS to Vue SFC with scoped CSS',
+      description: 'Convert HTML + TailwindCSS to Vue SFC with scoped CSS',
+      argsSchema: {
+        componentName: z.string().describe('Name for the Vue component'),
+        source: z.string().describe('HTML + TailwindCSS snippet to convert'),
+      },
     },
     async ({componentName, source}) => ({
       messages: [
@@ -150,12 +163,15 @@ ${source}`,
   )
 
   // HTML + Tailwind: 原样回显（不做任何代码改变）
-  mcpServer.prompt(
+  mcpServer.registerPrompt(
     'html-to-html-tailwind',
-    'Return HTML snippet as-is without any modification',
     {
-      componentName: z.string().optional().describe('Optional component name hint'),
-      source: z.string().describe('HTML + TailwindCSS snippet to wrap into HTML document'),
+      title: 'Return HTML snippet as-is without any modification',
+      description: 'Return HTML snippet as-is without any modification',
+      argsSchema: {
+        componentName: z.string().optional().describe('Optional component name hint'),
+        source: z.string().describe('HTML + TailwindCSS snippet to wrap into HTML document'),
+      },
     },
     async ({source}) => ({
       messages: [
