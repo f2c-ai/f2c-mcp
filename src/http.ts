@@ -18,8 +18,6 @@ app.get('/', async () => {
   const file = Bun.file('public/index.html')
   let html = await file.text()
 
-  const inject = `<script>var __serverConfig = ${config.toJSONString()}</script>`
-  html = html.includes('</head>') ? html.replace('</head>', `${inject}\n</head>`) : `${inject}\n${html}`
   return new Response(html, {
     headers: {'Content-Type': 'text/html'},
   })

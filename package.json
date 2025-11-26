@@ -23,7 +23,6 @@
   "scripts": {
     "dev": "bun --watch run src/http.ts",
     "serve": "bun run src/http.ts",
-    "dep": "bun --env-file=.env.deploy run src/http.ts",
     "lint": "biome check . --fix",
     "file-build": "bun run build.ts",
     "file-dev": "bun --watch run build.ts",

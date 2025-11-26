@@ -1,9 +1,14 @@
 import {randomUUID} from 'crypto'
-import config, {ws_web_timeout_ms} from 'src/config'
+import config from 'src/config'
 import {EventType, MessageType} from 'src/server/code/ws'
 import {createLogger, LogLevel} from 'src/utils/logger'
 
 const log = createLogger('mcp-client', LogLevel.DEBUG)
+export const ws_web_timeout_ms =
+  typeof process !== 'undefined' && process.env.WS_WEB_TIMEOUT_MS
+    ? Number.parseInt(process.env.WS_WEB_TIMEOUT_MS, 10)
+    : 0
+
 type PendingRequest = {
   resolve: (value: any) => void
   reject: (error: Error) => void

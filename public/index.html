@@ -59,6 +59,19 @@
   </script>
   <script>
    window.accessToken = 'e2d52bd7-441a-4426-9fc5-9aeac2186ada-1763605269813'
+   // 通过window获取访问入口的 域名 端口 和协议信息
+   const { protocol, hostname, port, origin } = window.location
+   const proto = protocol.replace(':', '')
+   const host = hostname
+   const portNum = port ? parseInt(port, 10) : (proto === 'https' ? 443 : 80)
+   window.config = {
+     protocol: proto,
+     host,
+     port: portNum,
+     url: `${proto}://${host}${portNum===433||portNum===80?'':`:${portNum}`}`,
+     wsUrl: `${proto==='https'?'wss':'ws'}://${host}${portNum===433||portNum===80?'':`:${portNum}`}/code`
+   }
+
     // ===== 工具类和服务层 =====
     class MessageService {
       constructor(addMessageCallback) {
@@ -161,7 +174,7 @@
       connect(getDefaultHtml) {
         this.status = 'connecting'
         this.statusText = 'WS 连接中...'
-        const baseWs = (window.__serverConfig && window.__serverConfig.codeWsUrl) || `ws://${window.location.hostname}:${window.location.port || 3000}/code`
+        const baseWs =  window.config.wsUrl
         const wsUrl = `${baseWs}/${this.uid}`
         // 保存 HTML 获取函数，确保后续发送使用最新内容
         if (typeof getDefaultHtml === 'function') {

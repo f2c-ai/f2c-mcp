@@ -65,8 +65,3 @@ export class AppConfig {
 }
 
 export default AppConfig.fromEnv()
-
-export const ws_web_timeout_ms =
-  typeof process !== 'undefined' && process.env.WS_WEB_TIMEOUT_MS
-    ? Number.parseInt(process.env.WS_WEB_TIMEOUT_MS, 10)
-    : 0
