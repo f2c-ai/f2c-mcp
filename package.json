@@ -1,6 +1,6 @@
 {
-  "name": "@f2c/mcp",
-  "version": "1.0.0-alpha.2",
+  "name": "@f2c/mcp-plugin",
+  "version": "1.0.0",
   "description": "",
   "type": "module",
   "repository": {
