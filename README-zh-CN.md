@@ -15,6 +15,8 @@
 [node-src]: https://img.shields.io/node/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
 [node-href]: https://nodejs.org/en/about/previous-releases
 
+> 由于Figma对于[REST API的调用限制](https://developers.figma.com/docs/rest-api/rate-limits/)，如果您受到影响，请切换至[@f2c/mcp-plugin](https://www.npmjs.com/package/@f2c/mcp-plugin)以便能够正常运行。
+
 [English](./README.md) | 简体中文   
 
 使用[F2C](https://f2c.yy.com/) 根据 Figma设计稿生成代码的模型上下文协议服务器。

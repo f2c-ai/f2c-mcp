@@ -16,6 +16,8 @@
 [node-src]: https://img.shields.io/node/v/@f2c/mcp?style=flat&colorA=18181B&colorB=F0DB4F
 [node-href]: https://nodejs.org/en/about/previous-releases
 
+> Due to [Figma REST API rate limits](https://developers.figma.com/docs/rest-api/rate-limits/), if you are affected, please switch to [@f2c/mcp-plugin](https://www.npmjs.com/package/@f2c/mcp-plugin) for normal operation.
+
 English | [简体中文](./README-zh-CN.md)
 
 A Model Context Protocol server for Figma Design to Code using [F2C](https://f2c.yy.com/).
