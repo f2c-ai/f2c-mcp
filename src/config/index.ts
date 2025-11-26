@@ -53,14 +53,7 @@ export class AppConfig {
   }
 
   static fromEnv(): AppConfig {
-    if (Bun) {
-      const protocol = Bun.env.MCP_PROTOCOL || PRESET.protocol
-      const host = Bun.env.MCP_HOST || PRESET.host
-      const port = Bun.env.MCP_PORT || PRESET.port
-      return new AppConfig({protocol, host, port})
-    } else {
-      return new AppConfig(PRESET)
-    }
+    return new AppConfig(PRESET)
   }
 }
 

@@ -66,7 +66,8 @@ genCodeTool(server, async (toolName, {componentName, framework, style, localPath
 const cliToken = getCliParam(['accessToken'])
 const cliMcp = getCliParam(['mcpServer'])
 //
-const mcpServer = cliMcp || process.env.MCP_SERVER_URL || 'https://f2c-figma-mcp.yy.com/mcp'
+let mcpServer = cliMcp || process.env.MCP_SERVER_URL || 'https://f2c-figma-mcp.yy.com'
+mcpServer = mcpServer.endsWith('/mcp') ? mcpServer : mcpServer + '/mcp'
 const accessToken = cliToken || process.env.MCP_CLIENT_TOKEN || ''
 //
 logger.info('McpName:', pkgName)
