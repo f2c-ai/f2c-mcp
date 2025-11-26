@@ -7,9 +7,9 @@
 
 ## STDIO 模式运行
 ```bash
-npx -y @f2c/mcp@1.0.0-alpha.1 --mcpServer=http://localhost:3000/mcp --accessToken=唯一令牌
+npx -y @f2c/mcp@1.0.0-alpha.1 --mcpServer=http://localhost:3000 --accessToken=唯一令牌
 ```
-+ `mcpServer` 为 MCP 服务器地址，默认值为 `https://f2c-figma-mcp.yy.com/mcp`
++ `mcpServer` 为 MCP 服务器地址，默认值为 `https://f2c-figma-mcp.yy.com`
 + `accessToken` 为 MCP 客户端令牌，默认值为空字符串
 
 ## IDE 配置示例（STDIO）
@@ -23,7 +23,7 @@ npx -y @f2c/mcp@1.0.0-alpha.1 --mcpServer=http://localhost:3000/mcp --accessToke
       "args": [
         "-y",
         "@f2c/mcp@1.0.0-alpha.1",
-        "--mcpServer=https://f2c-figma-mcp.yy.com/mcp",
+        "--mcpServer=https://f2c-figma-mcp.yy.com",
         "--accessToken=xxx-xxx-xxx-xxx"
       ]
     }
