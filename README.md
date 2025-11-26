@@ -1,9 +1,5 @@
 # F2C MCP Server Plugin Version
 ![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![github][github-src]][github-href]
-[![node][node-src]][node-href]
 
 English | [简体中文](./README-zh-CN.md)
 
