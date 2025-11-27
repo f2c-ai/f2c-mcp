@@ -44,7 +44,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.1",
     "@empjs/biome-config": "2.3.0",
-    "@modelcontextprotocol/sdk": "1.22.0",
+    "@modelcontextprotocol/sdk": "1.23.0",
     "@types/bun": "^1.2.13",
     "@types/ws": "^8.18.1",
     "typescript": "^5.9.3",
