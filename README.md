@@ -1,3 +1,34 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="right">
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=en">English</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=zh-CN">简体中文</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=zh-TW">繁體中文</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=ja">日本語</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=ko">한국어</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=hi">हिन्दी</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=th">ไทย</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=fr">Français</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=de">Deutsch</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=es">Español</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=it">Itapano</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=ru">Русский</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=pt">Português</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=nl">Nederlands</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=pl">Polski</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=ar">العربية</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=fa">فارسی</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=tr">Türkçe</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=vi">Tiếng Việt</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=f2c-ai&project=f2c-mcp&lang=id">Bahasa Indonesia</a></p>
+      </div>
+    </div>
+  </details>
+</div>
+
 # F2C MCP Server 
 ![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
 [![smithery badge](https://smithery.ai/badge/@f2c-ai/f2c-mcp)](https://smithery.ai/server/@f2c-ai/f2c-mcp)
